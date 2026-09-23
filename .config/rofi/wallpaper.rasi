@@ -1,0 +1,58 @@
+@import "theme.rasi"
+
+/* Wallpaper picker (Super + W) — thumbnail grid.
+   Columns * lines controls how many thumbnails fit on screen. */
+
+configuration {
+    show-icons: true;
+    matching: "fuzzy";
+    sort: false;
+    icon-theme: "Papirus-Dark";
+}
+
+window {
+    width: 1080px;
+    padding: 14px;
+    border-radius: 16px;
+}
+
+listview {
+    columns: 3;
+    lines: 2;
+    spacing: 10px;
+    fixed-height: false;
+    scrollbar: true;
+}
+
+element {
+    orientation: vertical;
+    children: [ element-icon, element-text ];
+    padding: 8px;
+    spacing: 6px;
+    border-radius: 12px;
+}
+
+element-icon {
+    size: 300px;
+    background-color: @surface-2;
+    border-radius: 10px;
+    horizontal-align: 0.5;
+}
+
+element-text {
+    horizontal-align: 0.5;
+    text-color: @text-dim;
+    font: "JetBrainsMono Nerd Font 10";
+}
+
+element selected.normal element-text {
+    text-color: @accent-ink;
+}
+
+entry {
+    placeholder: "filter wallpapers…";
+}
+
+prompt {
+    font: "JetBrainsMono Nerd Font 14";
+}

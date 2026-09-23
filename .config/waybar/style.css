@@ -1,0 +1,186 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ~/.config/waybar/style.css — hyprland-monochrome
+
+   Monochrome palette used throughout:
+     surface     rgba(10, 10, 10, 0.72)   bar groups
+     text        #e6e6e6                  primary text
+     text-dim    #8a8a8a                  inactive
+     hairline    rgba(255, 255, 255, .07) 1px borders
+     accent      #ffffff                  active item (inverted pill)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Symbols Nerd Font Mono", monospace;
+    font-size: 12px;
+    font-weight: 500;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: #e6e6e6;
+}
+
+/* ── The floating groups (center pill attaches to #mpris so it vanishes when idle) ── */
+.modules-left,
+.modules-right {
+    background: rgba(10, 10, 10, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    margin: 5px 0;
+    padding: 0 4px;
+}
+
+.modules-left   { margin-left: 8px; }
+.modules-right  { margin-right: 8px; }
+.modules-center { background: transparent; border: none; padding: 0; }
+
+#mpris {
+    background: rgba(10, 10, 10, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    margin: 5px 0;
+    padding: 0 12px;
+}
+
+/* ── Shared module look ────────────────────────────────────────────────── */
+#cpu,
+#memory,
+#temperature,
+#custom-updates,
+#network,
+#bluetooth,
+#pulseaudio,
+#battery,
+#clock,
+#tray,
+#mpris,
+#custom-launcher,
+#custom-settings,
+#custom-power,
+#window,
+#submap {
+    padding: 0 8px;
+    margin: 0 1px;
+    color: #e6e6e6;
+}
+
+/* Soft hover: the icon grows a touch and brightens — no colour, just light. */
+#cpu, #memory, #temperature, #custom-updates, #network, #bluetooth,
+#pulseaudio, #battery, #clock, #mpris, #custom-launcher,
+#custom-settings, #custom-power {
+    transition: opacity .15s ease, color .15s ease, background-color .15s ease;
+}
+
+#cpu:hover, #memory:hover, #temperature:hover, #custom-updates:hover,
+#network:hover, #bluetooth:hover, #pulseaudio:hover, #battery:hover,
+#clock:hover, #mpris:hover, #custom-launcher:hover,
+#custom-settings:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+}
+
+/* ── Launcher & power buttons ──────────────────────────────────────────── */
+/* Recording indicator: invisible while idle, a white dot + timer while live */
+#custom-recording {
+    font-size: 12px;
+    color: #ffffff;
+    padding: 0 8px;
+}
+#custom-recording.off   { font-size: 0; padding: 0; margin: 0; min-width: 0; }
+#custom-recording.paused { color: #8a8a8a; }
+#custom-recording:hover { background: rgba(255, 255, 255, 0.06); border-radius: 8px; }
+
+#custom-launcher {
+    font-size: 15px;
+    color: #ffffff;
+    padding: 0 10px 0 8px;
+}
+
+#custom-settings { font-size: 14px; color: #bdbdbd; }
+
+#custom-power {
+    font-size: 14px;
+    color: #bdbdbd;
+    padding: 0 10px;
+}
+
+#custom-power:hover,
+#custom-settings:hover { color: #ffffff; background: rgba(255, 255, 255, 0.06); border-radius: 8px; }
+
+/* ── Workspaces ────────────────────────────────────────────────────────── */
+#workspaces {
+    padding: 0 2px;
+}
+
+#workspaces button {
+    padding: 0 7px;
+    margin: 3px 1px;
+    color: #6f6f6f;
+    background: transparent;
+    border-radius: 8px;
+    transition: all .15s ease;
+}
+
+#workspaces button:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.10);
+}
+
+#workspaces button.active {
+    color: #0a0a0a;
+    background: #e6e6e6;
+}
+
+#workspaces button.urgent {
+    color: #0a0a0a;
+    background: #ffffff;
+}
+
+#workspaces button.empty { color: #4a4a4a; }
+
+/* ── Window title & submaps ────────────────────────────────────────────── */
+#window {
+    color: #bdbdbd;
+    padding-left: 4px;
+}
+
+window#waybar.empty #window { background: transparent; }
+
+#submap {
+    color: #0a0a0a;
+    background: #e6e6e6;
+    border-radius: 8px;
+    margin: 3px 4px;
+    padding: 0 8px;
+}
+
+/* ── State colours are monochrome too: brightness carries the meaning ──── */
+#temperature.critical { color: #ffffff; background: rgba(255, 255, 255, 0.12); border-radius: 8px; }
+#battery.warning       { color: #cfcfcf; }
+#battery.critical      { color: #ffffff; background: rgba(255, 255, 255, 0.12); border-radius: 8px; }
+#battery.charging,
+#battery.plugged       { color: #ffffff; }
+#bluetooth.connected   { color: #ffffff; }
+#network.disconnected  { color: #7a7a7a; }
+#mpris.paused          { color: #9a9a9a; }
+
+/* ── Tooltips ──────────────────────────────────────────────────────────── */
+tooltip {
+    background: rgba(8, 8, 8, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 10px;
+}
+
+tooltip label {
+    color: #e6e6e6;
+    font-size: 12px;
+    padding: 6px 8px;
+}
+
+/* ── Tray ──────────────────────────────────────────────────────────────── */
+#tray > .passive { -gtk-icon-effect: dim; }
+#tray > .needs-attention { background: rgba(255, 255, 255, 0.12); border-radius: 8px; }

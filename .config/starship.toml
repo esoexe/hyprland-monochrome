@@ -1,0 +1,231 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  ~/.config/starship.toml — monochrome prompt
+#
+#  One palette (see [palettes.mono] below) drives every module, so changing
+#  the three greys below recolours the whole prompt.
+#  Docs: https://starship.rs/config/
+# ═══════════════════════════════════════════════════════════════════════════
+
+"$schema" = "https://starship.rs/config-schema.json"
+palette = "mono"
+add_newline = true
+command_timeout = 1000
+scan_timeout = 30
+
+[palettes.mono]
+text   = "#e6e6e6"   # main text
+bright = "#ffffff"   # emphasis
+dim    = "#8a8a8a"   # secondary info
+faint  = "#4a4a4a"   # barely there
+ink    = "#0a0a0a"   # text on light fills
+
+format = """
+[](fg:faint)\
+[](fg:faint bg:dim)\
+$os\
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$git_state\
+$docker_context\
+$nix_shell\
+$c\
+$rust\
+$golang\
+$nodejs\
+$python\
+$lua\
+$java\
+$php\
+$shell\
+$jobs\
+$status\
+[](fg:dim bg:faint)\
+[](bg:faint)\
+$fill\
+$cmd_duration\
+$battery\
+$time\
+$line_break\
+$character"""
+
+right_format = ""
+
+# ── Prompt characters ─────────────────────────────────────────────────────
+[character]
+success_symbol = "[❯](bold bright)"
+error_symbol   = "[❯](bold bright)"
+vimcmd_symbol  = "[❮](bold dim)"
+
+# ── OS badge (only meaningful on foreign systems) ─────────────────────────
+[os]
+disabled = true
+style = "fg:ink bg:bright"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Arch = ""
+EndeavourOS = ""
+CachyOS = ""
+Manjaro = ""
+Linux = ""
+
+# ── Identity ──────────────────────────────────────────────────────────────
+[username]
+show_always = false
+style_user = "fg:ink bg:bright bold"
+style_root = "fg:ink bg:bright bold"
+format = "[ $user ]($style)"
+
+[hostname]
+ssh_only = true
+style = "fg:ink bg:dim"
+format = "[ $hostname ]($style)"
+
+# ── Location ──────────────────────────────────────────────────────────────
+[directory]
+style = "fg:bright bold"
+format = "[$path]($style)[$read_only]($read_only_style) "
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = false
+read_only = " 󰌾"
+read_only_style = "fg:dim"
+
+[directory.substitutions]
+"Documents" = "󰈙"
+"Downloads" = "󰉍"
+"Music"     = "󰝚"
+"Pictures"  = "󰋩"
+"Videos"    = "󰕧"
+"Desktop"   = "󰧨"
+"projects"  = ""
+"repos"     = "󰊢"
+
+# ── Git ───────────────────────────────────────────────────────────────────
+[git_branch]
+symbol = "󰊢 "
+style = "fg:dim"
+format = "[$symbol$branch(:$remote_branch) ]($style)"
+
+[git_status]
+style = "fg:dim"
+format = '[\($all_status$ahead_behind\)]($style) '
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+[git_state]
+style = "fg:dim"
+format = '[\($state( $progress_current/$progress_total)\)]($style) '
+
+# ── Environments ──────────────────────────────────────────────────────────
+[docker_context]
+symbol = "󰡨 "
+style = "fg:dim"
+format = "[$symbol$context]($style) "
+
+[nix_shell]
+style = "fg:dim"
+
+# ── Languages — icons only, all in the same grey ──────────────────────────
+[c]
+symbol = " "
+style = "fg:text"
+format = "[$symbol($version )]($style)"
+detect_extensions = ["c", "h", "cpp", "hpp", "cc", "cxx"]
+
+[rust]
+symbol = " "
+style = "fg:text"
+format = "[$symbol($version )]($style)"
+
+[golang]
+symbol = " "
+style = "fg:text"
+format = "[$symbol($version )]($style)"
+
+[nodejs]
+symbol = " "
+style = "fg:text"
+format = "[$symbol($version )]($style)"
+
+[python]
+symbol = " "
+style = "fg:text"
+format = '[$symbol($version )(\($virtualenv\) )]($style)'
+
+[lua]
+symbol = " "
+style = "fg:text"
+format = "[$symbol($version )]($style)"
+
+[java]
+symbol = " "
+style = "fg:text"
+format = "[$symbol($version )]($style)"
+
+[php]
+symbol = " "
+style = "fg:text"
+format = "[$symbol($version )]($style)"
+
+[shell]
+style = "fg:dim"
+disabled = false
+format = "[$indicator]($style) "
+bash_indicator = " "
+zsh_indicator  = " "
+fish_indicator = " "
+
+# ── Right side ────────────────────────────────────────────────────────────
+[fill]
+symbol = " "
+
+[cmd_duration]
+min_time = 500
+style = "fg:dim"
+format = "[$duration ]($style)"
+
+[battery]
+full_symbol = "󰁹 "
+charging_symbol = "󰂄 "
+discharging_symbol = "󰂃 "
+unknown_symbol = "󰁽 "
+empty_symbol = "󰂎 "
+format = "[$symbol$percentage]($style) "
+
+[[battery.display]]
+threshold = 25
+style = "fg:bright"
+
+[[battery.display]]
+threshold = 10
+style = "fg:bright bold"
+
+[status]
+style = "fg:dim"
+disabled = false
+format = "[$symbol$status]($style) "
+symbol = "✘"
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "fg:dim"
+format = "[$time ]($style)"
+utc_time_offset = "local"
+
+[jobs]
+symbol = "✦"
+number_threshold = 2
+style = "fg:dim"
+format = "[$symbol$number]($style) "

@@ -1,0 +1,41 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ~/.config/fastfetch/config.jsonc — monochrome system report
+//  Used by `fastfetch` in the terminal and by Super + I → System information.
+// ═══════════════════════════════════════════════════════════════════════════
+
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+    "logo": {
+        "source": "auto",
+        "padding": { "top": 1, "left": 2, "right": 4 },
+        "color": { "1": "38;2;230;230;230", "2": "38;2;120;120;120" }
+    },
+
+    "display": {
+        "separator": "  ",
+        "color": { "keys": "38;2;138;138;138", "title": "38;2;255;255;255", "output": "38;2;230;230;230" },
+        "key": { "width": 12 },
+        "percent": { "type": 9 }
+    },
+
+    "modules": [
+        "title",
+        "separator",
+        "os",
+        "kernel",
+        "uptime",
+        "packages",
+        "shell",
+        "wm",
+        "terminal",
+        "cpu",
+        "gpu",
+        "memory",
+        "disk",
+        "localip",
+        "battery",
+        "break",
+        "colors"
+    ]
+}

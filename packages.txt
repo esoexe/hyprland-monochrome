@@ -1,0 +1,82 @@
+# Packages for the hyprland-monochrome setup
+# Every package below lives in the official Arch Linux repositories, so it works
+# on Arch, EndeavourOS, CachyOS and Manjaro (as long as they ship current packages).
+#
+# Install: pacman -S --needed - < packages.txt      (install.sh does this for you)
+# Anything not found here is listed in aur-packages.txt (optional extras).
+
+# ─────────────────────────────── Hyprland ───────────────────────────────
+hyprland                 # the compositor itself (needs >= 0.55 for the Lua config)
+hyprlock                 # lock screen
+hypridle                 # idle daemon (dim / lock / suspend)
+hyprsunset               # native blue-light filter (night shift)
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk   # file pickers for GTK apps
+hyprpolkitagent          # authentication agent (elevation prompts)
+xorg-xwayland            # run X11 apps
+
+# ───────────────────────── Bar / menus / wallpaper ─────────────────────────
+waybar
+rofi                     # app launcher, clipboard, settings, power, wallpaper pickers
+awww                     # wallpaper daemon (former swww)
+grim                     # screenshots
+slurp                    # region selection for screenshots
+wf-recorder              # screen recording (works everywhere)
+gpu-screen-recorder      # screen recording with instant replay + pause (preferred)
+hyprpicker               # colour picker
+imagemagick              # thumbnails for the wallpaper picker
+
+# ──────────────────────────────── Clipboard ───────────────────────────────
+cliphist
+wl-clipboard
+
+# ───────────────────────────── Notifications ──────────────────────────────
+dunst
+
+# ─────────────────────────── Audio / Net / Bluetooth ──────────────────────
+pipewire
+pipewire-audio
+pipewire-pulse
+wireplumber
+pavucontrol              # detailed mixer for the Waybar/Settings menu
+networkmanager
+bluez
+bluez-utils
+bluez-obex               # bluetooth file transfer support
+
+# ─────────────────────────────── Applications ─────────────────────────────
+kitty                    # terminal
+thunar                   # file manager
+tumbler                  # thumbnails in Thunar
+ffmpegthumbnailer        # video thumbnails
+gvfs
+gvfs-mtp                 # mount phones / USB storage
+mpv                      # video player
+
+# ──────────────────────────────── Shell / CLI ─────────────────────────────
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+starship                 # prompt
+eza                      # ls replacement
+bat                      # cat replacement
+fzf                      # fuzzy finder (Ctrl+R history, Ctrl+T files)
+jq                       # JSON parsing for the scripts below
+fastfetch                # system info
+btop                     # resource monitor
+libnotify                # notify-send
+xdg-utils                # xdg-open
+
+# ──────────────────────────────── Fonts ───────────────────────────────────
+ttf-jetbrains-mono-nerd  # main UI font (bar, terminal, menus)
+ttf-nerd-fonts-symbols   # fallback glyphs
+otf-font-awesome         # extra icons
+noto-fonts
+noto-fonts-emoji
+
+# ───────────────────────────── Theming / tools ────────────────────────────
+nwg-look                 # GTK settings GUI
+papirus-icon-theme       # monochrome-friendly icon set
+brightnessctl            # backlight control
+playerctl                # media keys / now-playing in the bar
+gammastep                # fallback blue-light filter (if hyprsunset is unavailable)

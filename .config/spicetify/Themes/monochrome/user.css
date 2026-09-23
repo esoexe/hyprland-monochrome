@@ -1,0 +1,184 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Spicetify — monochrome user.css
+   Requires:  spicetify config inject_css 1 replace_colors 1
+   Applied by: ~/.config/hypr/scripts/spotify-theme.sh
+
+   Spotify changes its internal class names now and then; if a rule stops
+   applying after an update, that rule is the one to fix — everything else
+   (the colour scheme, which lives in color.ini) keeps working.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    --mono-ink: #0a0a0a;
+    --mono-surface: #121212;
+    --mono-surface-2: #1c1c1c;
+    --mono-line: rgba(255, 255, 255, 0.08);
+    --mono-text: #e6e6e6;
+    --mono-dim: #9a9a9a;
+    --mono-bright: #ffffff;
+
+    --spice-main: var(--mono-ink);
+    --spice-sidebar: #0d0d0d;
+    --spice-player: #101010;
+    --spice-card: #141414;
+    --spice-text: var(--mono-text);
+    --spice-subtext: var(--mono-dim);
+    --spice-highlight: var(--mono-surface-2);
+    --spice-button: var(--mono-text);
+    --spice-button-active: var(--mono-bright);
+    --spice-selected-row: #2a2a2a;
+
+    --font-family: "JetBrainsMono Nerd Font", "Inter", sans-serif;
+    --encore-body-font-stack: var(--font-family);
+    --encore-title-font-stack: var(--font-family);
+}
+
+/* ── Remove colour from the interface ─────────────────────────────────────── */
+.main-trackList-playingIcon,
+.main-trackList-trackListRow.main-trackList-selected,
+.main-nowPlayingBar-nowPlayingBar,
+.Root__nowPlaying-bar,
+.Root__nav-bar {
+    background-color: var(--mono-ink);
+}
+
+/* Accent colours that Spotify injects through JS variables */
+.aScC7MNPnW7mC1UPh0hH,
+.encore-dark-theme .encore-bright-accent-set {
+    --background-base: var(--mono-text) !important;
+    --background-highlight: var(--mono-bright) !important;
+    --text-base: var(--mono-ink) !important;
+    --essential-base: var(--mono-ink) !important;
+}
+
+.encore-text-body-small,
+.encore-text-body-medium,
+.main-trackList-trackListRow {
+    font-family: var(--font-family);
+}
+
+/* ── Chrome ───────────────────────────────────────────────────────────────── */
+.Root__top-container {
+    background-color: var(--mono-ink);
+}
+
+.Root__nav-bar,
+.Root__right-sidebar {
+    border-right: 1px solid var(--mono-line);
+    border-left: 1px solid var(--mono-line);
+}
+
+.main-yourLibraryX-navItems,
+.main-yourLibraryX-listItem {
+    border-radius: 8px;
+}
+
+/* Playing track: brighter, not coloured */
+.main-trackList-trackListRow.main-trackList-active .main-trackList-rowTitle,
+.main-trackList-trackListRow.main-trackList-selected .main-trackList-rowTitle {
+    color: var(--mono-bright) !important;
+}
+
+.main-trackList-playingIcon {
+    filter: grayscale(1) brightness(1.6);
+}
+
+/* ── Now-playing bar ──────────────────────────────────────────────────────── */
+.main-nowPlayingBar-nowPlayingBar,
+.Root__nowPlaying-bar {
+    border-top: 1px solid var(--mono-line);
+}
+
+.main-nowPlayingBar-center {
+    max-width: 720px;
+}
+
+.main-playButton-PlayButton button,
+button[data-testid="control-button-playpause"] {
+    background-color: var(--mono-text) !important;
+    color: var(--mono-ink) !important;
+    border-radius: 50%;
+}
+
+.main-playButton-PlayButton button:hover,
+button[data-testid="control-button-playpause"]:hover {
+    background-color: var(--mono-bright) !important;
+    transform: scale(1.04);
+}
+
+/* Progress + volume sliders */
+.x-progressBar-fillColor,
+.x-progressBar-progressBarBg,
+.progress-bar__fg,
+.playback-bar .progress-bar {
+    background-color: var(--mono-text) !important;
+    border-radius: 4px;
+}
+
+.playback-bar .progress-bar__bg,
+.progress-bar__bg {
+    background-color: #2a2a2a !important;
+}
+
+/* ── Cards / covers ───────────────────────────────────────────────────────── */
+.main-card-card {
+    background-color: var(--mono-surface);
+    border: 1px solid var(--mono-line);
+    border-radius: 10px;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.main-card-card:hover {
+    background-color: var(--mono-surface-2);
+    transform: translateY(-2px);
+}
+
+.main-cardImage-image,
+.cover-art-image {
+    border-radius: 8px;
+    filter: saturate(0.92);
+}
+
+/* ── Clean-ups: no upsells, no ad banners ─────────────────────────────────── */
+.main-bannerAds,
+.main-leaderboardComponent-container,
+.main-upgradeButton,
+button[data-testid="upgrade-button"],
+[data-testid="upgrade-button"] {
+    display: none !important;
+}
+
+.main-connectBar-connectBar {
+    background-color: var(--mono-surface-2) !important;
+    color: var(--mono-text) !important;
+}
+
+/* ── Scrollbars ───────────────────────────────────────────────────────────── */
+.os-scrollbar-handle,
+.main-trackList-trackList::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.18) !important;
+    border-radius: 3px;
+}
+
+.os-scrollbar-handle:hover {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 3px;
+}
+
+/* ── Tooltips ─────────────────────────────────────────────────────────────── */
+.main-tooltip-container,
+[role="tooltip"] {
+    background-color: var(--mono-surface-2) !important;
+    color: var(--mono-text) !important;
+    border: 1px solid var(--mono-line);
+    border-radius: 8px;
+}

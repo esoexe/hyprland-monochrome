@@ -1,0 +1,207 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ~/.config/rofi/theme.rasi — hyprland-monochrome base theme
+
+   Every menu loads this file first and then its own small override file
+   (launcher.rasi, clipboard.rasi, …). Change a colour here and every menu
+   follows — that is the whole point of keeping it in one place.
+
+   Palette:  ink #08080 8 · surface #0d0d0d · text #e6e6e6
+             dim #8a8a8a · faint #4a4a4a · accent #ffffff (inverted pills)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+configuration {
+    font: "JetBrainsMono Nerd Font 12";
+    show-icons: false;
+    icon-theme: "Papirus-Dark";
+
+    /* Behaviour: filter as you type, most relevant first, no case worries */
+    matching: "fuzzy";
+    sort: false;
+    case-sensitive: false;
+    scroll-method: 1;
+    cycle: true;
+    click-to-exit: true;
+
+    /* Sensible prompts when a mode is used from the command line */
+    display-drun: "";
+    display-run: ">";
+    display-window: "";
+    display-filebrowser: "";
+    drun-display-format: "{name}";
+    window-format: "{t:50}  ·  {c}";
+}
+
+* {
+    /* palette ----------------------------------------------------------- */
+    ink:            #080808f2;
+    surface:        #0d0d0df0;
+    surface-2:      #141414e6;
+    text:           #e6e6e6ff;
+    text-dim:       #8a8a8aff;
+    text-faint:     #4a4a4aff;
+    accent:         #ffffffff;
+    accent-ink:     #0a0a0aff;
+    hairline:       #ffffff14;
+    hairline-strong:#ffffff2b;
+    bg-hover:       #ffffff12;
+    bg-selected:    #e6e6e6ff;
+
+    background-color: transparent;
+    text-color:      @text;
+    border-color:    @hairline;
+    margin: 0;
+    padding: 0;
+    spacing: 0;
+}
+
+window {
+    location: center;
+    width: 560px;
+    background-color: @surface;
+    border: 1px solid;
+    border-color: @hairline-strong;
+    border-radius: 14px;
+    padding: 10px;
+}
+
+mainbox {
+    orientation: vertical;
+    children: [ inputbar, listview ];
+    spacing: 8px;
+    background-color: transparent;
+}
+
+/* ── Search line ───────────────────────────────────────────────────────── */
+inputbar {
+    children: [ prompt, entry ];
+    background-color: @surface-2;
+    border: 1px solid;
+    border-color: @hairline;
+    border-radius: 10px;
+    padding: 8px 12px;
+    spacing: 10px;
+}
+
+prompt {
+    enabled: true;
+    background-color: transparent;
+    text-color: @text-dim;
+    padding: 0;
+    vertical-align: 0.5;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @text;
+    placeholder: "type to search…";
+    placeholder-color: @text-faint;
+    vertical-align: 0.5;
+    cursor: text;
+}
+
+case-indicator {
+    background-color: transparent;
+    text-color: @text-faint;
+    spacing: 0;
+}
+
+/* ── Result list ───────────────────────────────────────────────────────── */
+listview {
+    background-color: transparent;
+    border: 0;
+    lines: 10;
+    columns: 1;
+    spacing: 4px;
+    padding: 2px 0;
+    fixed-height: true;
+    scrollbar: true;
+    dynamic: false;
+}
+
+element {
+    orientation: horizontal;
+    children: [ element-icon, element-text ];
+    background-color: transparent;
+    text-color: @text;
+    border: 0;
+    border-radius: 9px;
+    padding: 8px 12px;
+    spacing: 12px;
+    cursor: pointer;
+}
+
+element-icon {
+    size: 22px;
+    background-color: transparent;
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    vertical-align: 0.5;
+    highlight: bold #ffffffff;
+}
+
+element normal.normal   { background-color: transparent; text-color: @text; }
+element alternate.normal{ background-color: transparent; text-color: @text; }
+element normal.urgent   { background-color: transparent; text-color: @accent; }
+element selected.normal { background-color: @bg-selected; text-color: @accent-ink; }
+element selected.urgent { background-color: @accent;      text-color: @accent-ink; }
+element selected.active { background-color: @bg-selected; text-color: @accent-ink; }
+element normal.active   { background-color: transparent; text-color: @accent; }
+
+/* ── Small touches ─────────────────────────────────────────────────────── */
+scrollbar {
+    width: 3px;
+    border: 0;
+    handle-color: @hairline-strong;
+    handle-width: 3px;
+    padding: 0;
+    background-color: transparent;
+}
+
+message {
+    background-color: transparent;
+    text-color: @text-dim;
+    padding: 4px 8px;
+}
+
+textbox {
+    background-color: transparent;
+    text-color: @text-dim;
+    horizontal-align: 0.0;
+}
+
+textbox-prompt-colon {
+    expand: false;
+    str: "";
+    text-color: inherit;
+}
+
+button {
+    background-color: @surface-2;
+    text-color: @text-dim;
+    border: 1px solid;
+    border-color: @hairline;
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin: 2px;
+}
+
+button selected {
+    background-color: @bg-selected;
+    text-color: @accent-ink;
+    border-color: @hairline-strong;
+}
+
+mode-switcher {
+    background-color: transparent;
+    spacing: 4px;
+}
+
+mode-switcher button {
+    border-radius: 9px;
+    padding: 6px 12px;
+}

@@ -1,0 +1,9 @@
+# Python helpers
+__pycache__/
+*.pyc
+
+# generated / local files
+.config/hypr/modules/monitors-user.lua
+*.bak
+*~
+.DS_Store

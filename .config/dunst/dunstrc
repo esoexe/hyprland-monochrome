@@ -1,0 +1,104 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  ~/.config/dunst/dunstrc — hyprland-monochrome notifications
+#
+#  Matches the bar: near-black glass, hairline border, no colour anywhere.
+#  The 1 s "OSD" block at the bottom is what volume / brightness use.
+# ═══════════════════════════════════════════════════════════════════════════
+
+[global]
+    monitor = 0
+    follow = mouse
+    width = 340
+    height = (0, 150)
+    origin = top-right
+    offset = (12, 48)         # clears the Waybar
+    scale = 0
+    notification_limit = 4
+
+    progress_bar = true
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
+    progress_bar_min_width = 320
+    progress_bar_max_width = 320
+
+    transparency = 0
+    separator_height = 1
+    padding = 12
+    horizontal_padding = 14
+    text_icon_padding = 12
+    frame_width = 1
+    frame_color = "#ffffff14"
+    gap_size = 8
+    separator_color = frame
+
+    font = JetBrainsMono Nerd Font 10
+    line_height = 3
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = no
+    icon_position = left
+    min_icon_size = 24
+    max_icon_size = 48
+    icon_path = /usr/share/icons/Papirus-Dark:/usr/share/icons/Adwaita:/usr/share/icons/hicolor
+    sticky_history = yes
+    history_length = 30
+    dmenu = rofi -no-config -theme ~/.config/rofi/keybinds.rasi -dmenu -p dunst:
+    browser = xdg-open
+    always_run_script = true
+    title = Dunst
+    class = Dunst
+    corner_radius = 12
+    ignore_dbusclose = false
+    force_xwayland = false
+    force_xinerama = false
+
+    # Monochrome: everything is grey-on-black, urgency only changes brightness.
+    background = "#0d0d0df0"
+    foreground = "#e6e6e6"
+    highlight = "#ffffff"
+    timeout = 6
+
+[urgency_low]
+    background = "#0d0d0df0"
+    foreground = "#9a9a9a"
+    timeout = 4
+
+[urgency_normal]
+    background = "#0d0d0df0"
+    foreground = "#e6e6e6"
+    timeout = 6
+
+[urgency_critical]
+    background = "#0d0d0df0"
+    foreground = "#ffffff"
+    frame_color = "#ffffff40"
+    timeout = 0
+
+# ── Volume / microphone on-screen display ─────────────────────────────────
+[volume]
+    appname = "mono"
+    category = "volume"
+    timeout = 1500ms
+    icon_position = off
+    format = "<b>%s</b>\n<span font='JetBrainsMono Nerd Font 12'>%b</span>"
+
+# ── Screenshots ───────────────────────────────────────────────────────────
+[screenshot]
+    appname = "mono"
+    summary = "*Screenshot*"
+    timeout = 4
+    icon_position = left
+    max_icon_size = 96
+
+# ── Media / brightness etc. ───────────────────────────────────────────────
+[osd]
+    appname = "mono"
+    category = "osd"
+    timeout = 1500ms

@@ -1,0 +1,38 @@
+@import "theme.rasi"
+
+/* Keybind cheat sheet (Super + /) — built live from `hyprctl binds` */
+
+configuration {
+    show-icons: false;
+    matching: "fuzzy";
+    sort: false;
+}
+
+window {
+    width: 760px;
+    padding: 12px;
+}
+
+listview {
+    lines: 14;
+    columns: 1;
+    spacing: 3px;
+}
+
+element {
+    padding: 7px 12px;
+    font: "JetBrainsMono Nerd Font 11";
+}
+
+element-text {
+    font: "JetBrainsMono Nerd Font 11";
+}
+
+prompt {
+    font: "JetBrainsMono Nerd Font 13";
+    text-color: @accent;
+}
+
+entry {
+    placeholder: "filter shortcuts…";
+}

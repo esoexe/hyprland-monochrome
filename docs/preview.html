@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hyprland-monochrome — preview</title>
+<style>
+:root{
+  --ink:#080808; --surface:#0d0d0d; --surface-2:#141414; --surface-3:#1a1a1a;
+  --text:#e6e6e6; --dim:#8a8a8a; --faint:#4a4a4a;
+  --line:rgba(255,255,255,.08); --line-strong:rgba(255,255,255,.16);
+  --mono:"JetBrainsMono Nerd Font","JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ink); color:var(--text);
+  font-family:var(--mono); font-size:14px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:56px 24px 96px}
+a{color:#fff; text-decoration:none; border-bottom:1px solid var(--line-strong)}
+a:hover{border-bottom-color:#fff}
+h1{font-size:34px; margin:0 0 6px; letter-spacing:-.5px; color:#fff}
+h2{font-size:19px; margin:64px 0 4px; color:#fff; letter-spacing:.2px}
+h2 .num{color:var(--faint); margin-right:10px; font-weight:400}
+h3{font-size:14px; margin:28px 0 8px; color:var(--dim); text-transform:uppercase; letter-spacing:1.4px; font-weight:500}
+p{margin:8px 0; color:var(--text)}
+.lead{color:var(--dim); max-width:74ch}
+hr{border:0; border-top:1px solid var(--line); margin:20px 0 0}
+code{font-family:var(--mono); background:var(--surface-2); border:1px solid var(--line);
+     border-radius:5px; padding:1px 6px; font-size:12.5px; color:#fff}
+.badges{display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 0}
+.badge{border:1px solid var(--line); background:var(--surface); border-radius:999px;
+       padding:4px 12px; font-size:12px; color:var(--dim)}
+.badge b{color:#fff; font-weight:500}
+.note{border:1px solid var(--line); background:var(--surface); border-radius:10px;
+      padding:12px 16px; color:var(--dim); font-size:12.5px; margin:18px 0}
+.figure{border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-top:18px; background:#000}
+.figure svg{display:block; width:100%; height:auto}
+.caption{color:var(--faint); font-size:12px; margin:10px 0 0}
+.bar{display:flex; flex-direction:column; gap:7px; background:#050505;
+     border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin:18px 0 6px}
+.brow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.blabel{color:var(--dim); font-size:10px; letter-spacing:.16em; text-transform:uppercase;
+        min-width:50px}
+.group{display:flex; gap:2px; align-items:center; background:rgba(10,10,10,.72);
+       border:1px solid var(--line); border-radius:12px; padding:4px 8px; flex-wrap:wrap}
+.mod{color:var(--text); padding:0 8px; font-size:12.5px; white-space:nowrap}
+.mod b{color:#fff; font-weight:500; margin-left:5px}
+.ws{color:#6f6f6f; padding:2px 7px; border-radius:7px; font-size:12.5px}
+.ws.active{background:#e6e6e6; color:#0a0a0a; font-weight:600}
+.dot{display:inline-block; width:9px; height:9px; border-radius:2px; background:#3a3a3a; margin:0 3px}
+table{width:100%; border-collapse:collapse; margin:10px 0 0; font-size:13px}
+th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+th{color:var(--faint); font-weight:500; font-size:11.5px; text-transform:uppercase; letter-spacing:1.2px}
+td:first-child{white-space:nowrap; color:#fff}
+tbody tr:hover{background:var(--surface)}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:28px}
+.swatches{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
+.sw{border:1px solid var(--line); border-radius:10px; overflow:hidden; width:132px; background:var(--surface)}
+.sw .chip{height:44px}
+.sw .meta{padding:7px 10px; font-size:11.5px; color:var(--dim)}
+.sw .meta b{display:block; color:#fff; font-weight:500}
+.sw .meta span{color:var(--faint)}
+formula{display:block}
+pre{background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px; overflow-x:auto; font-size:12.5px; color:var(--text); margin:10px 0}
+pre .c{color:var(--faint)}
+pre .k{color:#fff}
+.tree{columns:2; column-gap:32px; font-size:12.5px; color:var(--dim); margin-top:12px}
+.tree div{break-inside:avoid; white-space:pre}
+.tree .d{color:#fff}
+.grid3{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin-top:14px}
+.card{border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:14px 16px}
+.card h4{margin:0 0 6px; font-size:13px; color:#fff; font-weight:600}
+.card p{margin:0; font-size:12.5px; color:var(--dim)}
+.card kbd{font-family:var(--mono); background:#fff; color:#0a0a0a; border-radius:5px;
+          padding:1px 7px; font-size:11.5px; font-weight:600}
+footer{margin-top:72px; padding-top:20px; border-top:1px solid var(--line);
+       color:var(--faint); font-size:12px}
+@media (max-width:760px){ .tree{columns:1} h1{font-size:26px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>hyprland-monochrome</h1>
+  <p class="lead">A clean monochrome Hyprland desktop for Arch, EndeavourOS, CachyOS and Manjaro.
+  This page is generated from the project's own configuration files, so nothing here is
+  aspirational — it is what the files actually say.</p>
+  <div class="badges">
+    <span class="badge"><b>Hyprland</b> 0.55+ · Lua config</span>
+    <span class="badge"><b>82</b> keybinds</span>
+    <span class="badge"><b>58</b> packages, all official repos</span>
+    <span class="badge"><b>4</b> optional AUR extras</span>
+    <span class="badge"><b>kitty</b> · <b>thunar</b> · Zsh + Starship</span>
+    <span class="badge">MIT</span>
+  </div>
+
+  <h2><span class="num">01</span>Desktop layout</h2>
+  <p class="lead">Tiled windows with 5px inner and 10px outer gaps, 10px rounding,
+  a focused-window border that goes white-to-grey, and a frosted top bar split into three floating groups.
+  Rofi slides in over the top for the launcher, menus and pickers.</p>
+  <div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" font-family="JetBrains Mono, DejaVu Sans Mono, ui-monospace, monospace">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="55%" stop-color="#131313"/>
+      <stop offset="100%" stop-color="#1e1e1e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="26%" cy="34%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.055"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="border-active" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#9a9a9a" stop-opacity="0.6"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <style>
+      .pill { fill: rgba(10,10,10,0.72); stroke: rgba(255,255,255,0.07); stroke-width: 1; }
+      .txt  { fill: #e6e6e6; font-size: 13px; }
+      .dim  { fill: #8a8a8a; font-size: 13px; }
+      .faint{ fill: #4a4a4a; font-size: 13px; }
+      .bright { fill: #ffffff; font-size: 13px; }
+      .win  { fill: rgba(13,13,13,0.93); stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+      .card { fill: rgba(13,13,13,0.95); stroke: rgba(255,255,255,0.17); stroke-width: 1; }
+      .key  { fill: #bdbdbd; font-size: 12px; }
+    </style>
+  </defs>
+
+  <!-- ── wallpaper ─────────────────────────────────────────────────────── -->
+  <rect preserveAspectRatio="xMidYMid meet" fill="url(#wall)"/>
+  <rect preserveAspectRatio="xMidYMid meet" fill="url(#glow)"/>
+  <g stroke="#ffffff" stroke-opacity="0.035" fill="none">
+    <circle cx="420" cy="330" r="120"/><circle cx="420" cy="330" r="190"/>
+    <circle cx="420" cy="330" r="260"/><circle cx="420" cy="330" r="330"/>
+    <circle cx="420" cy="330" r="400"/><circle cx="420" cy="330" r="470"/>
+    <circle cx="420" cy="330" r="540"/><circle cx="420" cy="330" r="610"/>
+  </g>
+
+  <!-- ── windows (tiled) ───────────────────────────────────────────────── -->
+  <!-- terminal -->
+  <rect x="18" y="58" width="1050" height="800" rx="10" class="win"/>
+  <rect x="18.5" y="58.5" width="1050" height="800" rx="10" fill="none"
+        stroke="url(#border-active)" stroke-width="1.4" opacity="0.85"/>
+  <text x="38" y="86" class="bright" font-weight="bold">~/projects/monochrome</text>
+  <text x="300" y="86" class="faint">kitty</text>
+
+  <!-- prompt -->
+  <text x="40" y="126" class="bright">~/projects/monochrome</text>
+  <text x="228" y="126" class="dim">main</text>
+  <text x="268" y="126" class="faint">±2</text>
+  <text x="304" y="126" fill="#ffffff" font-size="15">❯</text>
+  <text x="322" y="126" class="txt">hyprctl binds | wc -l</text>
+  <text x="40" y="150" class="dim">62</text>
+  <text x="40" y="180" class="bright">~/projects/monochrome</text>
+  <text x="228" y="180" class="dim">main</text>
+  <text x="264" y="180" fill="#ffffff" font-size="15">❯</text>
+  <text x="282" y="180" class="txt">eza -l --icons=never</text>
+  <text x="40" y="208" class="dim">.config</text>
+  <text x="180" y="208" class="dim">docs</text>
+  <text x="280" y="208" class="dim">test</text>
+  <text x="380" y="208" class="dim">tools</text>
+  <text x="500" y="208" class="dim">wallpapers</text>
+  <text x="660" y="208" class="faint">install.sh</text>
+  <text x="800" y="208" class="faint">packages.txt</text>
+  <text x="990" y="208" class="faint">README.md</text>
+  <text x="40" y="232" class="dim">.zshrc</text>
+  <text x="180" y="232" class="faint">LICENSE</text>
+  <text x="300" y="232" class="faint">uninstall.sh</text>
+  <text x="40" y="262" class="bright">~/projects/monochrome</text>
+  <text x="228" y="262" class="dim">main</text>
+  <text x="264" y="262" fill="#ffffff" font-size="15">❯</text>
+  <text x="282" y="262" class="txt">settings.sh</text>
+  <text x="282" y="282" class="faint"># system · network · bluetooth · monitors · sound</text>
+
+  <!-- block cursor + suggestions ghost text -->
+  <rect x="282" y="292" width="8" height="15" fill="#e6e6e6" opacity="0.9"/>
+
+  <!-- ── smaller tiled window: thunar ──────────────────────────────────── -->
+  <rect x="1078" y="58" width="504" height="486" rx="10" class="win"/>
+  <text x="1098" y="86" class="txt">Files — Wallpapers</text>
+  <line x1="1098" y1="100" x2="1562" y2="100" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1098" y="126" class="faint">Home</text>
+  <text x="1098" y="150" class="dim">Wallpapers</text>
+  <text x="1098" y="174" class="faint">Projects</text>
+  <rect x="1230" y="112" width="150" height="112" rx="6" fill="#171717" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="1394" y="112" width="150" height="112" rx="6" fill="#1d1d1d" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1230" y="242" class="faint" font-size="11">mono-01.jpg</text>
+  <text x="1394" y="242" class="faint" font-size="11">mono-02.jpg</text>
+  <rect x="1230" y="266" width="150" height="112" rx="6" fill="#141414" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="1394" y="266" width="150" height="112" rx="6" fill="#1a1a1a" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1230" y="396" class="faint" font-size="11">mono-05.jpg</text>
+  <text x="1394" y="396" class="faint" font-size="11">mono-06.jpg</text>
+  <rect x="1230" y="420" width="150" height="88" rx="6" fill="#191919" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="1394" y="420" width="150" height="88" rx="6" fill="#151515" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1230" y="524" class="faint" font-size="11">mono-03.jpg</text>
+  <text x="1394" y="524" class="faint" font-size="11">mono-04.jpg</text>
+
+  <!-- ── notification (dunst) ─────────────────────────────────────────── -->
+  <rect x="1178" y="566" width="404" height="68" rx="12" class="pill"/>
+  <rect x="1194" y="580" width="40" height="40" rx="8" fill="#1c1c1c" stroke="#ffffff" stroke-opacity="0.07"/>
+  <text x="1246" y="592" class="bright" font-weight="bold">Screenshot saved</text>
+  <text x="1246" y="614" class="dim">2026-09-23_21-42-08.png</text>
+
+  <!-- ── floating music window ─────────────────────────────────────────── -->
+  <rect x="1178" y="656" width="404" height="150" rx="10" class="win"/>
+  <rect x="1194" y="672" width="118" height="118" rx="6" fill="#242424" stroke="#ffffff" stroke-opacity="0.07"/>
+  <text x="1326" y="702" class="txt">Midnight City</text>
+  <text x="1326" y="724" class="dim">M83</text>
+  <text x="1326" y="752" class="faint" font-size="11">2:41 / 4:03</text>
+  <rect x="1326" y="766" width="240" height="4" rx="2" fill="#2a2a2a"/>
+  <rect x="1326" y="766" width="140" height="4" rx="2" fill="#e6e6e6"/>
+  <text x="1326" y="794" class="dim" font-size="12">Playing</text>
+
+  <!-- ── top bar ───────────────────────────────────────────────────────── -->
+  <!-- left group -->
+  <rect x="8" y="6" width="742" height="38" rx="12" class="pill"/>
+  <text x="24" y="31" class="bright" font-size="15">▲</text>
+  <rect x="52" y="13" width="26" height="24" rx="7" fill="#e6e6e6"/>
+  <text x="60" y="30" fill="#0a0a0a" font-size="12" font-weight="bold">1</text>
+  <text x="90" y="30" class="faint">2</text>
+  <text x="112" y="30" class="faint">3</text>
+  <text x="134" y="30" fill="#6f6f6f" font-size="12">4</text>
+  <text x="156" y="30" fill="#6f6f6f" font-size="12">5</text>
+  <text x="190" y="30" class="dim">~/projects/monochrome — kitty</text>
+
+  <!-- center group: now playing -->
+  <rect x="700" y="6" width="330" height="38" rx="12" class="pill"/>
+  <text x="722" y="30" class="dim">♪</text>
+  <text x="744" y="30" class="txt">Midnight City — M83</text>
+
+  <!-- right group -->
+  <rect x="1042" y="6" width="550" height="38" rx="12" class="pill"/>
+  <text x="1060" y="30" class="dim">cpu</text>
+  <text x="1096" y="30" class="txt">12%</text>
+  <text x="1140" y="30" class="dim">ram</text>
+  <text x="1178" y="30" class="txt">42%</text>
+  <text x="1222" y="30" class="dim">48°C</text>
+  <text x="1272" y="30" class="txt">󰖩</text>
+  <text x="1272" y="30" class="dim">wlan0</text>
+  <text x="1344" y="30" class="dim">vol</text>
+  <text x="1378" y="30" class="txt">65%</text>
+  <text x="1424" y="30" class="txt">󰁹</text>
+  <text x="1424" y="30" class="dim">88%</text>
+  <text x="1478" y="30" class="bright">21:42</text>
+  <text x="1548" y="30" class="dim">⚙</text>
+  <text x="1572" y="30" class="dim">⏻</text>
+
+  <!-- ── rofi launcher overlay ────────────────────────────────────────── -->
+  <rect x="0" y="0" preserveAspectRatio="xMidYMid meet" fill="#050505" opacity="0.45"/>
+  <rect x="470" y="230" width="660" height="440" rx="14" class="card"/>
+  <rect x="486" y="246" width="628" height="46" rx="10" fill="#141414" stroke="#ffffff" stroke-opacity="0.07"/>
+  <text x="504" y="275" class="dim">apps:</text>
+  <text x="556" y="275" class="bright">term</text>
+  <rect x="600" y="258" width="7" height="20" fill="#e6e6e6" opacity="0.85"/>
+
+  <rect x="486" y="304" width="628" height="40" rx="9" fill="#e6e6e6"/>
+  <text x="506" y="330" fill="#0a0a0a" font-size="13" font-weight="bold">Terminal</text>
+  <text x="1064" y="330" fill="#0a0a0a" font-size="12">kitty</text>
+
+  <text x="506" y="372" class="txt">Terminal (floating)</text>
+  <text x="1064" y="372" class="faint">kitty</text>
+  <text x="506" y="410" class="txt">Dropdown terminal</text>
+  <text x="1064" y="410" class="faint">kitty</text>
+  <text x="506" y="448" class="txt">System Monitor</text>
+  <text x="1064" y="448" class="faint">btop</text>
+  <text x="506" y="486" class="txt">Settings</text>
+  <text x="1064" y="486" class="faint">settings.sh</text>
+  <text x="506" y="524" class="txt">Thunar</text>
+  <text x="1064" y="524" class="faint">file manager</text>
+  <text x="506" y="562" class="txt">Wallpaper picker</text>
+  <text x="1064" y="562" class="faint">wallpaper.sh</text>
+  <text x="506" y="600" class="txt">Spotify</text>
+  <text x="1064" y="600" class="faint">flatpak</text>
+  <text x="1064" y="562" class="faint"> </text>
+  <text x="506" y="638" class="txt">Clipboard history</text>
+  <text x="1064" y="638" class="faint">cliphist</text>
+
+  <!-- ── caption ──────────────────────────────────────────────────────── -->
+  <rect x="470" y="700" width="660" height="62" rx="12" fill="rgba(8,8,8,0.72)" stroke="rgba(255,255,255,0.07)"/>
+  <text x="492" y="726" class="dim" font-size="12">Super + D launcher  ·  Super + W wallpapers  ·  Super + I settings</text>
+  <text x="492" y="748" class="faint" font-size="12">Super + Tab lock  ·  Super + / cheat sheet  ·  Super + Shift + W hide bar</text>
+</svg></div>
+  <p class="caption">A mockup of the layout, not a screenshot — the shapes are drawn to the real
+  gap, rounding and bar geometry from <code>modules/appearance.lua</code>, but the window contents
+  are illustrative. It is saved as <code>docs/preview.svg</code> next to this page.</p>
+
+  <h2><span class="num">02</span>The bar</h2>
+  <p class="lead">Waybar as configured: three pill groups, workspace numbers that invert when active,
+  now-playing in the centre that hides itself when nothing plays.</p>
+  <div class="bar"><div class="brow"><span class="blabel">left</span><div class="group "><span class="mod custom-launcher">󰣇</span><span class="ws active">1</span><span class="ws">2</span><span class="ws">3</span><span class="ws">4</span><span class="ws">5</span><span class="mod hyprland-submap"></span><span class="mod hyprland-window"><b>~/projects/monochrome — kitty</b></span></div></div><div class="brow"><span class="blabel">centre</span><div class="group "><span class="mod mpris">󰎈<b>Midnight City — M83</b></span></div></div><div class="brow"><span class="blabel">right</span><div class="group "><span class="mod cpu"><b>12%</b></span><span class="mod memory"><b>42%</b></span><span class="mod temperature"><b>48°C</b></span><span class="mod custom-updates">󰚰<b>7</b></span><span class="mod network">󰖩<b>wlan0</b></span><span class="mod bluetooth">󰂯</span><span class="mod pulseaudio">󰕾<b>65%</b></span><span class="mod battery">󰁹<b>88%</b></span><span class="mod custom-recording"></span><span class="mod tray"><span class="dot"></span><span class="dot"></span></span><span class="mod clock"><b>21:42</b></span><span class="mod custom-settings"></span><span class="mod custom-power">⏻</span></div></div></div>
+<p class="caption">The three floating groups of the bar, exactly as listed in
+<code>waybar/config.jsonc</code> — on screen they sit in one row, left · centre · right.
+Module values are sample data; the right group is ordered
+<code>cpu, memory, temperature, custom/updates, network, bluetooth, pulseaudio, battery, custom/recording, tray, clock, custom/settings, custom/power</code>.</p>
+
+  <h2><span class="num">03</span>Keybinds</h2>
+  <p class="lead">The main modifier is <kbd>Super</kbd> (one line in
+  <code>modules/user.lua</code> changes it). Every bind carries a description, so
+  <kbd>Super + /</kbd> and <code>hyprctl binds</code> show the same wording as this page.
+  These tables are parsed straight out of <code>modules/binds.lua</code>.</p>
+  <h3>APPLICATIONS</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Enter</kbd></td><td>Terminal</td></tr><tr><td><kbd>Super + T</kbd></td><td>Terminal</td></tr><tr><td><kbd>Super + Shift + Enter</kbd></td><td>Floating terminal</td></tr><tr><td><kbd>Super + Shift + T</kbd></td><td>Dropdown terminal (quake style)</td></tr><tr><td><kbd>Super + D</kbd></td><td>App launcher</td></tr><tr><td><kbd>Super + Shift + D</kbd></td><td>Window switcher</td></tr><tr><td><kbd>Super + E</kbd></td><td>File manager</td></tr><tr><td><kbd>Super + B</kbd></td><td>Browser</td></tr><tr><td><kbd>Super + W</kbd></td><td>Wallpaper picker</td></tr><tr><td><kbd>Super + I</kbd></td><td>Settings menu (system, net, BT, monitors, sound)</td></tr><tr><td><kbd>Super + V</kbd></td><td>Clipboard history</td></tr><tr><td><kbd>Super + Shift + V</kbd></td><td>Clear clipboard history</td></tr><tr><td><kbd>Super + /</kbd></td><td>Keyboard shortcut cheat sheet</td></tr><tr><td><kbd>Super + Shift + C</kbd></td><td>Colour picker (copies hex to clipboard)</td></tr><tr><td><kbd>Super + N</kbd></td><td>Show the last notification</td></tr><tr><td><kbd>Super + X</kbd></td><td>Switch keyboard layout</td></tr></tbody></table><h3>WINDOW MANAGEMENT</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Q</kbd></td><td>Close window</td></tr><tr><td><kbd>Super + Shift + Q</kbd></td><td>Force-close window</td></tr><tr><td><kbd>Super + F</kbd></td><td>Toggle fullscreen</td></tr><tr><td><kbd>Super + Shift + F</kbd></td><td>Toggle maximize</td></tr><tr><td><kbd>Super + Space</kbd></td><td>Toggle floating window (centred at 70%)</td></tr><tr><td><kbd>Super + Shift + Space</kbd></td><td>Pin window (visible on all workspaces)</td></tr><tr><td><kbd>Super + P</kbd></td><td>Pseudo-tile (dwindle)</td></tr><tr><td><kbd>Super + Y</kbd></td><td>Toggle split direction (dwindle)</td></tr><tr><td><kbd>Super + O</kbd></td><td>Cycle window opacity</td></tr><tr><td><kbd>Super + G</kbd></td><td>Group / ungroup window (tabs)</td></tr><tr><td><kbd>Alt + Tab</kbd></td><td>Next window</td></tr><tr><td><kbd>Alt + Shift + Tab</kbd></td><td>Previous window</td></tr></tbody></table><h3>FOCUS / MOVE / RESIZE</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + H</kbd></td><td>Focus left</td></tr><tr><td><kbd>Super + J</kbd></td><td>Focus down</td></tr><tr><td><kbd>Super + K</kbd></td><td>Focus up</td></tr><tr><td><kbd>Super + L</kbd></td><td>Focus right</td></tr><tr><td><kbd>Super + Left</kbd></td><td>Focus left</td></tr><tr><td><kbd>Super + Down</kbd></td><td>Focus down</td></tr><tr><td><kbd>Super + Up</kbd></td><td>Focus up</td></tr><tr><td><kbd>Super + Right</kbd></td><td>Focus right</td></tr><tr><td><kbd>Super + Shift + H</kbd></td><td>Move window left</td></tr><tr><td><kbd>Super + Shift + J</kbd></td><td>Move window down</td></tr><tr><td><kbd>Super + Shift + K</kbd></td><td>Move window up</td></tr><tr><td><kbd>Super + Shift + L</kbd></td><td>Move window right</td></tr><tr><td><kbd>Ctrl + H</kbd></td><td>Shrink window width</td></tr><tr><td><kbd>Ctrl + L</kbd></td><td>Grow window width</td></tr><tr><td><kbd>Ctrl + K</kbd></td><td>Shrink window height</td></tr><tr><td><kbd>Ctrl + J</kbd></td><td>Grow window height</td></tr></tbody></table><h3>WORKSPACES</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + scroll down</kbd></td><td>Next workspace</td></tr><tr><td><kbd>Super + scroll up</kbd></td><td>Previous workspace</td></tr><tr><td><kbd>Super + Ctrl + scroll down</kbd></td><td>Move window to next workspace</td></tr><tr><td><kbd>Super + Ctrl + scroll up</kbd></td><td>Move window to previous workspace</td></tr><tr><td><kbd>Super + S</kbd></td><td>Toggle scratchpad</td></tr><tr><td><kbd>Super + Shift + S</kbd></td><td>Move window to scratchpad</td></tr><tr><td><kbd>Super + 1..0</kbd></td><td>Switch workspace (10 is bound to the 0 key)</td></tr><tr><td><kbd>Super + Shift + 1..0</kbd></td><td>Move the focused window to that workspace</td></tr><tr><td><kbd>Super + Alt + 1..0</kbd></td><td>Move it there without following</td></tr></tbody></table><h3>BAR / SESSION / SYSTEM</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Shift + W</kbd></td><td>Toggle the top bar</td></tr><tr><td><kbd>Super + Shift + R</kbd></td><td>Reload Hyprland config</td></tr><tr><td><kbd>Super + Escape</kbd></td><td>Logout menu (lock, suspend, reboot, shutdown)</td></tr><tr><td><kbd>Super + `</kbd></td><td>Logout menu</td></tr><tr><td><kbd>Super + Shift + E</kbd></td><td>Quit the session</td></tr><tr><td><kbd>Super + Tab</kbd></td><td>Lock screen</td></tr><tr><td><kbd>Ctrl + Alt + L</kbd></td><td>Lock screen</td></tr><tr><td><kbd>Super + Shift + N</kbd></td><td>Night shift (blue light filter)</td></tr><tr><td><kbd>Super + Shift + M</kbd></td><td>Mute / unmute microphone</td></tr></tbody></table><h3>SCREENSHOTS, RECORDING &amp; ZOOM</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Print</kbd></td><td>Screenshot: select an area</td></tr><tr><td><kbd>Super + Shift + Print</kbd></td><td>Screenshot: whole screen</td></tr><tr><td><kbd>Ctrl + Print</kbd></td><td>Screenshot: active window</td></tr><tr><td><kbd>Alt + Print</kbd></td><td>Record the screen (again = stop)</td></tr><tr><td><kbd>Alt + Shift + Print</kbd></td><td>Record a selected area</td></tr><tr><td><kbd>Alt + S</kbd></td><td>Save the last minute (instant replay)</td></tr><tr><td><kbd>Alt + P</kbd></td><td>Pause / resume recording</td></tr><tr><td><kbd>Super + -</kbd></td><td>Zoom out</td></tr><tr><td><kbd>Super + =</kbd></td><td>Zoom in</td></tr></tbody></table><h3>MEDIA &amp; HARDWARE KEYS</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>XF86AudioRaiseVolume</kbd></td><td>Volume up</td></tr><tr><td><kbd>XF86AudioLowerVolume</kbd></td><td>Volume down</td></tr><tr><td><kbd>XF86AudioMute</kbd></td><td>Mute the output</td></tr><tr><td><kbd>XF86AudioMicMute</kbd></td><td>Mute the microphone</td></tr><tr><td><kbd>XF86MonBrightnessUp</kbd></td><td>Brightness up</td></tr><tr><td><kbd>XF86MonBrightnessDown</kbd></td><td>Brightness down</td></tr><tr><td><kbd>XF86AudioNext</kbd></td><td>Next track</td></tr><tr><td><kbd>XF86AudioPrev</kbd></td><td>Previous track</td></tr><tr><td><kbd>XF86AudioPlay</kbd></td><td>Play / pause</td></tr><tr><td><kbd>XF86AudioPause</kbd></td><td>Play / pause</td></tr><tr><td><kbd>XF86AudioStop</kbd></td><td>Stop playback</td></tr></tbody></table>
+
+  <h2><span class="num">04</span>Palette</h2>
+  <p class="lead">Greyscale everywhere. Each surface has its own one-line palette so you can shift
+  the whole theme by editing a handful of values.</p>
+
+  <h3>Menus — rofi/theme.rasi</h3>
+  <div class="swatches"><div class="sw"><div class="chip" style="background:#080808f2"></div><div class="meta"><b>ink</b><span>#080808f2</span></div></div><div class="sw"><div class="chip" style="background:#0d0d0df0"></div><div class="meta"><b>surface</b><span>#0d0d0df0</span></div></div><div class="sw"><div class="chip" style="background:#141414e6"></div><div class="meta"><b>surface-2</b><span>#141414e6</span></div></div><div class="sw"><div class="chip" style="background:#e6e6e6ff"></div><div class="meta"><b>text</b><span>#e6e6e6ff</span></div></div><div class="sw"><div class="chip" style="background:#8a8a8aff"></div><div class="meta"><b>text-dim</b><span>#8a8a8aff</span></div></div><div class="sw"><div class="chip" style="background:#4a4a4aff"></div><div class="meta"><b>text-faint</b><span>#4a4a4aff</span></div></div><div class="sw"><div class="chip" style="background:#ffffffff"></div><div class="meta"><b>accent</b><span>#ffffffff</span></div></div><div class="sw"><div class="chip" style="background:#0a0a0aff"></div><div class="meta"><b>accent-ink</b><span>#0a0a0aff</span></div></div><div class="sw"><div class="chip" style="background:#ffffff14"></div><div class="meta"><b>hairline</b><span>#ffffff14</span></div></div><div class="sw"><div class="chip" style="background:#ffffff2b"></div><div class="meta"><b>hairline-strong</b><span>#ffffff2b</span></div></div><div class="sw"><div class="chip" style="background:#ffffff12"></div><div class="meta"><b>bg-hover</b><span>#ffffff12</span></div></div><div class="sw"><div class="chip" style="background:#e6e6e6ff"></div><div class="meta"><b>bg-selected</b><span>#e6e6e6ff</span></div></div></div>
+
+  <div class="two">
+    <div>
+      <h3>Terminal — kitty/theme.conf</h3>
+      <div class="swatches"></div>
+      <div class="swatches"></div>
+    </div>
+    <div>
+      <h3>Prompt — starship.toml</h3>
+      <div class="swatches"></div>
+      <h3>Bar — waybar/style.css</h3>
+      <div class="swatches"><div class="sw"><div class="chip" style="background:#e6e6e6"></div><div class="meta"><b>style.css #1</b><span>#e6e6e6</span></div></div><div class="sw"><div class="chip" style="background:#8a8a8a"></div><div class="meta"><b>style.css #2</b><span>#8a8a8a</span></div></div><div class="sw"><div class="chip" style="background:#ffffff"></div><div class="meta"><b>style.css #3</b><span>#ffffff</span></div></div><div class="sw"><div class="chip" style="background:#bdbdbd"></div><div class="meta"><b>style.css #4</b><span>#bdbdbd</span></div></div><div class="sw"><div class="chip" style="background:#6f6f6f"></div><div class="meta"><b>style.css #5</b><span>#6f6f6f</span></div></div><div class="sw"><div class="chip" style="background:#0a0a0a"></div><div class="meta"><b>style.css #6</b><span>#0a0a0a</span></div></div><div class="sw"><div class="chip" style="background:#4a4a4a"></div><div class="meta"><b>style.css #7</b><span>#4a4a4a</span></div></div><div class="sw"><div class="chip" style="background:#cfcfcf"></div><div class="meta"><b>style.css #8</b><span>#cfcfcf</span></div></div></div>
+    </div>
+  </div>
+
+  <h2><span class="num">05</span>What gets installed</h2>
+  <p class="lead">Everything in <code>packages.txt</code> is in the official Arch repositories,
+  so the install works on Arch, EndeavourOS, CachyOS and Manjaro without an AUR helper.</p>
+  <h3>Hyprland</h3><table><tbody><tr><td>hyprland</td><td>the compositor itself (needs &gt;= 0.55 for the Lua config)</td></tr><tr><td>hyprlock</td><td>lock screen</td></tr><tr><td>hypridle</td><td>idle daemon (dim / lock / suspend)</td></tr><tr><td>hyprsunset</td><td>native blue-light filter (night shift)</td></tr><tr><td>xdg-desktop-portal-hyprland</td><td></td></tr><tr><td>xdg-desktop-portal-gtk</td><td>file pickers for GTK apps</td></tr><tr><td>hyprpolkitagent</td><td>authentication agent (elevation prompts)</td></tr><tr><td>xorg-xwayland</td><td>run X11 apps</td></tr></tbody></table><h3>Bar / menus / wallpaper</h3><table><tbody><tr><td>waybar</td><td></td></tr><tr><td>rofi</td><td>app launcher, clipboard, settings, power, wallpaper pickers</td></tr><tr><td>awww</td><td>wallpaper daemon (former swww)</td></tr><tr><td>grim</td><td>screenshots</td></tr><tr><td>slurp</td><td>region selection for screenshots</td></tr><tr><td>wf-recorder</td><td>screen recording (works everywhere)</td></tr><tr><td>gpu-screen-recorder</td><td>screen recording with instant replay + pause (preferred)</td></tr><tr><td>hyprpicker</td><td>colour picker</td></tr><tr><td>imagemagick</td><td>thumbnails for the wallpaper picker</td></tr></tbody></table><h3>Clipboard</h3><table><tbody><tr><td>cliphist</td><td></td></tr><tr><td>wl-clipboard</td><td></td></tr></tbody></table><h3>Notifications</h3><table><tbody><tr><td>dunst</td><td></td></tr></tbody></table><h3>Audio / Net / Bluetooth</h3><table><tbody><tr><td>pipewire</td><td></td></tr><tr><td>pipewire-audio</td><td></td></tr><tr><td>pipewire-pulse</td><td></td></tr><tr><td>wireplumber</td><td></td></tr><tr><td>pavucontrol</td><td>detailed mixer for the Waybar/Settings menu</td></tr><tr><td>networkmanager</td><td></td></tr><tr><td>bluez</td><td></td></tr><tr><td>bluez-utils</td><td></td></tr><tr><td>bluez-obex</td><td>bluetooth file transfer support</td></tr></tbody></table><h3>Applications</h3><table><tbody><tr><td>kitty</td><td>terminal</td></tr><tr><td>thunar</td><td>file manager</td></tr><tr><td>tumbler</td><td>thumbnails in Thunar</td></tr><tr><td>ffmpegthumbnailer</td><td>video thumbnails</td></tr><tr><td>gvfs</td><td></td></tr><tr><td>gvfs-mtp</td><td>mount phones / USB storage</td></tr><tr><td>mpv</td><td>video player</td></tr></tbody></table><h3>Shell / CLI</h3><table><tbody><tr><td>zsh</td><td></td></tr><tr><td>zsh-autosuggestions</td><td></td></tr><tr><td>zsh-syntax-highlighting</td><td></td></tr><tr><td>starship</td><td>prompt</td></tr><tr><td>eza</td><td>ls replacement</td></tr><tr><td>bat</td><td>cat replacement</td></tr><tr><td>fzf</td><td>fuzzy finder (Ctrl+R history, Ctrl+T files)</td></tr><tr><td>jq</td><td>JSON parsing for the scripts below</td></tr><tr><td>fastfetch</td><td>system info</td></tr><tr><td>btop</td><td>resource monitor</td></tr><tr><td>libnotify</td><td>notify-send</td></tr><tr><td>xdg-utils</td><td>xdg-open</td></tr></tbody></table><h3>Fonts</h3><table><tbody><tr><td>ttf-jetbrains-mono-nerd</td><td>main UI font (bar, terminal, menus)</td></tr><tr><td>ttf-nerd-fonts-symbols</td><td>fallback glyphs</td></tr><tr><td>otf-font-awesome</td><td>extra icons</td></tr><tr><td>noto-fonts</td><td></td></tr><tr><td>noto-fonts-emoji</td><td></td></tr></tbody></table><h3>Theming / tools</h3><table><tbody><tr><td>nwg-look</td><td>GTK settings GUI</td></tr><tr><td>papirus-icon-theme</td><td>monochrome-friendly icon set</td></tr><tr><td>brightnessctl</td><td>backlight control</td></tr><tr><td>playerctl</td><td>media keys / now-playing in the bar</td></tr><tr><td>gammastep</td><td>fallback blue-light filter (if hyprsunset is unavailable)</td></tr></tbody></table>
+  <h3>Optional AUR extras</h3>
+  <table><tbody><tr><td>wlogout</td><td>grid-style logout menu (an alternative to the Rofi power menu)</td></tr><tr><td>papirus-folders</td><td>grey Papirus folder colours to match the monochrome theme</td></tr><tr><td>bibata-cursor-theme</td><td>clean, monochrome-ish cursor set</td></tr><tr><td>spicetify-cli</td><td>Spotify theming (see .config/spicetify + scripts/spotify-theme.sh)</td></tr></tbody></table>
+
+  <h2><span class="num">06</span>Project layout</h2>
+  <p class="lead">Hyprland reads <code>hyprland.lua</code>, which loads the modules beside it —
+  so the file you normally open is <code>modules/user.lua</code>. The shell scripts are what power
+  the menus, pickers and bar helpers.</p>
+  <div class="tree"><div><span class="d">.config/</span></div><div>│  <span class="d">btop/</span></div><div>│  │  <span class="">btop.conf</span></div><div>│  │  <span class="d">themes/</span></div><div>│  │  │  <span class="">mono.theme</span></div><div>│  <span class="d">dunst/</span></div><div>│  │  <span class="">dunstrc</span></div><div>│  <span class="d">fastfetch/</span></div><div>│  │  <span class="">config.jsonc</span></div><div>│  <span class="d">gtk-3.0/</span></div><div>│  │  <span class="">settings.ini</span></div><div>│  <span class="d">gtk-4.0/</span></div><div>│  │  <span class="">settings.ini</span></div><div>│  <span class="d">hypr/</span></div><div>│  │  <span class="">hypridle.conf</span></div><div>│  │  <span class="">hyprland.lua</span></div><div>│  │  <span class="">hyprlock.conf</span></div><div>│  │  <span class="">hyprsunset.conf</span></div><div>│  │  <span class="d">modules/</span></div><div>│  │  │  <span class="">appearance.lua</span></div><div>│  │  │  <span class="">autostart.lua</span></div><div>│  │  │  <span class="">binds.lua</span></div><div>│  │  │  <span class="">monitors.lua</span></div><div>│  │  │  <span class="">rules.lua</span></div><div>│  │  │  <span class="">user.lua</span></div><div>│  │  <span class="d">scripts/</span></div><div>│  │  │  <span class="">clipboard.sh</span></div><div>│  │  │  <span class="">float-center.sh</span></div><div>│  │  │  <span class="">lib.sh</span></div><div>│  │  │  <span class="">menu.sh</span></div><div>│  │  │  <span class="">nightshift.sh</span></div><div>│  │  │  <span class="">opacity.sh</span></div><div>│  │  │  <span class="">polkit.sh</span></div><div>│  │  │  <span class="">powermenu.sh</span></div><div>│  │  │  <span class="">record.sh</span></div><div>│  │  │  <span class="">scratchterm.sh</span></div><div>│  │  │  <span class="">screenshot.sh</span></div><div>│  │  │  <span class="">session.sh</span></div><div>│  │  │  <span class="">settings.sh</span></div><div>│  │  │  <span class="">spotify-theme.sh</span></div><div>│  │  │  <span class="">volume.sh</span></div><div>│  │  │  <span class="">wallpaper.sh</span></div><div>│  │  │  <span class="">waybar-toggle.sh</span></div><div>│  │  │  <span class="">zoom.sh</span></div><div>│  <span class="d">kitty/</span></div><div>│  │  <span class="">kitty.conf</span></div><div>│  │  <span class="">theme.conf</span></div><div>│  <span class="d">rofi/</span></div><div>│  │  <span class="">clipboard.rasi</span></div><div>│  │  <span class="">keybinds.rasi</span></div><div>│  │  <span class="">launcher.rasi</span></div><div>│  │  <span class="">powermenu.rasi</span></div><div>│  │  <span class="">settings.rasi</span></div><div>│  │  <span class="">theme.rasi</span></div><div>│  │  <span class="">wallpaper.rasi</span></div><div>│  <span class="d">spicetify/</span></div><div>│  │  <span class="d">Themes/</span></div><div>│  │  │  <span class="d">monochrome/</span></div><div>│  │  │  │  <span class="">color.ini</span></div><div>│  │  │  │  <span class="">user.css</span></div><div>│  <span class="">starship.toml</span></div><div>│  <span class="d">waybar/</span></div><div>│  │  <span class="">config.jsonc</span></div><div>│  │  <span class="d">scripts/</span></div><div>│  │  │  <span class="">updates.sh</span></div><div>│  │  <span class="">style.css</span></div><div>│  <span class="d">wlogout/</span></div><div>│  │  <span class="">layout</span></div><div>│  │  <span class="">style.css</span></div><div><span class="">.editorconfig</span></div><div><span class="">.gitattributes</span></div><div><span class="">.gitignore</span></div><div><span class="">.zshrc</span></div><div><span class="">CHANGELOG.md</span></div><div><span class="">CONTRIBUTING.md</span></div><div><span class="">LICENSE</span></div><div><span class="">README.md</span></div><div><span class="">aur-packages.txt</span></div><div><span class="d">docs/</span></div><div>│  <span class="">CUSTOMIZE.md</span></div><div>│  <span class="">INSTALL.md</span></div><div>│  <span class="">KEYBINDS.md</span></div><div>│  <span class="">ON-WINDOWS.md</span></div><div>│  <span class="">QUICKSTART.md</span></div><div>│  <span class="">TROUBLESHOOTING.md</span></div><div>│  <span class="">desktop-demo.mp4</span></div><div>│  <span class="">preview.html</span></div><div>│  <span class="">preview.png</span></div><div>│  <span class="">preview.svg</span></div><div>│  <span class="">test-run.mp4</span></div><div><span class="">install.sh</span></div><div><span class="">packages.txt</span></div><div><span class="d">test/</span></div><div>│  <span class="">install-sandbox.sh</span></div><div>│  <span class="">run-all.sh</span></div><div>│  <span class="">smoke-test.sh</span></div><div><span class="d">tools/</span></div><div>│  <span class="">build-preview.py</span></div><div>│  <span class="">build-windows-kit.py</span></div><div>│  <span class="">demo.sh</span></div><div>│  <span class="">keybind-table.py</span></div><div>│  <span class="">record-desktop.sh</span></div><div><span class="">uninstall.sh</span></div><div><span class="d">wallpapers/</span></div><div>│  <span class="">generate.py</span></div><div>│  <span class="">mono-01.jpg</span></div><div>│  <span class="">mono-02.jpg</span></div><div>│  <span class="">mono-03.jpg</span></div><div>│  <span class="">mono-04.jpg</span></div><div>│  <span class="">mono-05.jpg</span></div><div>│  <span class="">mono-06-16k.jpg</span></div><div>│  <span class="">mono-06.jpg</span></div><div><span class="d">windows/</span></div><div>│  <span class="">glazewm-config.yaml</span></div><div>│  <span class="">windows-terminal-scheme.json</span></div><div>│  <span class="">windows-terminal-settings.json</span></div></div>
+
+  <h2><span class="num">07</span>Try it</h2>
+  <div class="grid3">
+    <div class="card"><h4>Install</h4><p><code>./install.sh</code><br>
+      Packages, backups (twice), configs, wallpapers. <code>--dry-run</code> shows the plan first.</p></div>
+    <div class="card"><h4>See the keys</h4><p><kbd>Super + /</kbd><br>
+      Searchable cheat sheet built from your live binds, or read <code>docs/KEYBINDS.md</code>.</p></div>
+    <div class="card"><h4>Make it yours</h4><p><code>modules/user.lua</code><br>
+      Programs, gaps, keyboard, paths — the other modules read from it.
+      Right now: browser <b>firefox</b>, terminal <b>kitty</b>.</p></div>
+    <div class="card"><h4>Pick a wallpaper</h4><p><kbd>Super + W</kbd><br>
+      Thumbnail grid over <code>~/Pictures/Wallpapers</code>, or <code>--random</code> on every boot.</p></div>
+    <div class="card"><h4>Record it</h4><p><kbd>Super + Alt + Print</kbd><br>
+    screen recording (again to stop) · <kbd>Super + Alt + S</kbd> saves the last minute ·
+    gpu-screen-recorder or wf-recorder, whichever you have.</p></div>
+    <div class="card"><h4>System settings</h4><p><kbd>Super + I</kbd><br>
+      Info, Network, Bluetooth, Monitors, Sound, night shift, and every config file.</p></div>
+    <div class="card"><h4>Undo everything</h4><p><code>./uninstall.sh</code><br>
+      Removes the config and restores your originals from <code>~/.config-backups/pristine</code>.</p></div>
+  </div>
+
+  <pre><span class="c"># the short version</span>
+git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
+<span class="k">./install.sh</span>            <span class="c"># then log out and back in</span>
+<span class="k">./test/run-all.sh</span>        <span class="c"># shellcheck + lua + json + 63 smoke checks</span></pre>
+
+  <footer>
+    Generated from this repository's config on 2026-11-05 by
+    <code>tools/build-preview.py</code> · 82 binds, 58 packages, MIT licensed.
+    Start reading at <code>README.md</code>; troubleshooting lives in
+    <code>docs/TROUBLESHOOTING.md</code>.
+  </footer>
+
+</div>
+</body>
+</html>

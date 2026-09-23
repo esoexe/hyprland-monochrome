@@ -1,0 +1,57 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  mono.theme — monochrome palette for btop
+#  Selected by `color_theme = "mono"` in ~/.config/btop/btop.conf
+# ═══════════════════════════════════════════════════════════════════════════
+
+theme[main_bg]="#0a0a0a"
+theme[main_fg]="#e6e6e6"
+theme[title]="#ffffff"
+theme[hi_fg]="#ffffff"
+theme[selected_bg]="#2a2a2a"
+theme[selected_fg]="#ffffff"
+theme[inactive_fg]="#6f6f6f"
+theme[graph_text]="#8a8a8a"
+theme[meter_bg]="#1c1c1c"
+theme[proc_misc]="#bdbdbd"
+
+theme[cpu_box]="#4a4a4a"
+theme[mem_box]="#4a4a4a"
+theme[net_box]="#4a4a4a"
+theme[proc_box]="#4a4a4a"
+theme[div_line]="#2a2a2a"
+
+theme[temp_start]="#8a8a8a"
+theme[temp_mid]="#c8c8c8"
+theme[temp_end]="#ffffff"
+
+theme[cpu_start]="#6f6f6f"
+theme[cpu_mid]="#b0b0b0"
+theme[cpu_end]="#ffffff"
+
+theme[free_start]="#3a3a3a"
+theme[free_mid]="#5a5a5a"
+theme[free_end]="#7a7a7a"
+
+theme[cached_start]="#4a4a4a"
+theme[cached_mid]="#6a6a6a"
+theme[cached_end]="#8a8a8a"
+
+theme[available_start]="#2a2a2a"
+theme[available_mid]="#4a4a4a"
+theme[available_end]="#6a6a6a"
+
+theme[used_start]="#7a7a7a"
+theme[used_mid]="#b0b0b0"
+theme[used_end]="#ffffff"
+
+theme[download_start]="#6f6f6f"
+theme[download_mid]="#a0a0a0"
+theme[download_end]="#dedede"
+
+theme[upload_start]="#3a3a3a"
+theme[upload_mid]="#6a6a6a"
+theme[upload_end]="#9a9a9a"
+
+theme[process_start]="#8a8a8a"
+theme[process_mid]="#c0c0c0"
+theme[process_end]="#ffffff"

@@ -1,0 +1,23 @@
+{
+  "name": "hyprland-monochrome",
+  "background": "#0a0a0a",
+  "foreground": "#e6e6e6",
+  "cursorColor": "#e6e6e6",
+  "selectionBackground": "#e6e6e6",
+  "black": "#141414",
+  "red": "#141414",
+  "green": "#141414",
+  "yellow": "#141414",
+  "blue": "#141414",
+  "purple": "#141414",
+  "cyan": "#141414",
+  "white": "#141414",
+  "brightBlack": "#ffffff",
+  "brightRed": "#ffffff",
+  "brightGreen": "#ffffff",
+  "brightYellow": "#ffffff",
+  "brightBlue": "#ffffff",
+  "brightPurple": "#ffffff",
+  "brightCyan": "#ffffff",
+  "brightWhite": "#ffffff"
+}

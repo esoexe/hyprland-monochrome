@@ -1,0 +1,42 @@
+{
+  "profiles": {
+    "defaults": {
+      "colorScheme": "hyprland-monochrome",
+      "font": {
+        "face": "JetBrainsMono Nerd Font",
+        "size": 11
+      },
+      "opacity": 92,
+      "padding": "14",
+      "useAcrylic": true,
+      "cursorShape": "bar",
+      "antialiasingMode": "cleartype"
+    }
+  },
+  "schemes": [
+    {
+      "name": "hyprland-monochrome",
+      "background": "#0a0a0a",
+      "foreground": "#e6e6e6",
+      "cursorColor": "#e6e6e6",
+      "selectionBackground": "#e6e6e6",
+      "black": "#141414",
+      "red": "#141414",
+      "green": "#141414",
+      "yellow": "#141414",
+      "blue": "#141414",
+      "purple": "#141414",
+      "cyan": "#141414",
+      "white": "#141414",
+      "brightBlack": "#ffffff",
+      "brightRed": "#ffffff",
+      "brightGreen": "#ffffff",
+      "brightYellow": "#ffffff",
+      "brightBlue": "#ffffff",
+      "brightPurple": "#ffffff",
+      "brightCyan": "#ffffff",
+      "brightWhite": "#ffffff"
+    }
+  ],
+  "_comment": "Merge this into %LOCALAPPDATA%\\Packages\\Microsoft.WindowsTerminal_*\\LocalState\\settings.json \u2014 or open Settings with Ctrl+, \u2192 Open JSON file and paste. The scheme comes from .config/kitty/theme.conf, so both terminals are the same greys. 'opacity' and 'padding' come from modules/user.lua."
+}

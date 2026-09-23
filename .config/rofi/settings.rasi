@@ -1,0 +1,35 @@
+@import "theme.rasi"
+
+/* Settings menu (Super + I): system info, network, Bluetooth, monitors, sound */
+
+configuration {
+    show-icons: false;
+    matching: "fuzzy";
+    sort: false;
+    case-sensitive: false;
+}
+
+window {
+    width: 640px;
+    padding: 10px;
+}
+
+listview {
+    lines: 11;
+    columns: 1;
+    spacing: 4px;
+}
+
+element {
+    padding: 9px 14px;
+    font: "JetBrainsMono Nerd Font 12";
+}
+
+prompt {
+    text-color: @accent;
+    font: "JetBrainsMono Nerd Font 13";
+}
+
+entry {
+    placeholder: "search settings…";
+}

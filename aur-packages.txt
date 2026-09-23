@@ -1,0 +1,9 @@
+# OPTIONAL AUR packages.
+#
+# install.sh installs these only if an AUR helper (paru or yay) is available.
+# Nothing here is required — the desktop works fully without them.
+
+wlogout                  # grid-style logout menu (an alternative to the Rofi power menu)
+papirus-folders          # grey Papirus folder colours to match the monochrome theme
+bibata-cursor-theme      # clean, monochrome-ish cursor set
+spicetify-cli            # Spotify theming (see .config/spicetify + scripts/spotify-theme.sh)

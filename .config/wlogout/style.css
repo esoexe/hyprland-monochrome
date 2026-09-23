@@ -1,0 +1,53 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ~/.config/wlogout/style.css — monochrome logout grid
+
+   This is the *alternative* logout menu. The default keybind (Super + ESCAPE)
+   opens the Rofi power menu instead — see scripts/powermenu.sh.
+   To use wlogout, install it (AUR) and rebind, e.g.:
+       sh("ESCAPE", "wlogout -b 5 -c 20 -r 20 -L 1700 -R 1700 -T 325 -B 325", "Logout menu")
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+window {
+    background-color: rgba(8, 8, 8, 0.62);
+}
+
+button {
+    margin: 10px;
+    min-width: 110px;
+    min-height: 110px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 22px;
+
+    color: #bdbdbd;
+    background-color: rgba(13, 13, 13, 0.72);
+
+    transition: all 0.18s ease;
+}
+
+button:hover,
+button:focus,
+button:active {
+    color: #0a0a0a;
+    background-color: #e6e6e6;
+    border-color: #ffffff;
+    outline: none;
+}
+
+/* Everything stays monochrome — the order of the grid carries the meaning. */
+#lock,
+#logout,
+#suspend,
+#reboot,
+#shutdown {
+    color: #bdbdbd;
+}

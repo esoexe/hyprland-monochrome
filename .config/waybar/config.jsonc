@@ -1,0 +1,260 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  ~/.config/waybar/config.jsonc — hyprland-monochrome
+//
+//  Reload after editing:  pkill -SIGUSR2 waybar   (or Super+I → Hyprland → restart bar)
+//  Remove a module by deleting it from modules-left / center / right below.
+//  Every module also has a matching block further down you can delete.
+// ═══════════════════════════════════════════════════════════════════════════
+
+{
+    "layer": "top",
+    "position": "top",
+    "height": 38,
+    "spacing": 0,
+    "exclusive": true,
+    "fixed-center": false,
+    "margin-top": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+
+    "modules-left": [
+        "custom/launcher",
+        "hyprland/workspaces",
+        "hyprland/submap",
+        "hyprland/window"
+    ],
+    "modules-center": [
+        "mpris"
+    ],
+    "modules-right": [
+        "cpu",
+        "memory",
+        "temperature",
+        "custom/updates",
+        "network",
+        "bluetooth",
+        "pulseaudio",
+        "battery",
+        "custom/recording",
+        "tray",
+        "clock",
+        "custom/settings",
+        "custom/power"
+    ],
+
+    // ── Left ──────────────────────────────────────────────────────────────
+    "custom/launcher": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "~/.config/hypr/scripts/menu.sh launcher"
+    },
+
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-click": "activate",
+        "all-outputs": false,
+        "show-special": false,
+        "persistent-workspaces": {
+            "*": 5
+        },
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "0",
+            "default": "•"
+        }
+    },
+
+    "hyprland/submap": {
+        "format": " {}",
+        "tooltip": false
+    },
+
+    "hyprland/window": {
+        "format": "{title}",
+        "max-length": 70,
+        "separate-outputs": true
+    },
+
+    // ── Center: now playing (hides itself when nothing plays) ─────────────
+    "mpris": {
+        "format": "{player_icon}  {title} — {artist}",
+        "format-paused": "{player_icon}  {title} — {artist}",
+        "title-len": 45,
+        "dynamic-len": 60,
+        "tooltip-format": "{player} · {status} · {position}/{length}",
+        "player-icons": {
+            "default": "",
+            "spotify": "",
+            "firefox": "",
+            "mpv": "▶",
+            "chromium": ""
+        },
+        "status-icons": {
+            "paused": "",
+            "playing": ""
+        },
+        "on-click": "playerctl play-pause",
+        "on-click-right": "playerctl next",
+        "on-click-middle": "playerctl previous",
+        "on-scroll-up": "playerctl volume 0.05+",
+        "on-scroll-down": "playerctl volume 0.05-"
+    },
+
+    // ── Right ─────────────────────────────────────────────────────────────
+    "cpu": {
+        "interval": 3,
+        "format": "  {usage}%",
+        "tooltip-format": "CPU {usage}% · {load} loads",
+        "on-click": "kitty -e btop"
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": "  {percentage}%",
+        "tooltip-format": "RAM {used:0.1f}G / {total:0.1f}G\nSwap {swapUsed:0.1f}G / {swapTotal:0.1f}G",
+        "on-click": "kitty -e btop"
+    },
+
+    // If this module shows an error on your machine, set "hwmon-path" to the
+    // right sensor (ls /sys/class/hwmon/*/temp1_input) or just delete the block
+    // and remove "temperature" from modules-right.
+    "temperature": {
+        "interval": 5,
+        "critical-threshold": 85,
+        "format": "  {temperatureC}°C",
+        "format-critical": "  {temperatureC}°C",
+        "tooltip-format": "CPU {temperatureC}°C"
+    },
+
+    // Appears only while recording (the script prints {} when idle).
+    // Left click starts/stops, right click saves the instant replay,
+    // middle click pauses (gpu-screen-recorder).
+    "custom/recording": {
+        "exec": "~/.config/hypr/scripts/record.sh status --waybar",
+        "interval": 1,
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "~/.config/hypr/scripts/record.sh toggle",
+        "on-click-right": "~/.config/hypr/scripts/record.sh replay",
+        "on-click-middle": "~/.config/hypr/scripts/record.sh pause"
+    },
+
+    "custom/updates": {
+        "exec": "~/.config/waybar/scripts/updates.sh",
+        "interval": 3600,
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "kitty -e sudo pacman -Syu"
+    },
+
+    "network": {
+        "interval": 5,
+        "format-wifi": "  {essid}",
+        "format-ethernet": "  {ifname}",
+        "format-disconnected": "  offline",
+        "format-linked": "  {ifname}",
+        "tooltip-format": "{ifname} · {ipaddr}\n↓ {bandwidthDownBits}  ↑ {bandwidthUpBits}",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ifname} · {ipaddr}\n↓ {bandwidthDownBits}  ↑ {bandwidthUpBits}",
+        "tooltip-format-disconnected": "No connection",
+        "on-click": "~/.config/hypr/scripts/settings.sh",
+        "on-click-right": "nmcli radio wifi toggle"
+    },
+
+    "bluetooth": {
+        "interval": 10,
+        "format": "  {status}",
+        "format-disabled": "",
+        "format-off": "",
+        "format-connected": "  {device_alias}",
+        "tooltip-format": "{controller_alias}\n{num_connections} connected",
+        "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "on-click": "~/.config/hypr/scripts/settings.sh"
+    },
+
+    "pulseaudio": {
+        "format": "  {icon} {volume}%",
+        "format-muted": "  muted",
+        "format-source": "  mic {volume}%",
+        "format-source-muted": "  mic muted",
+        "format-icons": {
+            "default": ["", "", ""],
+            "headphones": "",
+            "headset": "",
+            "bluetooth": ""
+        },
+        "scroll-step": 5,
+        "tooltip": false,
+        "on-click": "pavucontrol",
+        "on-click-right": "~/.config/hypr/scripts/volume.sh mute",
+        "on-scroll-up": "~/.config/hypr/scripts/volume.sh up",
+        "on-scroll-down": "~/.config/hypr/scripts/volume.sh down"
+    },
+
+    "battery": {
+        "interval": 30,
+        "states": {
+            "warning": 25,
+            "critical": 10
+        },
+        "format": "  {capacity}%",
+        "format-charging": "  {capacity}%",
+        "format-plugged": "  {capacity}%",
+        "format-full": "  full",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{timeTo}\n{capacity}% · {power}W",
+        "on-click": "~/.config/hypr/scripts/settings.sh"
+    },
+
+    "tray": {
+        "icon-size": 14,
+        "spacing": 8,
+        "show-passive-items": true
+    },
+
+    "clock": {
+        "interval": 30,
+        "format": "  {:%H:%M}",
+        "format-alt": "  {:%a %d %b}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "weeks-pos": "right",
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#ffffff'><b>{}</b></span>",
+                "days": "<span color='#bdbdbd'>{}</span>",
+                "weekdays": "<span color='#8a8a8a'><b>{}</b></span>",
+                "today": "<span color='#ffffff'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    },
+
+    "custom/settings": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "~/.config/hypr/scripts/settings.sh"
+    },
+
+    "custom/power": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "~/.config/hypr/scripts/powermenu.sh"
+    }
+}

@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-family="JetBrains Mono, DejaVu Sans Mono, ui-monospace, monospace">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="55%" stop-color="#131313"/>
+      <stop offset="100%" stop-color="#1e1e1e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="26%" cy="34%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.055"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="border-active" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#9a9a9a" stop-opacity="0.6"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <style>
+      .pill { fill: rgba(10,10,10,0.72); stroke: rgba(255,255,255,0.07); stroke-width: 1; }
+      .txt  { fill: #e6e6e6; font-size: 13px; }
+      .dim  { fill: #8a8a8a; font-size: 13px; }
+      .faint{ fill: #4a4a4a; font-size: 13px; }
+      .bright { fill: #ffffff; font-size: 13px; }
+      .win  { fill: rgba(13,13,13,0.93); stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+      .card { fill: rgba(13,13,13,0.95); stroke: rgba(255,255,255,0.17); stroke-width: 1; }
+      .key  { fill: #bdbdbd; font-size: 12px; }
+    </style>
+  </defs>
+
+  <!-- ── wallpaper ─────────────────────────────────────────────────────── -->
+  <rect width="1600" height="900" fill="url(#wall)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+  <g stroke="#ffffff" stroke-opacity="0.035" fill="none">
+    <circle cx="420" cy="330" r="120"/><circle cx="420" cy="330" r="190"/>
+    <circle cx="420" cy="330" r="260"/><circle cx="420" cy="330" r="330"/>
+    <circle cx="420" cy="330" r="400"/><circle cx="420" cy="330" r="470"/>
+    <circle cx="420" cy="330" r="540"/><circle cx="420" cy="330" r="610"/>
+  </g>
+
+  <!-- ── windows (tiled) ───────────────────────────────────────────────── -->
+  <!-- terminal -->
+  <rect x="18" y="58" width="1050" height="800" rx="10" class="win"/>
+  <rect x="18.5" y="58.5" width="1050" height="800" rx="10" fill="none"
+        stroke="url(#border-active)" stroke-width="1.4" opacity="0.85"/>
+  <text x="38" y="86" class="bright" font-weight="bold">~/projects/monochrome</text>
+  <text x="300" y="86" class="faint">kitty</text>
+
+  <!-- prompt -->
+  <text x="40" y="126" class="bright">~/projects/monochrome</text>
+  <text x="228" y="126" class="dim">main</text>
+  <text x="268" y="126" class="faint">±2</text>
+  <text x="304" y="126" fill="#ffffff" font-size="15">❯</text>
+  <text x="322" y="126" class="txt">hyprctl binds | wc -l</text>
+  <text x="40" y="150" class="dim">62</text>
+  <text x="40" y="180" class="bright">~/projects/monochrome</text>
+  <text x="228" y="180" class="dim">main</text>
+  <text x="264" y="180" fill="#ffffff" font-size="15">❯</text>
+  <text x="282" y="180" class="txt">eza -l --icons=never</text>
+  <text x="40" y="208" class="dim">.config</text>
+  <text x="180" y="208" class="dim">docs</text>
+  <text x="280" y="208" class="dim">test</text>
+  <text x="380" y="208" class="dim">tools</text>
+  <text x="500" y="208" class="dim">wallpapers</text>
+  <text x="660" y="208" class="faint">install.sh</text>
+  <text x="800" y="208" class="faint">packages.txt</text>
+  <text x="990" y="208" class="faint">README.md</text>
+  <text x="40" y="232" class="dim">.zshrc</text>
+  <text x="180" y="232" class="faint">LICENSE</text>
+  <text x="300" y="232" class="faint">uninstall.sh</text>
+  <text x="40" y="262" class="bright">~/projects/monochrome</text>
+  <text x="228" y="262" class="dim">main</text>
+  <text x="264" y="262" fill="#ffffff" font-size="15">❯</text>
+  <text x="282" y="262" class="txt">settings.sh</text>
+  <text x="282" y="282" class="faint"># system · network · bluetooth · monitors · sound</text>
+
+  <!-- block cursor + suggestions ghost text -->
+  <rect x="282" y="292" width="8" height="15" fill="#e6e6e6" opacity="0.9"/>
+
+  <!-- ── smaller tiled window: thunar ──────────────────────────────────── -->
+  <rect x="1078" y="58" width="504" height="486" rx="10" class="win"/>
+  <text x="1098" y="86" class="txt">Files — Wallpapers</text>
+  <line x1="1098" y1="100" x2="1562" y2="100" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1098" y="126" class="faint">Home</text>
+  <text x="1098" y="150" class="dim">Wallpapers</text>
+  <text x="1098" y="174" class="faint">Projects</text>
+  <rect x="1230" y="112" width="150" height="112" rx="6" fill="#171717" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="1394" y="112" width="150" height="112" rx="6" fill="#1d1d1d" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1230" y="242" class="faint" font-size="11">mono-01.jpg</text>
+  <text x="1394" y="242" class="faint" font-size="11">mono-02.jpg</text>
+  <rect x="1230" y="266" width="150" height="112" rx="6" fill="#141414" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="1394" y="266" width="150" height="112" rx="6" fill="#1a1a1a" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1230" y="396" class="faint" font-size="11">mono-05.jpg</text>
+  <text x="1394" y="396" class="faint" font-size="11">mono-06.jpg</text>
+  <rect x="1230" y="420" width="150" height="88" rx="6" fill="#191919" stroke="#ffffff" stroke-opacity="0.06"/>
+  <rect x="1394" y="420" width="150" height="88" rx="6" fill="#151515" stroke="#ffffff" stroke-opacity="0.06"/>
+  <text x="1230" y="524" class="faint" font-size="11">mono-03.jpg</text>
+  <text x="1394" y="524" class="faint" font-size="11">mono-04.jpg</text>
+
+  <!-- ── notification (dunst) ─────────────────────────────────────────── -->
+  <rect x="1178" y="566" width="404" height="68" rx="12" class="pill"/>
+  <rect x="1194" y="580" width="40" height="40" rx="8" fill="#1c1c1c" stroke="#ffffff" stroke-opacity="0.07"/>
+  <text x="1246" y="592" class="bright" font-weight="bold">Screenshot saved</text>
+  <text x="1246" y="614" class="dim">2026-09-23_21-42-08.png</text>
+
+  <!-- ── floating music window ─────────────────────────────────────────── -->
+  <rect x="1178" y="656" width="404" height="150" rx="10" class="win"/>
+  <rect x="1194" y="672" width="118" height="118" rx="6" fill="#242424" stroke="#ffffff" stroke-opacity="0.07"/>
+  <text x="1326" y="702" class="txt">Midnight City</text>
+  <text x="1326" y="724" class="dim">M83</text>
+  <text x="1326" y="752" class="faint" font-size="11">2:41 / 4:03</text>
+  <rect x="1326" y="766" width="240" height="4" rx="2" fill="#2a2a2a"/>
+  <rect x="1326" y="766" width="140" height="4" rx="2" fill="#e6e6e6"/>
+  <text x="1326" y="794" class="dim" font-size="12">Playing</text>
+
+  <!-- ── top bar ───────────────────────────────────────────────────────── -->
+  <!-- left group -->
+  <rect x="8" y="6" width="742" height="38" rx="12" class="pill"/>
+  <text x="24" y="31" class="bright" font-size="15">▲</text>
+  <rect x="52" y="13" width="26" height="24" rx="7" fill="#e6e6e6"/>
+  <text x="60" y="30" fill="#0a0a0a" font-size="12" font-weight="bold">1</text>
+  <text x="90" y="30" class="faint">2</text>
+  <text x="112" y="30" class="faint">3</text>
+  <text x="134" y="30" fill="#6f6f6f" font-size="12">4</text>
+  <text x="156" y="30" fill="#6f6f6f" font-size="12">5</text>
+  <text x="190" y="30" class="dim">~/projects/monochrome — kitty</text>
+
+  <!-- center group: now playing -->
+  <rect x="700" y="6" width="330" height="38" rx="12" class="pill"/>
+  <text x="722" y="30" class="dim">♪</text>
+  <text x="744" y="30" class="txt">Midnight City — M83</text>
+
+  <!-- right group -->
+  <rect x="1042" y="6" width="550" height="38" rx="12" class="pill"/>
+  <text x="1060" y="30" class="dim">cpu</text>
+  <text x="1096" y="30" class="txt">12%</text>
+  <text x="1140" y="30" class="dim">ram</text>
+  <text x="1178" y="30" class="txt">42%</text>
+  <text x="1222" y="30" class="dim">48°C</text>
+  <text x="1272" y="30" class="txt">󰖩</text>
+  <text x="1272" y="30" class="dim">wlan0</text>
+  <text x="1344" y="30" class="dim">vol</text>
+  <text x="1378" y="30" class="txt">65%</text>
+  <text x="1424" y="30" class="txt">󰁹</text>
+  <text x="1424" y="30" class="dim">88%</text>
+  <text x="1478" y="30" class="bright">21:42</text>
+  <text x="1548" y="30" class="dim">⚙</text>
+  <text x="1572" y="30" class="dim">⏻</text>
+
+  <!-- ── rofi launcher overlay ────────────────────────────────────────── -->
+  <rect x="0" y="0" width="1600" height="900" fill="#050505" opacity="0.45"/>
+  <rect x="470" y="230" width="660" height="440" rx="14" class="card"/>
+  <rect x="486" y="246" width="628" height="46" rx="10" fill="#141414" stroke="#ffffff" stroke-opacity="0.07"/>
+  <text x="504" y="275" class="dim">apps:</text>
+  <text x="556" y="275" class="bright">term</text>
+  <rect x="600" y="258" width="7" height="20" fill="#e6e6e6" opacity="0.85"/>
+
+  <rect x="486" y="304" width="628" height="40" rx="9" fill="#e6e6e6"/>
+  <text x="506" y="330" fill="#0a0a0a" font-size="13" font-weight="bold">Terminal</text>
+  <text x="1064" y="330" fill="#0a0a0a" font-size="12">kitty</text>
+
+  <text x="506" y="372" class="txt">Terminal (floating)</text>
+  <text x="1064" y="372" class="faint">kitty</text>
+  <text x="506" y="410" class="txt">Dropdown terminal</text>
+  <text x="1064" y="410" class="faint">kitty</text>
+  <text x="506" y="448" class="txt">System Monitor</text>
+  <text x="1064" y="448" class="faint">btop</text>
+  <text x="506" y="486" class="txt">Settings</text>
+  <text x="1064" y="486" class="faint">settings.sh</text>
+  <text x="506" y="524" class="txt">Thunar</text>
+  <text x="1064" y="524" class="faint">file manager</text>
+  <text x="506" y="562" class="txt">Wallpaper picker</text>
+  <text x="1064" y="562" class="faint">wallpaper.sh</text>
+  <text x="506" y="600" class="txt">Spotify</text>
+  <text x="1064" y="600" class="faint">flatpak</text>
+  <text x="1064" y="562" class="faint"> </text>
+  <text x="506" y="638" class="txt">Clipboard history</text>
+  <text x="1064" y="638" class="faint">cliphist</text>
+
+  <!-- ── caption ──────────────────────────────────────────────────────── -->
+  <rect x="470" y="700" width="660" height="62" rx="12" fill="rgba(8,8,8,0.72)" stroke="rgba(255,255,255,0.07)"/>
+  <text x="492" y="726" class="dim" font-size="12">Super + D launcher  ·  Super + W wallpapers  ·  Super + I settings</text>
+  <text x="492" y="748" class="faint" font-size="12">Super + Tab lock  ·  Super + / cheat sheet  ·  Super + Shift + W hide bar</text>
+</svg>
