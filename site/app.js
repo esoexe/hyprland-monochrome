@@ -837,33 +837,29 @@ hl.general({ gaps_out = 16, gaps_in = 8 })`
   updatePcMatrix();
 
   /* -------------------------------------------------------------------------
-   * 05. Procedural C++20 Wallpaper Studio (20 JPGs + 4 Live GIFs)
+   * 05. Procedural C++20 Wallpaper Studio (17 JPGs + 3 Live GIFs)
    * ----------------------------------------------------------------------- */
   const WALLPAPERS = [
-    { file: "mono-live-01.gif", title: "Live 01 : Lunar Eclipse", cat: "live", badge: "LIVE GIF" },
-    { file: "mono-live-02.gif", title: "Live 02 : Topo Drift", cat: "live", badge: "LIVE GIF" },
-    { file: "mono-live-03.gif", title: "Live 03 : Rain Matrix", cat: "live", badge: "LIVE GIF" },
-    { file: "mono-live-04.gif", title: "Live 04 : Pulse Horizon", cat: "live", badge: "LIVE GIF" },
-    { file: "mono-01.jpg", title: "01 : Obsidian Mist", cat: "minimal", badge: "1080P" },
-    { file: "mono-02.jpg", title: "02 : Brutalist Grid", cat: "geo", badge: "1080P" },
-    { file: "mono-03.jpg", title: "03 : Topographic Ridges", cat: "field", badge: "1080P" },
-    { file: "mono-04.jpg", title: "04 : Eclipse Corona", cat: "minimal", badge: "1080P" },
-    { file: "mono-05.jpg", title: "05 : Architectural Beams", cat: "geo", badge: "1080P" },
-    { file: "mono-06.jpg", title: "06 : Fine Halftone", cat: "geo", badge: "1080P" },
-    { file: "mono-07.jpg", title: "07 : Silk Flow Field", cat: "field", badge: "1080P" },
-    { file: "mono-08.jpg", title: "08 : Zenith Gradient", cat: "minimal", badge: "1080P" },
-    { file: "mono-09.jpg", title: "09 : Concentric Orbit", cat: "geo", badge: "1080P" },
-    { file: "mono-10.jpg", title: "10 : Silver Dune", cat: "field", badge: "1080P" },
-    { file: "mono-11.jpg", title: "11 : Monolith Horizon", cat: "minimal", badge: "DEFAULT" },
-    { file: "mono-12.jpg", title: "12 : Isometric Vault", cat: "geo", badge: "1080P" },
-    { file: "mono-13.jpg", title: "13 : Interference Wave", cat: "field", badge: "1080P" },
-    { file: "mono-14.jpg", title: "14 : Pure OLED Void", cat: "minimal", badge: "OLED" },
-    { file: "mono-15.jpg", title: "15 : Vector Contours", cat: "field", badge: "1080P" },
-    { file: "mono-16.jpg", title: "16 : Bauhaus Slices", cat: "geo", badge: "1080P" },
-    { file: "mono-17.jpg", title: "17 : Film Grain 400", cat: "minimal", badge: "NOIR" },
-    { file: "mono-18.jpg", title: "18 : Magnetic Flux", cat: "field", badge: "1080P" },
-    { file: "mono-19.jpg", title: "19 : Cathedral Light", cat: "geo", badge: "1080P" },
-    { file: "mono-20.jpg", title: "20 : Event Horizon", cat: "minimal", badge: "1080P" }
+    { file: "mono-live-01-orbital.gif", title: "Live 01 : Orbital Rings", cat: "live", badge: "LIVE GIF" },
+    { file: "mono-live-02-pulse.gif", title: "Live 02 : Harmonic Pulse", cat: "live", badge: "LIVE GIF" },
+    { file: "mono-live-03-lissajous.gif", title: "Live 03 : Lissajous Scope", cat: "live", badge: "LIVE GIF" },
+    { file: "mono-01.jpg", title: "01 : Noir Vignette", cat: "minimal", badge: "1080P" },
+    { file: "mono-02.jpg", title: "02 : Architectural Grid", cat: "geo", badge: "1080P" },
+    { file: "mono-03.jpg", title: "03 : Concentric Arcs", cat: "geo", badge: "1080P" },
+    { file: "mono-04.jpg", title: "04 : Topographic Contours", cat: "field", badge: "1080P" },
+    { file: "mono-05.jpg", title: "05 : Diagonal Strata", cat: "geo", badge: "1080P" },
+    { file: "mono-06.jpg", title: "06 : Horizon Mist", cat: "minimal", badge: "1080P" },
+    { file: "mono-07.jpg", title: "07 : Solar Eclipse", cat: "minimal", badge: "1080P" },
+    { file: "mono-08.jpg", title: "08 : Alpine Ridgeline", cat: "field", badge: "1080P" },
+    { file: "mono-09.jpg", title: "09 : Brutalist Monoliths", cat: "geo", badge: "1080P" },
+    { file: "mono-10.jpg", title: "10 : Caustic Silk Ribbon", cat: "field", badge: "1080P" },
+    { file: "mono-11.jpg", title: "11 : Gravitational Singularity", cat: "minimal", badge: "DEFAULT" },
+    { file: "mono-12.jpg", title: "12 : Liquid Mercury", cat: "field", badge: "1080P" },
+    { file: "mono-13.jpg", title: "13 : Rain & Bokeh Noir", cat: "minimal", badge: "NOIR" },
+    { file: "mono-14.jpg", title: "14 : Bauhaus Compass", cat: "geo", badge: "1080P" },
+    { file: "mono-07-4k.jpg", title: "07 UHD : Solar Eclipse", cat: "minimal", badge: "4K MASTER" },
+    { file: "mono-11-4k.jpg", title: "11 UHD : Singularity", cat: "minimal", badge: "4K MASTER" },
+    { file: "mono-06-16k.jpg", title: "06 UHD : Horizon Mist", cat: "minimal", badge: "16K MASTER" }
   ];
 
   const wallGrid = $("#wall-grid");
@@ -871,7 +867,16 @@ hl.general({ gaps_out = 16, gaps_in = 8 })`
   const lightboxModal = $("#lightbox-modal");
   const lightboxImg = $("#lightbox-img");
   const lightboxCap = $("#lightbox-caption");
-  let activeLightboxUrl = "wallpapers/mono-11.jpg";
+  const inlineWalls = window.__INLINE_WALLS__ || null;
+  let activeLightboxUrl = (inlineWalls && inlineWalls["mono-11.jpg"]) || "wallpapers/mono-11.jpg";
+  if (inlineWalls && inlineWalls["mono-11.jpg"] && osWallImg) {
+    osWallImg.src = inlineWalls["mono-11.jpg"];
+  }
+
+  function resolveWallUrl(file) {
+    if (inlineWalls && inlineWalls[file]) return inlineWalls[file];
+    return `wallpapers/${file}`;
+  }
 
   function applyWallpaperToSimulator(url, title) {
     if (osWallImg) osWallImg.src = url;
@@ -884,7 +889,7 @@ hl.general({ gaps_out = 16, gaps_in = 8 })`
     const list = cat === "all" ? WALLPAPERS : WALLPAPERS.filter((w) => w.cat === cat);
     wallGrid.innerHTML = "";
     list.forEach((w) => {
-      const url = `wallpapers/${w.file}`;
+      const url = resolveWallUrl(w.file);
       const card = document.createElement("div");
       card.className = "wall-card";
       card.innerHTML = `
@@ -986,40 +991,46 @@ hl.general({ gaps_out = 16, gaps_in = 8 })`
     return row.submap ? `[${row.submap}] ${combo}` : combo;
   }
 
-  fetch("keybinds.json")
-    .then((r) => r.json())
-    .then((data) => {
-      allKeybinds = Array.isArray(data)
-        ? data.map((row) => ({
-            ...row,
-            shortcut: sanitizeLabel(formatModShortcut(row)),
-            category: sanitizeLabel(row.category || (row.submap ? `Submap: ${row.submap}` : "Core")),
-            description: sanitizeLabel(row.description)
-          }))
-        : [];
-      const topCats = ["All", ...Array.from(new Set(allKeybinds.map((k) => k.category))).slice(0, 6)];
-      if (kbCats) {
-        kbCats.innerHTML = topCats
-          .map(
-            (c) =>
-              `<button type="button" class="sbtn ${c === "All" ? "on" : ""}" data-kbcat="${c}">${c}</button>`
-          )
-          .join("");
-        $$("[data-kbcat]", kbCats).forEach((btn) => {
-          btn.addEventListener("click", () => {
-            activeKbCat = btn.dataset.kbcat || "All";
-            $$("[data-kbcat]", kbCats).forEach((x) => x.classList.toggle("on", x === btn));
-            renderKeybinds();
-          });
+  function loadKeybindsData(data) {
+    allKeybinds = Array.isArray(data)
+      ? data.map((row) => ({
+          ...row,
+          shortcut: sanitizeLabel(formatModShortcut(row)),
+          category: sanitizeLabel(row.category || (row.submap ? `Submap: ${row.submap}` : "Core")),
+          description: sanitizeLabel(row.description)
+        }))
+      : [];
+    const topCats = ["All", ...Array.from(new Set(allKeybinds.map((k) => k.category))).slice(0, 6)];
+    if (kbCats) {
+      kbCats.innerHTML = topCats
+        .map(
+          (c) =>
+            `<button type="button" class="sbtn ${c === "All" ? "on" : ""}" data-kbcat="${c}">${c}</button>`
+        )
+        .join("");
+      $$("[data-kbcat]", kbCats).forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activeKbCat = btn.dataset.kbcat || "All";
+          $$("[data-kbcat]", kbCats).forEach((x) => x.classList.toggle("on", x === btn));
+          renderKeybinds();
         });
-      }
-      renderKeybinds();
-    })
-    .catch(() => {
-      if (kbTbody) {
-        kbTbody.innerHTML = `<tr><td colspan="3" style="color:var(--ink-muted)">Run ./bin/serve-site to load keybinds.json.</td></tr>`;
-      }
-    });
+      });
+    }
+    renderKeybinds();
+  }
+
+  if (Array.isArray(window.__INLINE_KEYBINDS__)) {
+    loadKeybindsData(window.__INLINE_KEYBINDS__);
+  } else {
+    fetch("keybinds.json")
+      .then((r) => r.json())
+      .then(loadKeybindsData)
+      .catch(() => {
+        if (kbTbody) {
+          kbTbody.innerHTML = `<tr><td colspan="3" style="color:var(--ink-muted)">Run ./bin/serve-site to load keybinds.json.</td></tr>`;
+        }
+      });
+  }
 
   kbSearch?.addEventListener("input", renderKeybinds);
 
