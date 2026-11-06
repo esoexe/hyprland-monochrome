@@ -27,7 +27,7 @@
         "mpris"
     ],
     "modules-right": [
-        "cpu",
+        "custom/sysgraph",
         "memory",
         "temperature",
         "custom/updates",
@@ -111,18 +111,27 @@
     },
 
     // ── Right ─────────────────────────────────────────────────────────────
+    "custom/sysgraph": {
+        "exec": "~/.config/waybar/scripts/sysgraph.sh",
+        "return-type": "json",
+        "interval": 2,
+        "format": "{}",
+        "on-click": "~/.config/hypr/scripts/scratchpad.sh btop",
+        "on-click-right": "~/.config/hypr/scripts/doctor.sh --rofi"
+    },
+
     "cpu": {
         "interval": 3,
         "format": "  {usage}%",
         "tooltip-format": "CPU {usage}% · {load} loads",
-        "on-click": "kitty -e btop"
+        "on-click": "~/.config/hypr/scripts/scratchpad.sh btop"
     },
 
     "memory": {
         "interval": 5,
         "format": "  {percentage}%",
         "tooltip-format": "RAM {used:0.1f}G / {total:0.1f}G\nSwap {swapUsed:0.1f}G / {swapTotal:0.1f}G",
-        "on-click": "kitty -e btop"
+        "on-click": "~/.config/hypr/scripts/scratchpad.sh btop"
     },
 
     // If this module shows an error on your machine, set "hwmon-path" to the

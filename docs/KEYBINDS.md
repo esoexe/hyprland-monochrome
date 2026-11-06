@@ -27,6 +27,8 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + T` | Terminal |
 | `Super + Shift + Enter` | Floating terminal |
 | `Super + Shift + T` | Dropdown terminal (quake style) |
+| `Super + Shift + B` | Floating btop++ telemetry drawer |
+| `Super + '` | Scratchpad Markdown notes (~/Documents/scratch.md) |
 | `Super + D` | App launcher |
 | `Super + Shift + P` | Command palette & live math calculator |
 | `Super + ;` | Command palette (home-row alias) |
@@ -60,6 +62,7 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + G` | Group / ungroup window (tabs) |
 | `Alt + G` | Next tab in window group |
 | `Super + Shift + G` | Lock / unlock window group |
+| `Super + U` | Jump to urgent window |
 | `Alt + Tab` | Next window |
 | `Alt + Shift + Tab` | Previous window |
 
@@ -159,6 +162,15 @@ The **main modifier is `Super`**. Change it in one place:
 | `[CAPTURE] P` | Save 60s instant replay |
 | `[CAPTURE] M` | Open screen recording menu |
 | `[CAPTURE] Escape` | Cancel capture chord |
+| `Ctrl + S` | Enter SCRATCH & SESSION chord (t/b/n/f/w/r) |
+| `[SCRATCH] T` | Toggle dropdown terminal drawer |
+| `[SCRATCH] B` | Toggle btop++ telemetry drawer |
+| `[SCRATCH] N` | Toggle Markdown scratch notes |
+| `[SCRATCH] F` | Toggle quick file drawer |
+| `[SCRATCH] W` | Save current workspace session |
+| `[SCRATCH] R` | Restore saved workspace session |
+| `[SCRATCH] M` | Open workspace session manager |
+| `[SCRATCH] Escape` | Cancel scratch chord |
 
 ## Media & Hardware Keys
 
@@ -168,8 +180,8 @@ The **main modifier is `Super`**. Change it in one place:
 | `XF86AudioLowerVolume` | Volume down |
 | `XF86AudioMute` | Mute the output |
 | `XF86AudioMicMute` | Mute the microphone |
-| `XF86MonBrightnessUp` | Brightness up |
-| `XF86MonBrightnessDown` | Brightness down |
+| `XF86MonBrightnessUp` | Brightness up (OSD) |
+| `XF86MonBrightnessDown` | Brightness down (OSD) |
 | `XF86AudioNext` | Next track |
 | `XF86AudioPrev` | Previous track |
 | `XF86AudioPlay` | Play / pause |

@@ -518,7 +518,10 @@ while :; do
     key="$(choose settings "settings:" \
         "palette$TAB⌘  Command palette & math calculator" \
         "focus$TAB◎  Deep-work focus & Zen mode" \
+        "drawers$TAB▣  Named floating drawers (term / btop / notes)" \
+        "sessions$TAB💾  Workspace session snapshots (save / restore)" \
         "layout$TAB⊞  Tiling layouts & gap presets" \
+        "doctor$TAB✓  System & monochrome theme doctor" \
         "system$TAB󰍹  System information" \
         "network$TAB󰖩  Network" \
         "bluetooth$TAB󰂯  Bluetooth" \
@@ -532,7 +535,10 @@ while :; do
     case "$key" in
         palette)    "$SCRIPTS_DIR/palette.sh"; exit 0 ;;
         focus)      "$SCRIPTS_DIR/focus.sh" menu ;;
+        drawers)    "$SCRIPTS_DIR/scratchpad.sh" menu; exit 0 ;;
+        sessions)   "$SCRIPTS_DIR/workspace-session.sh" menu ;;
         layout)     "$SCRIPTS_DIR/layout.sh" menu ;;
+        doctor)     "$SCRIPTS_DIR/doctor.sh" --rofi ;;
         system)     system_info ;;
         network)    network_menu ;;
         bluetooth)  bluetooth_menu ;;

@@ -17,6 +17,7 @@ case "${1:-}" in --*) set -- "${1#--}" "${@:2}" ;; esac
 
 FOCUS_STATE="$CACHE_DIR/focus.state"
 ZEN_STATE="$CACHE_DIR/zen.state"
+SHARE_STATE="$CACHE_DIR/screenshare-dnd.state"
 
 refresh_bar() {
     pkill -RTMIN+9 -x waybar 2>/dev/null || true
@@ -286,6 +287,21 @@ case "${1:-menu}" in
         if [ -f "$FOCUS_STATE" ]; then cmd_stop; else cmd_start "${2:-25}" "${3:-Deep Work}"; fi ;;
     zen)    cmd_zen ;;
     dnd)    cmd_dnd ;;
+    screenshare-on)
+        if have dunstctl && [ "$(dunstctl is-paused 2>/dev/null)" != "true" ]; then
+            notify "Screen share privacy" "Notifications auto-muted while sharing"
+            sleep 0.15
+            printf 'auto_muted=1\n' > "$SHARE_STATE"
+            dunstctl set-paused true >/dev/null 2>&1 || true
+        fi ;;
+    screenshare-off)
+        if [ -f "$SHARE_STATE" ]; then
+            rm -f "$SHARE_STATE"
+            if [ ! -f "$ZEN_STATE" ] && have dunstctl; then
+                dunstctl set-paused false >/dev/null 2>&1 || true
+                notify "Screen share ended" "Notifications resumed"
+            fi
+        fi ;;
     status) cmd_status "${2:-}" ;;
     *)
         echo "usage: focus.sh {menu|start [mins] [label]|pause|stop|toggle|zen|dnd|status [--waybar]}" >&2

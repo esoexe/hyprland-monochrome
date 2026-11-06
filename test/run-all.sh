@@ -69,7 +69,7 @@ fi
 printf '\n\033[1m3. Lua config\033[0m\n'
 LUAC="$(command -v luac5.4 || command -v luac || true)"
 if [ -n "$LUAC" ]; then
-    for f in .config/hypr/hyprland.lua .config/hypr/modules/*.lua; do
+    for f in .config/hypr/hyprland.lua .config/hypr/modules/*.lua .config/nvim/init.lua .config/nvim/colors/*.lua; do
         if "$LUAC" -p "$f" 2>/dev/null; then green "$f"; else red "$f"; "$LUAC" -p "$f"; fi
     done
 else

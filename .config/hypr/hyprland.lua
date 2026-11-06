@@ -13,6 +13,7 @@
 --    modules/autostart.lua  ← what launches with the session
 --    modules/binds.lua      ← every keybind
 --    modules/rules.lua      ← window + layer rules
+--    modules/smart.lua      ← reactive Lua event hooks (screenshare DND, hotplug)
 --
 --  Reload after a change:  hyprctl reload      (saving the file also reloads)
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -23,6 +24,7 @@ require("modules/appearance")
 require("modules/autostart")
 require("modules/binds")
 require("modules/rules")
+require("modules/smart")
 
 
 -- ─────────────────────────── Environment ───────────────────────────────────
@@ -31,6 +33,7 @@ require("modules/rules")
 hl.env("XCURSOR_SIZE", tostring(user.cursor_size or 24))
 hl.env("HYPRCURSOR_SIZE", tostring(user.cursor_size or 24))
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
+hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 hl.env("MOZ_ENABLE_WAYLAND", "1")
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")

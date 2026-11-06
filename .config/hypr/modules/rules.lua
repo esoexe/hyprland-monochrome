@@ -28,7 +28,7 @@ hl.window_rule({
 
 hl.window_rule({
     name    = "terminal-opacity",
-    match   = { class = "^(kitty|foot|alacritty|dropdown-term|kitty-float)$" },
+    match   = { class = "^(kitty|foot|alacritty|dropdown-term|kitty-float|mono-btop|mono-notes)$" },
     opacity = v(term_op) .. " override 0.85 override",
 })
 
@@ -83,7 +83,7 @@ hl.window_rule({
     size  = { "(monitor_w*0.26)", "(monitor_h*0.26)" },
 })
 
--- ── Scratchpad / dropdown terminal ────────────────────────────────────────
+-- ── Scratchpad / named floating drawers ───────────────────────────────────
 
 hl.window_rule({
     name      = "dropdown-terminal",
@@ -92,6 +92,33 @@ hl.window_rule({
     center    = true,
     size      = { "(monitor_w*0.66)", "(monitor_h*0.45)" },
     workspace = "special:" .. (u.dropdown_name or "dropdown"),
+})
+
+hl.window_rule({
+    name      = "drawer-btop",
+    match     = { class = "^(mono-btop)$" },
+    float     = true,
+    center    = true,
+    size      = { "(monitor_w*0.74)", "(monitor_h*0.68)" },
+    workspace = "special:btop",
+})
+
+hl.window_rule({
+    name      = "drawer-notes",
+    match     = { class = "^(mono-notes)$" },
+    float     = true,
+    center    = true,
+    size      = { "(monitor_w*0.64)", "(monitor_h*0.62)" },
+    workspace = "special:notes",
+})
+
+hl.window_rule({
+    name      = "drawer-files",
+    match     = { class = "^(mono-files)$" },
+    float     = true,
+    center    = true,
+    size      = { "(monitor_w*0.70)", "(monitor_h*0.64)" },
+    workspace = "special:files",
 })
 
 -- ── App specifics ─────────────────────────────────────────────────────────

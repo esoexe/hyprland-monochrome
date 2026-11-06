@@ -295,13 +295,21 @@ if [ "$DRY_RUN" = "0" ]; then
     ok "Scripts marked executable"
 fi
 
-# ── Personalise: browser ──────────────────────────────────────────────────
+# ── Personalise: browser & Qt palette path ───────────────────────────────
 USER_LUA="$CONFIG_DIR/hypr/modules/user.lua"
-if [ -n "$DETECTED_BROWSER" ] && [ -f "$USER_LUA" ] && [ "$DRY_RUN" = "0" ]; then
+if [ -n "$DETECTED_BROWSER" ] && [ -f "$USER_LUA" ] && [ "$DRY_RUN" = "0" ] && [ ! -L "$USER_LUA" ]; then
     if grep -q 'browser      = "firefox"' "$USER_LUA" 2>/dev/null || grep -q 'browser = "firefox"' "$USER_LUA" 2>/dev/null; then
         sed -i -E "s|^( *browser *)= *\"firefox\"|\1= \"$DETECTED_BROWSER\"|" "$USER_LUA"
         ok "Set your browser to '$DETECTED_BROWSER' in modules/user.lua"
     fi
+fi
+
+if [ "$DRY_RUN" = "0" ]; then
+    for qtc in "$CONFIG_DIR/qt5ct/qt5ct.conf" "$CONFIG_DIR/qt6ct/qt6ct.conf"; do
+        if [ -f "$qtc" ] && [ ! -L "$qtc" ]; then
+            sed -i "s|~/.config|$CONFIG_DIR|g" "$qtc" 2>/dev/null || true
+        fi
+    done
 fi
 
 # ── A leftover hyprlang config? ───────────────────────────────────────────

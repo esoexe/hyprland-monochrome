@@ -334,6 +334,262 @@ def silk_ribbon(w, h):
     return img
 
 
+def singularity(w, h):
+    """Relativistic black-hole accretion disc with gravitational lensing halo."""
+    k = h / 1080.0
+    rng = random.Random(1107)
+    img = _canvas(w, h, 5)
+
+    # Subtle distant starfield
+    stars = Image.new("L", (w, h), 0)
+    sd = ImageDraw.Draw(stars)
+    for _ in range(220):
+        sx = rng.randrange(w)
+        sy = rng.randrange(h)
+        lum = rng.randint(35, 135)
+        rad = max(1, int((0.8 if lum < 105 else 1.5) * k))
+        sd.ellipse((sx - rad, sy - rad, sx + rad, sy + rad), fill=lum)
+    img = ImageChops.add(img, stars.filter(ImageFilter.GaussianBlur(0.6 * k)))
+
+    cx, cy = int(w * 0.52), int(h * 0.50)
+    r0 = h * 0.195
+
+    # Gravitationally lensed upper & lower relativistic arches (behind shadow)
+    halo = Image.new("L", (w, h), 0)
+    hd = ImageDraw.Draw(halo)
+    for i in range(28, 0, -1):
+        t = i / 28.0
+        rr = r0 * (1.0 + 0.85 * t)
+        val = int(88 * (1.0 - t) ** 2.1)
+        hd.ellipse((cx - rr * 1.18, cy - rr * 1.04, cx + rr * 1.18, cy + rr * 1.04), fill=val)
+    # Bright lensed upper & lower Einstein arcs
+    for mult, lum in ((1.06, 185), (1.13, 130), (1.22, 75)):
+        rr = r0 * mult
+        hd.ellipse((cx - rr * 1.08, cy - rr * 1.03, cx + rr * 1.08, cy + rr * 1.03),
+                   outline=lum, width=max(2, int(5.5 * k)))
+    halo = halo.filter(ImageFilter.GaussianBlur(14 * k))
+    img = ImageChops.add(img, halo)
+
+    # Back half of tilted accretion disc (occluded by event horizon shadow)
+    diag = int(math.hypot(w, h))
+    disc_bg = Image.new("L", (diag, diag), 0)
+    dbd = ImageDraw.Draw(disc_bg)
+    dc = diag // 2
+    for ring in range(46):
+        f = ring / 45.0
+        rx = r0 * (1.14 + f * 2.10)
+        ry = rx * 0.16
+        lum = int(195 * math.sin(math.pi * min(1.0, f * 1.4)) * math.exp(-f * 1.45))
+        if ring % 5 == 0:
+            lum = max(0, lum - 34)
+        dbd.arc((dc - rx, dc - ry, dc + rx, dc + ry), start=180, end=360,
+                fill=lum, width=max(2, int(3.0 * k)))
+    disc_bg = disc_bg.filter(ImageFilter.GaussianBlur(2.6 * k)).rotate(14, resample=Image.Resampling.BICUBIC)
+    ox, oy = cx - dc, cy - dc
+    img = ImageChops.add(img, disc_bg.crop((-ox, -oy, w - ox, h - oy)))
+
+    # Pure black event horizon shadow + crisp relativistic photon ring
+    eh = ImageDraw.Draw(img)
+    eh.ellipse((cx - r0 * 1.02, cy - r0 * 0.99, cx + r0 * 1.02, cy + r0 * 0.99), fill=4)
+
+    ring_layer = Image.new("L", (w, h), 0)
+    rd = ImageDraw.Draw(ring_layer)
+    rd.ellipse(
+        (cx - r0 * 1.035, cy - r0 * 1.005, cx + r0 * 1.035, cy + r0 * 1.005),
+        outline=238,
+        width=max(2, int(2.4 * k)),
+    )
+    img = ImageChops.add(img, ring_layer.filter(ImageFilter.GaussianBlur(1.4 * k)))
+
+    # Foreground half ONLY (smooth continuous Doppler gradient across 0..180 deg)
+    fg = Image.new("L", (diag, diag), 0)
+    fgd = ImageDraw.Draw(fg)
+    for ring in range(44):
+        f = ring / 43.0
+        rx = r0 * (1.12 + f * 2.15)
+        ry = rx * 0.145
+        base = 246 * math.exp(-f * 1.42) * (0.58 + 0.42 * math.sin(f * 16.0) ** 2)
+        if ring % 6 == 0:
+            base *= 0.62
+        for seg in range(18):
+            a0 = -4.0 + seg * 10.4
+            a1 = a0 + 11.2
+            mid = math.radians((a0 + a1) * 0.5)
+            # Smooth cosine Doppler boost toward left limb (180 deg)
+            doppler = 0.92 - 0.24 * math.cos(mid)
+            lum = max(0, min(254, int(base * doppler)))
+            fgd.arc((dc - rx, dc - ry, dc + rx, dc + ry), start=a0, end=a1,
+                    fill=lum, width=max(2, int(2.8 * k)))
+    fg = fg.filter(ImageFilter.GaussianBlur(1.6 * k)).rotate(14, resample=Image.Resampling.BICUBIC)
+    img = ImageChops.add(img, fg.crop((-ox, -oy, w - ox, h - oy)))
+    return img
+
+
+def liquid_mercury(w, h):
+    """Domain-warped ferrofluid / brushed liquid chrome with Blinn-Phong lighting."""
+    gw = min(560, max(360, w // 4))
+    gh = max(202, int(gw * h / w))
+    z = [0.0] * (gw * gh)
+
+    for j in range(gh):
+        v = (j / gh) * 3.4 - 1.7
+        row = j * gw
+        for i in range(gw):
+            u = (i / gw) * 6.0 - 3.0
+            qx = math.sin(1.45 * u + 1.35 * math.cos(1.30 * v + 0.5))
+            qy = math.cos(1.35 * v - 1.25 * math.sin(1.40 * u - 0.3))
+            rx = math.sin(2.10 * u + 1.85 * qx + 0.75 * math.sin(2.6 * v + 1.5 * qy))
+            ry = math.cos(2.05 * v - 1.75 * qy + 0.65 * math.cos(2.4 * u - 1.3 * qx))
+            z[row + i] = 0.62 * rx + 0.38 * ry + 0.18 * math.sin(4.4 * u + 3.2 * ry)
+
+    buf = bytearray(gw * gh)
+    # Key light from upper-left + subtle rim from lower-right
+    lx, ly, lz = -0.52, -0.60, 0.61
+    hx, hy, hz = -0.28, -0.34, 0.90  # half-vector with viewer (0,0,1)
+    scale_n = 28.0 / (6.0 / gw) * (1.0 / gw) * 9.5
+
+    for j in range(gh):
+        jm = max(0, j - 1) * gw
+        jp = min(gh - 1, j + 1) * gw
+        row = j * gw
+        vy = (j / gh) - 0.5
+        for i in range(gw):
+            im = max(0, i - 1)
+            ip = min(gw - 1, i + 1)
+            dzdx = (z[row + ip] - z[row + im]) * scale_n
+            dzdy = (z[jp + i] - z[jm + i]) * scale_n
+            inv = 1.0 / math.sqrt(dzdx * dzdx + dzdy * dzdy + 1.0)
+            nx, ny, nz = -dzdx * inv, -dzdy * inv, inv
+
+            diff = max(0.0, nx * lx + ny * ly + nz * lz)
+            rim = max(0.0, nx * 0.55 + ny * 0.58 + nz * 0.25)
+            ndoth = max(0.0, nx * hx + ny * hy + nz * hz)
+            spec = (ndoth ** 26) * 215.0 + (ndoth ** 6) * 44.0
+
+            ux = (i / gw) - 0.5
+            vig = max(0.28, 1.0 - 0.85 * (ux * ux + vy * vy * 1.35))
+            val = (7.0 + 34.0 * (diff ** 1.6) + 18.0 * (rim ** 3.0) + spec) * vig
+            buf[row + i] = max(6, min(246, int(val)))
+
+    base = Image.frombytes("L", (gw, gh), bytes(buf))
+    return base.resize((w, h), resample=Image.Resampling.BICUBIC)
+
+
+def rain_noir(w, h):
+    """Shallow-depth-of-field silver bokeh & midnight rain streaks on dark glass."""
+    k = h / 1080.0
+    rng = random.Random(1309)
+
+    # Smooth vertical dusk ramp
+    col = Image.new("L", (1, h))
+    for y in range(h):
+        t = y / max(1, h - 1)
+        v = 7 + 20 * math.exp(-((t - 0.58) / 0.28) ** 2)
+        col.putpixel((0, y), int(v))
+    img = col.resize((w, h), resample=Image.Resampling.BILINEAR)
+
+    # Three depth planes of monochrome optical bokeh
+    specs = [
+        (16, 46, 98, 22, 46, 30.0),   # far soft orbs
+        (22, 20, 52, 26, 62, 11.0),   # mid bokeh with optical rim
+        (18,  8, 22, 34, 88,  4.0),   # near crisp silver discs
+    ]
+    for count, rmin, rmax, lmin, lmax, blur_r in specs:
+        layer = Image.new("L", (w, h), 0)
+        ld = ImageDraw.Draw(layer)
+        for _ in range(count):
+            cx = int(rng.uniform(0.04, 0.96) * w)
+            cy = int(rng.gauss(0.56, 0.20) * h)
+            cy = max(int(0.08 * h), min(int(0.92 * h), cy))
+            rad = rng.uniform(rmin, rmax) * k
+            lum = rng.randint(lmin, lmax)
+            ld.ellipse((cx - rad, cy - rad, cx + rad, cy + rad), fill=int(lum * 0.58))
+            ld.ellipse(
+                (cx - rad, cy - rad, cx + rad, cy + rad),
+                outline=min(235, int(lum * 1.28)),
+                width=max(1, int(2.0 * k)),
+            )
+        img = ImageChops.add(img, layer.filter(ImageFilter.GaussianBlur(blur_r * k)))
+
+    # Crisp glass rain streaks & micro-droplets
+    rain = Image.new("L", (w, h), 0)
+    rd = ImageDraw.Draw(rain)
+    for _ in range(130):
+        x0 = rng.uniform(0, w)
+        y0 = rng.uniform(0, h * 0.92)
+        ln = rng.uniform(28, 135) * k
+        dx = ln * -0.09
+        lum = rng.randint(14, 48)
+        rd.line([(x0, y0), (x0 + dx, y0 + ln)], fill=lum, width=max(1, int(1.1 * k)))
+        if lum > 34:
+            dr = max(1, int(1.6 * k))
+            rd.ellipse((x0 + dx - dr, y0 + ln - dr, x0 + dx + dr, y0 + ln + dr), fill=min(155, lum * 2))
+    img = ImageChops.add(img, rain.filter(ImageFilter.GaussianBlur(0.65 * k)))
+    return img
+
+
+def bauhaus_geo(w, h):
+    """Swiss / Dieter Rams architectural geometry: balanced circles & hairline arcs."""
+    k = h / 1080.0
+    img = _canvas(w, h, 10)
+
+    # Subtle radial studio backdrop glow
+    glow = Image.new("L", (w, h), 0)
+    gd = ImageDraw.Draw(glow)
+    cx, cy = int(w * 0.50), int(h * 0.50)
+    for i in range(20, 0, -1):
+        t = i / 20.0
+        rr = h * 0.62 * t
+        gd.ellipse((cx - rr * 1.3, cy - rr, cx + rr * 1.3, cy + rr), fill=int(18 * (1.0 - t)))
+    img = ImageChops.add(img, glow.filter(ImageFilter.GaussianBlur(30 * k)))
+
+    d = ImageDraw.Draw(img)
+    hw = max(1, int(round(1.25 * k)))
+
+    # Precision horizon & golden-ratio axes
+    hy = int(h * 0.56)
+    gx = int(w * 0.618)
+    d.line([(int(w * 0.08), hy), (int(w * 0.92), hy)], fill=34, width=hw)
+    d.line([(gx, int(h * 0.12)), (gx, int(h * 0.88))], fill=28, width=hw)
+
+    # Tonal stepped sphere at golden-ratio intersection
+    R = int(h * 0.27)
+    sphere = Image.new("L", (2 * R + 4, 2 * R + 4), 0)
+    sd = ImageDraw.Draw(sphere)
+    for y in range(2 * R):
+        t = y / max(1, 2 * R - 1)
+        chord = math.sqrt(max(0.0, 1.0 - (2.0 * t - 1.0) ** 2))
+        x0 = int(R * (1.0 - chord)) + 2
+        x1 = int(R * (1.0 + chord)) + 2
+        val = int(175 * (1.0 - t) ** 1.35 + 16)
+        sd.line([(x0, y + 2), (x1, y + 2)], fill=val)
+    # Mask lower half into crisp Bauhaus horizontal louvers
+    for y in range(R, 2 * R, max(3, int(9 * k))):
+        for k_row in range(max(1, int(4 * k))):
+            if y + k_row < 2 * R + 2:
+                sd.line([(0, y + k_row + 2), (2 * R + 3, y + k_row + 2)], fill=0)
+    img = ImageChops.add(img, _paste_centered(w, h, sphere, int(w * 0.44), int(h * 0.48)))
+    d = ImageDraw.Draw(img)
+
+    # Outer compass construction rings & counterpoint disc
+    for mult, col_val in ((1.0, 96), (1.34, 48), (1.68, 30)):
+        rr = int(R * mult)
+        ox, oy = int(w * 0.44), int(h * 0.48)
+        d.ellipse((ox - rr, oy - rr, ox + rr, oy + rr), outline=col_val, width=hw)
+
+    r_small = int(h * 0.048)
+    sx, sy = gx, int(h * 0.48 - R * 0.72)
+    d.ellipse((sx - r_small, sy - r_small, sx + r_small, sy + r_small), fill=232)
+    d.ellipse((gx - int(8 * k), hy - int(8 * k), gx + int(8 * k), hy + int(8 * k)), fill=10, outline=175, width=hw)
+    return img
+
+
+def _paste_centered(w, h, patch, cx, cy):
+    layer = Image.new("L", (w, h), 0)
+    layer.paste(patch, (cx - patch.width // 2, cy - patch.height // 2))
+    return layer
+
+
 DESIGNS = [
     ("mono-01", gradient_mesh, "soft gradient — the default wallpaper"),
     ("mono-02", ripple, "concentric rings"),
@@ -345,6 +601,10 @@ DESIGNS = [
     ("mono-08", ridgeline, "topographic horizon ridges"),
     ("mono-09", monoliths, "architectural monoliths"),
     ("mono-10", silk_ribbon, "caustic silver silk ribbon"),
+    ("mono-11", singularity, "gravitational lensing singularity"),
+    ("mono-12", liquid_mercury, "specular liquid mercury ferrofluid"),
+    ("mono-13", rain_noir, "midnight glass bokeh & rain"),
+    ("mono-14", bauhaus_geo, "Swiss architectural geometry"),
 ]
 
 
@@ -384,7 +644,7 @@ def main() -> int:
     if wrote == 0:
         names = ", ".join(d[0] for d in DESIGNS)
         print(f"Nothing generated: --only {only!r} matches no design.", file=sys.stderr)
-        print(f"Known designs: {names}  (also accepts 1-10)", file=sys.stderr)
+        print(f"Known designs: {names}  (also accepts 1-14)", file=sys.stderr)
         return 1
     print("Done.")
     return 0

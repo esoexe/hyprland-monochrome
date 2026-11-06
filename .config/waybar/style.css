@@ -58,6 +58,7 @@ window#waybar {
 #tray,
 #mpris,
 #custom-launcher,
+#custom-sysgraph,
 #custom-settings,
 #custom-power,
 #window,
@@ -68,13 +69,13 @@ window#waybar {
 }
 
 /* Soft hover: the icon grows a touch and brightens — no colour, just light. */
-#cpu, #memory, #temperature, #custom-updates, #network, #bluetooth,
+#cpu, #custom-sysgraph, #memory, #temperature, #custom-updates, #network, #bluetooth,
 #pulseaudio, #battery, #clock, #mpris, #custom-launcher,
 #custom-settings, #custom-power {
     transition: opacity .15s ease, color .15s ease, background-color .15s ease;
 }
 
-#cpu:hover, #memory:hover, #temperature:hover, #custom-updates:hover,
+#cpu:hover, #custom-sysgraph:hover, #memory:hover, #temperature:hover, #custom-updates:hover,
 #network:hover, #bluetooth:hover, #pulseaudio:hover, #battery:hover,
 #clock:hover, #mpris:hover, #custom-launcher:hover,
 #custom-settings:hover {

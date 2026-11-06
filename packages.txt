@@ -67,6 +67,7 @@ fzf                      # fuzzy finder (Ctrl+R history, Ctrl+T files)
 jq                       # JSON parsing for the scripts below
 fastfetch                # system info
 btop                     # resource monitor
+neovim                   # zero-plugin monochrome editor & scratchpad notes
 libnotify                # notify-send
 xdg-utils                # xdg-open
 
@@ -79,6 +80,8 @@ noto-fonts-emoji
 
 # ───────────────────────────── Theming / tools ────────────────────────────
 nwg-look                 # GTK settings GUI
+qt5ct                    # Qt5 monochrome palette engine
+qt6ct                    # Qt6 monochrome palette engine
 papirus-icon-theme       # monochrome-friendly icon set
 brightnessctl            # backlight control
 playerctl                # media keys / now-playing in the bar

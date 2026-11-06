@@ -30,14 +30,15 @@ Kitty · Thunar · Zsh + Starship · dunst · cliphist · PipeWire · NetworkMan
 
 | | |
 | --- | --- |
-| **Hyprland** | Lua 0.55+ tiling (`dwindle`, `master`, `scrolling`), modal chords (`RESIZE` & `CAPTURE`), monochrome window-group tab bars, vim-style focus, scratchpad, dropdown terminal, per-app window rules |
-| **Command Palette** | `Super + Shift + P` (or `Super + ;`): Raycast/Linear-style omnibar for jumping to open windows across workspaces, triggering focus/layout/capture actions, quick-editing configs, and evaluating live math/hex expressions (`= (15360*8640)/1e6`) |
+| **Hyprland & Reactive Lua** | Lua 0.55+/0.56 tiling (`dwindle`, `master`, `scrolling`), modal chords (`RESIZE`, `CAPTURE`, `SCRATCH`), monochrome group tab bars, and **in-compositor `hl.on` reactive hooks (`smart.lua`)** — auto-mutes notifications during screen-sharing, recovers hot-plugged monitors, and alerts on urgent background windows (`Super + U`) |
+| **Command Palette** | `Super + Shift + P` (or `Super + ;`): Raycast/Linear-style omnibar for jumping to open windows across workspaces, toggling named drawers, saving/restoring workspace sessions, running the System Doctor, and evaluating live math/hex expressions (`= (15360*8640)/1e6`) |
+| **Named Drawers & Sessions** | `Super + Shift + T` (dropdown terminal), `Super + Shift + B` (floating `btop++` monitor), `Super + '` (instant `~/Documents/scratch.md` in Neovim), plus `Super + Ctrl + S` (`SCRATCH` chord) and **Workspace Session Snapshots** (`workspace-session.sh save` / `restore`) |
 | **Focus & Zen** | `Super + Z` enters distraction-free **Zen Mode** (hides Waybar, frames the active window with 28px obsidian margins, mutes Dunst); `Super + Shift + Z` runs Pomodoro / Deep-Work sprints with a live inverted Waybar pill (`◎ 24:58`) |
 | **Layouts & Gaps** | `Super + \` cycles `Dwindle` → `Master` → `Scrolling` on the fly; `Super + Shift + \` switches gap presets (`Default`, `Compact`, `Airy` gallery, `Zero` monocle) |
-| **Waybar** | Frosted glass pill groups, active-inverted workspaces, live `RESIZE`/`CAPTURE` submap pill, `custom/focus` Pomodoro pill, `custom/recording` dot + timer, MPRIS now-playing, CPU/RAM/temp, updates, network, Bluetooth, volume, battery, tray, calendar |
-| **Rofi & GTK** | Unified 16px monochrome Rofi suite with contextual hint bars + custom GTK3/GTK4 `gtk.css` overrides eliminating Adwaita's blue highlights in Thunar and dialogs |
-| **Settings menu** | `Super + I`: Command Palette, Focus/Zen, Layouts/Gaps, System Info, Network, Bluetooth, Monitors (writes `monitors-user.lua`), Sound, Night Shift, Capture/OCR, and config shortcuts |
-| **Wallpapers** | `Super + W`: 3×2 visual gallery, random/next/prev, solid colours, login restore. **10 procedural monochrome designs** (`mono-01`..`mono-10`: Solar Eclipse, Caustic Silk Ribbon, Alpine Ridgeline, Brutalist Monoliths, Horizon Mist…), scalable to any resolution incl. bundled 4K `mono-07` & 16K `mono-06` |
+| **Waybar** | Frosted glass pill groups, active-inverted workspaces, **live Unicode CPU micro-sparkline (`▁▂▄▆▃▂ 14%`)**, `RESIZE`/`CAPTURE`/`SCRATCH` submap pill, `custom/focus` Pomodoro pill, `custom/recording` dot + timer, MPRIS now-playing, RAM/temp, updates, network, Bluetooth, volume, battery, tray, calendar |
+| **Full-Stack Monochrome** | **7/7 toolkits themed strictly greyscale (`R == G == B`)**: GTK3/GTK4 (`gtk.css`), **Qt5 & Qt6 (`qt5ct`/`qt6ct` 21-slot Fusion palette)**, **zero-plugin typographic Neovim (`monochrome.lua`)**, Kitty, Rofi, Waybar, Dunst progress-bar OSDs (`volume.sh` + `brightness.sh`), and a redesigned Swiss-watch `hyprlock` with live MPRIS now-playing |
+| **Settings & Doctor** | `Super + I`: Command Palette, Focus/Zen, Named Drawers, Workspace Sessions, Layouts/Gaps, **System & Monochrome Theme Doctor (`doctor.sh`)**, System Info, Network, Bluetooth, Monitors, Sound, Night Shift, Capture/OCR |
+| **Wallpapers** | `Super + W`: 3×2 visual gallery, random/next/prev, solid colours, login restore. **14 procedural monochrome designs** (`mono-01`..`mono-14`: **Gravitational Singularity**, **Liquid Mercury**, **Rain & Bokeh Noir**, **Bauhaus Compass**, Solar Eclipse, Caustic Silk Ribbon…), scalable to any resolution incl. 4K `mono-07`/`mono-11` & 16K `mono-06` |
 | **Capture & OCR** | `Super + C` opens the single-chord `CAPTURE` mode (`s` region, `f` full, `w` window, `o` **Tesseract OCR → clipboard**, `e` **Satty/Swappy annotate**, `r` record, `p` 60s instant replay) — plus `Print` keybinds |
 | **Recording** | `Super + Alt + Print` starts/stops screen recording (`gpu-screen-recorder` with 60s replay buffer, automatic `wf-recorder` fallback); live `●` timer in Waybar |
 | **Idle & light** | hypridle (dim → lock → screen off → suspend) and hyprsunset (automatic blue-light filter, `Super + Shift + N` to toggle) |
@@ -112,7 +113,9 @@ built from your live config.
 | `Super + E` | File manager (monochrome GTK) | | `Super + R` | **`RESIZE` chord** (`h/j/k/l`, `1-3/0` gaps) |
 | `Super + B` | Browser | | `Super + C` | **`CAPTURE` chord** (`s/f/w/o/e/r/p/m`) |
 | `Super + I` | Settings menu | | `Super + \` / `Super + Shift + \` | **Cycle layout / gap presets** |
-| `Super + W` | Wallpaper studio (10 designs) | | `Super + F` / `Super + Shift + F` | Fullscreen / Maximize |
+| `Super + W` | Wallpaper studio (14 designs) | | `Super + F` / `Super + Shift + F` | Fullscreen / Maximize |
+| `Super + Shift + B` | **Floating `btop++` drawer** | | `Super + '` | **Scratch Markdown notes (`nvim`)** |
+| `Super + Ctrl + S` | **`SCRATCH` & Session chord** | | `Super + U` | **Jump to urgent window** |
 | `Super + V` | Clipboard history | | `Super + Space` | Floating (centred) |
 | `Super + O` | Cycle window opacity | | `Super + G` / `Super + Alt + G` | Group windows / next tab |
 | `Super + /` | Interactive shortcut launcher | | `Super + 1..0` | Switch workspace |
@@ -140,14 +143,15 @@ resize with `Super + Ctrl + H/J/K/L`, drag with `Super + left mouse`, resize wit
 │   ├── monitors.lua          monitor layout (+ monitors-user.lua from the settings menu)
 │   ├── appearance.lua        borders, blur, animations, input devices
 │   ├── autostart.lua         what starts with the session
-│   ├── binds.lua             every keybind, commented
-│   └── rules.lua             window + layer rules
-└── scripts/                  bash that powers the menus and the desktop
+│   ├── binds.lua             every keybind + RESIZE / CAPTURE / SCRATCH chords
+│   ├── rules.lua             window + layer + named drawer rules
+│   └── smart.lua             reactive hl.on() event hooks (screenshare DND, hotplug)
+└── scripts/                  bash that powers the menus, drawers, sessions & doctor
 ```
 
 Everything else is where you would expect it: `~/.config/waybar`, `~/.config/rofi`,
-`~/.config/kitty`, `~/.config/dunst`, `~/.config/starship.toml`, `~/.config/btop`,
-`~/.config/fastfetch`, `~/.zshrc`.
+`~/.config/kitty`, `~/.config/nvim`, `~/.config/gtk-{3,4}.0`, `~/.config/qt{5,6}ct`,
+`~/.config/dunst`, `~/.config/starship.toml`, `~/.config/btop`, `~/.config/fastfetch`, `~/.zshrc`.
 
 Config files are hot-reloaded when you save them (`hyprctl reload` does it by hand).
 After editing `binds.lua`, refresh the docs with `python3 tools/keybind-table.py`.

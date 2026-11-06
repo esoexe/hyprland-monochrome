@@ -270,18 +270,23 @@ cat > "$WORK/scene3.sh" <<'EOF'
 B=$'\033[1m'; D=$'\033[2m'; G=$'\033[32m'; R=$'\033[0m'
 show_cmd() { printf '\n%smono%s %s$%s %s%s%s\n' "$D" "$R" "$G" "$R" "$B" "$1" "$R"; sleep 0.35; }
 
-printf '%s▎ Studio Wallpapers, Pure-Monochrome GTK3, Live OCR, Zen & Recorder%s\n' "$B" "$R"
-sleep 0.6
+printf '%s▎ 3.0 Studio Edition · Doctor, Sessions, 14 Wallpapers, OCR & Zen%s\n' "$B" "$R"
+sleep 0.5
 
-show_cmd 'ls -1 ~/Pictures/Wallpapers/   # 10 procedural designs up to 16K'
-ls -1 "$HOME/Pictures/Wallpapers/"
-# Wait while 3x2 Wallpaper Studio switches across Silk Ribbon & Solar Eclipse
+show_cmd '~/.config/hypr/scripts/doctor.sh   # 7/7 monochrome toolkits audited'
+~/.config/hypr/scripts/doctor.sh
+# Wait while 3x2 Wallpaper Studio switches across Singularity & Liquid Mercury
 while [ ! -f "$WORK/wall.done" ]; do sleep 0.2; done
 sleep 0.4
 
+show_cmd '~/.config/hypr/scripts/workspace-session.sh save studio && ~/.config/hypr/scripts/workspace-session.sh list'
+~/.config/hypr/scripts/workspace-session.sh save studio
+~/.config/hypr/scripts/workspace-session.sh list
+sleep 0.9
+
 show_cmd 'MONO_SLURP_GEOM="20,60 780x360" ~/.config/hypr/scripts/screenshot.sh ocr'
 MONO_SLURP_GEOM="20,60 780x360" ~/.config/hypr/scripts/screenshot.sh ocr | head -4
-sleep 1.1
+sleep 1.0
 
 show_cmd '~/.config/hypr/scripts/focus.sh zen   # hides bar & frames workspace (28px)'
 ~/.config/hypr/scripts/focus.sh zen
@@ -313,7 +318,7 @@ sleep 0.35
 bash test/install-sandbox.sh | sed "s|/tmp/tmp\.[^/ ]*|/tmp/sandbox|g"
 sleep 1.5
 
-printf '\n%s▎ 2/2 · Full repository verification — 9 suites / 122 smoke checks (test/run-all.sh)%s\n' "$B$C" "$R"
+printf '\n%s▎ 2/2 · Full repository verification — 9 suites / 143 smoke checks (test/run-all.sh)%s\n' "$B$C" "$R"
 printf '%smono%s %s$%s %sbash test/run-all.sh%s\n' "$D" "$R" "$G" "$R" "$B" "$R"
 sleep 0.35
 bash test/run-all.sh
@@ -324,7 +329,7 @@ chmod +x "$WORK/scene3.sh" "$WORK/scene4.sh"
 
 RAW_MKV="$WORK/raw.mkv"
 
-printf '==> Booting headless 1920x1080 Wayland session and recording 2.0 walkthrough…\n'
+printf '==> Booting headless 1920x1080 Wayland session and recording 3.0 walkthrough…\n'
 
 # Note: GTK_THEME is intentionally NOT set so GTK3 reads ~/.config/gtk-3.0/settings.ini
 # AND layers our monochrome ~/.config/gtk-3.0/gtk.css override cleanly on top!
@@ -353,8 +358,8 @@ dbus-run-session -- bash -c '
     export SWAYSOCK
     export DISPLAY=:0
 
-    # Start on the new 4K Solar Eclipse design (mono-07-4k.jpg) + Waybar + Dunst
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-07-4k.jpg" >/dev/null 2>&1
+    # Start on the new 4K Gravitational Singularity design (mono-11-4k.jpg) + Waybar + Dunst
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-11-4k.jpg" >/dev/null 2>&1
     waybar >"$WORK/waybar.log" 2>&1 </dev/null &
     printf "%s\n" "$!" >> "$WORK/pids"
     dunst -config ~/.config/dunst/dunstrc >"$WORK/dunst.log" 2>&1 </dev/null &
@@ -373,15 +378,23 @@ dbus-run-session -- bash -c '
         done
     }
 
-    # ── Scene 1: Workspace 1 — Zsh + Starship + fastfetch + btop + Pomodoro ──
+    # ── Scene 1: Workspace 1 — Zsh + Starship + Monochrome Neovim + btop + Pomodoro ──
     ~/.config/hypr/scripts/focus.sh start 25 "Deep Work" >/dev/null 2>&1
     foot -c "$WORK/foot.ini" -D "$REPO" -e zsh >/dev/null 2>&1 </dev/null &
     W1_T1=$!; printf "%s\n" "$W1_T1" >> "$WORK/pids"
-    sleep 1.7
+    sleep 1.4
+
+    if command -v nvim >/dev/null 2>&1; then
+        foot -c "$WORK/foot.ini" -D "$REPO" -e nvim -R .config/hypr/modules/smart.lua >/dev/null 2>&1 </dev/null &
+        W1_NV=$!
+        sleep 2.3
+        kill "$W1_NV" 2>/dev/null || true
+        sleep 0.3
+    fi
 
     foot -c "$WORK/foot.ini" -e btop >/dev/null 2>&1 </dev/null &
     W1_T2=$!; printf "%s\n" "$W1_T2" >> "$WORK/pids"
-    sleep 2.2
+    sleep 2.0
 
     # ── Scene 2: Command Palette (Super+Shift+P), Live Math, Keybinds & RESIZE ──
     ~/.config/hypr/scripts/palette.sh >/dev/null 2>&1 </dev/null &
@@ -447,20 +460,20 @@ dbus-run-session -- bash -c '
     wait "$RF" 2>/dev/null || true
     sleep 1.2
 
-    # Close Thunar window so Silk Ribbon & Zen Mode framing shine unobstructed!
+    # Close Thunar window so Liquid Mercury & Zen Mode framing shine unobstructed!
     swaymsg "[app_id=thunar] kill" >/dev/null 2>&1 || kill "$W2_TH" 2>/dev/null || true
     sleep 0.8
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-10.jpg" >/dev/null 2>&1
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-12.jpg" >/dev/null 2>&1
     sleep 0.8
     touch "$WORK/wall.done"
 
     while [ ! -f "$WORK/s3.done" ]; do sleep 0.2; done
 
-    # ── Scene 4: Workspace 3 — Full Automated 122-Check Verification Live ────
+    # ── Scene 4: Workspace 3 — Full Automated 143-Check Verification Live ────
     swaymsg "workspace number 3" >/dev/null
     sleep 0.35
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-08.jpg" >/dev/null 2>&1
-    notify-send -a mono "Workspace 3 · Verification" "Running install-sandbox.sh & 122-check run-all.sh"
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-14.jpg" >/dev/null 2>&1
+    notify-send -a mono "Workspace 3 · Verification" "Running install-sandbox.sh & 143-check run-all.sh"
 
     MONO_NO_BANNER=1 foot -c "$WORK/foot.ini" -D "$REPO" -e "$WORK/scene4.sh" >/dev/null 2>&1 </dev/null &
     W3_T1=$!; printf "%s\n" "$W3_T1" >> "$WORK/pids"

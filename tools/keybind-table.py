@@ -39,6 +39,7 @@ KEY_LABELS = {
     "SLASH": "/",
     "BACKSLASH": "\\",
     "SEMICOLON": ";",
+    "APOSTROPHE": "'",
     "EQUAL": "=",
     "MINUS": "-",
     "PRINT": "Print",

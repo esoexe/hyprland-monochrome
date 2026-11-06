@@ -174,6 +174,7 @@ MODULE_SAMPLE = {
     "hyprland/submap": ("RESIZE", ""),
     "hyprland/window": ("", "~/projects/monochrome — kitty"),
     "mpris": ("󰎈", "Midnight City — M83"),
+    "custom/sysgraph": ("▁▂▄▆▃▂", "14%"),
     "cpu": ("", "12%"),
     "memory": ("", "42%"),
     "temperature": ("", "48°C"),
@@ -201,6 +202,10 @@ WALL_META = {
     "mono-08": ("Alpine Ridgeline", "7-layer silhouette · silver mist"),
     "mono-09": ("Brutalist Monoliths", "Side-lit architectural slabs"),
     "mono-10": ("Caustic Silk Ribbon", "76-strand harmonic silver wave"),
+    "mono-11": ("Gravitational Singularity", "4K relativistic accretion halo & photon ring"),
+    "mono-12": ("Liquid Mercury", "Blinn-Phong specular ferrofluid chrome"),
+    "mono-13": ("Rain & Bokeh Noir", "Shallow-DOF optical bokeh & silver rain"),
+    "mono-14": ("Bauhaus Compass", "Swiss architectural drafting & golden ratio"),
 }
 
 
@@ -214,16 +219,16 @@ def wallpaper_cards() -> tuple[str, str]:
         if not src.exists():
             continue
         with Image.open(src) as im:
-            thumb = im.convert("L").resize((400, 225), Image.Resampling.LANCZOS)
+            thumb = im.convert("L").resize((420, 236), Image.Resampling.LANCZOS)
             buf = io.BytesIO()
             thumb.save(buf, format="JPEG", quality=82)
             uri = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode("ascii")
-        if stem == "mono-07" or not hero_uri:
+        if stem == "mono-11" or not hero_uri:
             hero_uri = uri
         title, desc = WALL_META[stem]
         badge = "16K · 132.7 MP" if (wall_dir / f"{stem}-16k.jpg").exists() else (
                 "4K · UHD" if (wall_dir / f"{stem}-4k.jpg").exists() else "1080p · scalable")
-        active = " active" if stem == "mono-07" else ""
+        active = " active" if stem == "mono-11" else ""
         items.append(
             f'<button type="button" class="wcard{active}" data-uri="{uri}" '
             f'data-title="{html.escape(stem)} — {html.escape(title)}" '
@@ -332,7 +337,46 @@ code{font-family:var(--mono); background:var(--surface-2); border:1px solid var(
       border-radius:10px; padding:9px 14px; font-size:12px}
 .whud b{color:#fff}
 .whud span{color:var(--dim)}
-.wgrid{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:12px}
+.wgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(195px,1fr)); gap:10px; margin-top:12px}
+.simbar{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:16px 0 10px}
+.simbtn{appearance:none; background:var(--surface); border:1px solid var(--line-strong); color:var(--dim);
+        border-radius:8px; padding:5px 11px; font:inherit; font-size:11.5px; cursor:pointer;
+        transition:all .15s ease}
+.simbtn:hover{color:#fff; border-color:#fff}
+.simbtn.on{background:#e6e6e6; color:#080808; border-color:#e6e6e6; font-weight:600}
+.simstage{position:relative; aspect-ratio:16/9; border:1px solid var(--line-strong); border-radius:14px;
+          overflow:hidden; background:#050505; user-select:none}
+.simbg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s ease}
+.simtop{position:absolute; top:8px; left:10px; right:10px; height:28px; display:flex; align-items:center;
+        justify-content:space-between; padding:0 10px; background:rgba(10,10,10,.82);
+        border:1px solid var(--line-strong); border-radius:9px; font-size:11px; transition:transform .22s ease, opacity .22s ease}
+.simstage.zen .simtop{transform:translateY(-42px); opacity:0}
+.simgrid{position:absolute; inset:46px 12px 12px 12px; display:grid; grid-template-columns:1.15fr .85fr;
+         gap:10px; transition:inset .22s ease, gap .22s ease}
+.simstage.zen .simgrid{inset:20px 26px 20px 26px; gap:18px}
+.simstage.airy .simgrid{inset:52px 24px 24px 24px; gap:18px}
+.simstage.compact .simgrid{inset:40px 5px 5px 5px; gap:4px}
+.simstage.zero .simgrid{inset:38px 0 0 0; gap:0}
+.simwin{background:rgba(10,10,10,.84); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.14);
+        border-radius:10px; padding:12px 14px; font-size:11.5px; line-height:1.55; overflow:hidden;
+        display:flex; flex-direction:column; transition:border-radius .2s ease}
+.simstage.zero .simwin{border-radius:0}
+.simwin.focus{border-color:rgba(255,255,255,.68); box-shadow:0 12px 36px rgba(0,0,0,.55)}
+.simtitle{display:flex; justify-content:space-between; color:var(--dim); font-size:10.5px;
+          border-bottom:1px solid var(--line); padding-bottom:6px; margin-bottom:8px}
+.simdrawer{position:absolute; left:14%; right:14%; top:15%; bottom:17%; background:rgba(12,12,12,.94);
+           border:1px solid #e6e6e6; border-radius:12px; padding:14px 16px; box-shadow:0 24px 64px rgba(0,0,0,.82);
+           display:none; flex-direction:column; z-index:4}
+.simdrawer.open{display:flex}
+.simpal{position:absolute; left:20%; right:20%; top:16%; background:rgba(10,10,10,.96);
+        border:1px solid #ffffff; border-radius:12px; padding:12px; box-shadow:0 24px 64px rgba(0,0,0,.88);
+        display:none; flex-direction:column; gap:8px; z-index:5}
+.simpal.open{display:flex}
+.simpal input{width:100%; background:#141414; border:1px solid var(--line-strong); border-radius:8px;
+              color:#fff; font:inherit; font-size:12px; padding:7px 10px; outline:none}
+.simpal ul{list-style:none; margin:0; padding:0; font-size:11.5px; max-height:150px; overflow:auto}
+.simpal li{padding:5px 8px; border-radius:6px; color:var(--text); cursor:pointer}
+.simpal li:first-child,.simpal li:hover{background:#e6e6e6; color:#080808; font-weight:600}
 .wcard{appearance:none; background:var(--surface); border:1px solid var(--line); border-radius:10px;
        padding:0; overflow:hidden; text-align:left; cursor:pointer; color:var(--text); font:inherit;
        transition:border-color .15s ease, transform .15s ease}
@@ -482,12 +526,66 @@ def build() -> str:
   <p class="caption">Vector layout drawn to the real gap, rounding and bar geometry from
   <code>modules/appearance.lua</code> (<code>docs/preview.svg</code>).</p>
 
-  <h3>Procedural Wallpaper Studio — 10 Monochrome Designs (1080p → 16K)</h3>
-  <div class="wstage">
-    <img id="wall-stage-img" src="{hero_wall_uri}" alt="Selected monochrome wallpaper">
-    <div class="whud">
-      <b id="wall-stage-title">mono-07 — Solar Eclipse</b>
-      <span id="wall-stage-desc">4K/16K off-axis corona &amp; rim light · click any design below</span>
+  <h3>Interactive Desktop Simulator &amp; 14-Design Wallpaper Studio (1080p → 16K)</h3>
+  <div class="simbar" id="sim-controls">
+    <span style="color:var(--dim);font-size:11.5px;margin-right:4px">Live controls:</span>
+    <button type="button" class="simbtn on" data-gap="default">Gaps: Default</button>
+    <button type="button" class="simbtn" data-gap="airy">Airy</button>
+    <button type="button" class="simbtn" data-gap="compact">Compact</button>
+    <button type="button" class="simbtn" data-gap="zero">Zero (0px)</button>
+    <button type="button" class="simbtn" id="sim-zen">Zen Mode (Super+Z)</button>
+    <button type="button" class="simbtn" id="sim-drawer">btop++ Drawer (Super+Shift+B)</button>
+    <button type="button" class="simbtn" id="sim-pal-btn">Command Palette (Super+;)</button>
+  </div>
+  <div class="simstage" id="sim-stage">
+    <img class="simbg" id="wall-stage-img" src="{hero_wall_uri}" alt="Selected monochrome wallpaper">
+    <div class="simtop">
+      <div><b style="color:#fff;margin-right:8px">◆</b><span class="ws active">1</span> <span class="ws">2</span> <span class="ws">3</span> <span style="color:var(--dim);margin-left:8px">nvim · modules/smart.lua</span></div>
+      <div style="color:var(--dim)">♫ Midnight City — M83</div>
+      <div><span style="color:#e6e6e6;margin-right:8px">▁▂▄▆▃▂ 14%</span><span style="background:#e6e6e6;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:8px">◎ 24:58</span><b style="color:#fff">21:42</b></div>
+    </div>
+    <div class="simgrid">
+      <div class="simwin focus">
+        <div class="simtitle"><span>NORMAL · ~/.config/hypr/modules/smart.lua</span><span>monochrome.lua</span></div>
+        <div style="color:#686868;font-style:italic">-- Reactive Lua engine (zero-polling event hooks)</div>
+        <div><b style="color:#fff">if</b> enabled(<span style="color:#b8b8b8;font-style:italic">"smart_screenshare_dnd"</span>, <b style="color:#fff">true</b>) <b style="color:#fff">then</b></div>
+        <div>&nbsp;&nbsp;hl.on(<span style="color:#b8b8b8;font-style:italic">"screenshare.state"</span>, <b style="color:#fff">function</b>(active)</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;hl.exec_cmd(scripts .. <span style="color:#b8b8b8;font-style:italic">"focus.sh "</span> .. (active <b style="color:#fff">and</b> <span style="color:#b8b8b8;font-style:italic">"screenshare-on"</span> <b style="color:#fff">or</b> <span style="color:#b8b8b8;font-style:italic">"screenshare-off"</span>))</div>
+        <div>&nbsp;&nbsp;<b style="color:#fff">end</b>)</div>
+        <div><b style="color:#fff">end</b></div>
+        <div style="margin-top:auto;background:#141414;padding:3px 8px;border-radius:5px;color:var(--dim);display:flex;justify-content:space-between">
+          <span><b style="background:#e6e6e6;color:#080808;padding:0 5px;border-radius:3px">NORMAL</b> smart.lua</span><span>lua · 18:1</span>
+        </div>
+      </div>
+      <div class="simwin">
+        <div class="simtitle"><span>kitty · doctor.sh</span><span>zsh + starship</span></div>
+        <div><b style="color:#fff">❯</b> ~/.config/hypr/scripts/doctor.sh</div>
+        <div style="color:#e6e6e6">✓ Lua config &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all modules parse cleanly</div>
+        <div style="color:#e6e6e6">✓ Monochrome &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7/7 toolkits (GTK3/4, Qt5/6, Nvim, Kitty, Bar)</div>
+        <div style="color:#e6e6e6">✓ Capture &amp; OCR &nbsp;&nbsp;grim + slurp + Tesseract + Satty</div>
+        <div style="color:#e6e6e6">✓ Wallpapers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14 procedural designs ready</div>
+        <div style="margin-top:auto;color:var(--dim)" id="wall-stage-title">Active: mono-11 — Gravitational Singularity</div>
+        <div style="color:var(--faint);font-size:10.5px" id="wall-stage-desc">4K relativistic accretion halo &amp; photon ring · click any card below</div>
+      </div>
+    </div>
+    <div class="simdrawer" id="sim-drawer-box">
+      <div class="simtitle"><b style="color:#fff">▣ special:btop — Floating Telemetry Drawer (Super + Shift + B)</b><span>Esc to hide</span></div>
+      <div style="color:#e6e6e6">CPU  ██████████░░░░░░░░░░  34%   ▁▂▃▅▄▆▃▂▁▃▄▂   48°C</div>
+      <div style="color:#bdbdbd">MEM  ████████░░░░░░░░░░░░  4.1 / 16.0 GiB (25%) · ZRAM 0B</div>
+      <div style="color:#8a8a8a;margin-top:8px">PID   USER   COMMAND                  CPU%   MEM%</div>
+      <div style="color:#e6e6e6">1042  user   Hyprland (Lua 0.56)       2.1    1.4</div>
+      <div style="color:#bdbdbd">1188  user   waybar                    0.3    0.6</div>
+      <div style="color:#bdbdbd">1409  user   kitty --class mono-notes  0.1    0.5</div>
+    </div>
+    <div class="simpal" id="sim-pal-box">
+      <input id="sim-pal-in" type="text" value="= 1920 * 1080" placeholder="Type command or '= 1920*1080'…">
+      <div id="sim-pal-math" style="color:#fff;font-size:11.5px;padding:0 4px">= 2,073,600 (live calculator preview)</div>
+      <ul id="sim-pal-list">
+        <li data-act="zen">◌ Focus · Toggle Distraction-Free Zen Mode (Super + Z)</li>
+        <li data-act="drawer">▣ Drawer · Toggle Floating btop++ Monitor (Super + Shift + B)</li>
+        <li data-act="airy">⊟ Gaps · Airy Gallery Framing (10 / 22px)</li>
+        <li data-act="zero">⊟ Gaps · Zero Edge-to-Edge Monocle (0px)</li>
+      </ul>
     </div>
   </div>
   <div class="wgrid" id="wall-grid">{wall_cards_html}</div>
@@ -590,10 +688,64 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
       document.querySelectorAll('.wcard').forEach(function(b){{ b.classList.remove('active'); }});
       btn.classList.add('active');
       document.getElementById('wall-stage-img').src = btn.getAttribute('data-uri');
-      document.getElementById('wall-stage-title').textContent = btn.getAttribute('data-title');
+      document.getElementById('wall-stage-title').textContent = 'Active: ' + btn.getAttribute('data-title');
       document.getElementById('wall-stage-desc').textContent = btn.getAttribute('data-desc');
     }});
   }}
+  var stage = document.getElementById('sim-stage');
+  var dbox = document.getElementById('sim-drawer-box');
+  var pbox = document.getElementById('sim-pal-box');
+  document.querySelectorAll('[data-gap]').forEach(function(btn) {{
+    btn.addEventListener('click', function() {{
+      document.querySelectorAll('[data-gap]').forEach(function(b){{ b.classList.remove('on'); }});
+      btn.classList.add('on');
+      stage.classList.remove('airy','compact','zero');
+      var g = btn.getAttribute('data-gap');
+      if (g !== 'default') stage.classList.add(g);
+    }});
+  }});
+  var zenBtn = document.getElementById('sim-zen');
+  if (zenBtn) zenBtn.addEventListener('click', function() {{
+    zenBtn.classList.toggle('on');
+    stage.classList.toggle('zen');
+  }});
+  var drwBtn = document.getElementById('sim-drawer');
+  if (drwBtn) drwBtn.addEventListener('click', function() {{
+    drwBtn.classList.toggle('on');
+    dbox.classList.toggle('open');
+  }});
+  var palBtn = document.getElementById('sim-pal-btn');
+  var palIn = document.getElementById('sim-pal-in');
+  var palMath = document.getElementById('sim-pal-math');
+  if (palBtn) palBtn.addEventListener('click', function() {{
+    palBtn.classList.toggle('on');
+    pbox.classList.toggle('open');
+    if (pbox.classList.contains('open')) palIn.focus();
+  }});
+  if (palIn) palIn.addEventListener('input', function() {{
+    var raw = palIn.value.trim();
+    var expr = raw.charAt(0) === '=' ? raw.slice(1).trim() : raw;
+    if (expr && /^[0-9+\\-*/().%\\s]+$/.test(expr)) {{
+      try {{
+        var v = Function('"use strict";return (' + expr + ')')();
+        if (typeof v === 'number' && isFinite(v)) {{
+          palMath.textContent = '= ' + v.toLocaleString() + '  (live calculator)';
+          return;
+        }}
+      }} catch (_e) {{}}
+    }}
+    palMath.textContent = 'Tip: type "= 3840 * 2160" or click an action below';
+  }});
+  var palList = document.getElementById('sim-pal-list');
+  if (palList) palList.addEventListener('click', function(ev) {{
+    var li = ev.target.closest('li');
+    if (!li) return;
+    var a = li.getAttribute('data-act');
+    if (a === 'zen') zenBtn.click();
+    else if (a === 'drawer') drwBtn.click();
+    else {{ var gb = document.querySelector('[data-gap="' + a + '"]'); if (gb) gb.click(); }}
+    palBtn.click();
+  }});
   var input = document.getElementById('kb-filter');
   var box = document.getElementById('kb-container');
   if (input && box) {{

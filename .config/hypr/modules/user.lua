@@ -55,6 +55,11 @@ user = {
     night_shift_temp  = 4000,     -- Kelvin, higher = less orange
     screenshot_notify = true,
 
+    -- ── Reactive automation (modules/smart.lua) ──────────────────────────
+    smart_screenshare_dnd = true, -- auto-pause notifications while screen-sharing
+    smart_monitor_hotplug = true, -- restore wallpaper & bar on monitor plug/unplug
+    smart_urgent_notify   = true, -- monochrome toast when a background app flags urgent
+
     -- ── Screen recording ─────────────────────────────────────────────────
     record_backend  = "auto",     -- auto | gsr | wf-recorder
     record_audio    = "desktop",  -- off | desktop | mic | both (change live: mod + Alt + PRINT twice)

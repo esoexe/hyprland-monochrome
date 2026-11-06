@@ -2,6 +2,24 @@
 
 Notable changes to this setup. Versions are the dates they landed.
 
+## 2026-11-06 — 3.0.0
+
+Studio Edition — full-stack 7-toolkit monochrome cohesion, 4 optical/relativistic procedural wallpapers, in-compositor reactive Lua hooks, named scratchpad drawers, workspace session snapshots, and an interactive offline desktop simulator.
+
+**Visual Artistry & Full-Stack Monochrome Cohesion**
+- **4 new procedural monochrome artworks** in `wallpapers/generate.py` (`mono-11` Gravitational Singularity + 4K master with continuous relativistic Doppler beaming & photon ring, `mono-12` Blinn-Phong Liquid Mercury ferrofluid, `mono-13` Rain & Bokeh Noir, `mono-14` Swiss Bauhaus Compass), bringing the Wallpaper Studio to **14 procedural designs** (17 bundled files up to 16K)
+- **Qt5 & Qt6 monochrome Fusion palette** (`.config/qt5ct/`, `.config/qt6ct/`, `QT_QPA_PLATFORMTHEME=qt6ct`): 21-slot `Monochrome.conf` ramp eliminating default Qt blue highlights across Dolphin, OBS, qBittorrent, and VLC (verified `R == G == B` by `smoke-test.sh`)
+- **Zero-plugin typographic Neovim configuration** (`.config/nvim/init.lua`, `.config/nvim/colors/monochrome.lua`): syntax hierarchy built from luminance, bold keywords, italic silver strings, and dim italic comments over Kitty's blurred glass
+- **Architectural `hyprlock.conf` redesign**: top host/Focus/battery status pill, 94pt clock, strictly greyscale `check_color` / `fail_color` (no orange/red leaks), and live bottom `playerctl` Now-Playing readout
+- **Live Waybar Unicode CPU Sparkline (`waybar/scripts/sysgraph.sh`)** + **Backlight Dunst OSD (`scripts/brightness.sh`)**: Braun-inspired 6-column rolling sparkline (`▁▂▄▆▃▂ 14%`) in the bar and monochrome progress-bar OSDs on `XF86MonBrightnessUp/Down`
+- **Interactive Desktop Simulator in `docs/preview.html` (`tools/build-preview.py`)**: self-contained offline preview with live 14-wallpaper cross-fading, live gap preset morphing (`Default`/`Airy`/`Compact`/`Zero`), Zen Mode toggle, floating `btop++` drawer, and an interactive live math Command Palette
+
+**Advanced Compositor & Productivity Architecture**
+- **In-Compositor Reactive Lua Engine (`modules/smart.lua`)**: native Hyprland `hl.on(...)` hooks with zero polling — `screenshare.state` auto-pauses Dunst notifications while screen-sharing (`smart_screenshare_dnd`), `monitor.added`/`removed` restores wallpapers & refreshes Waybar on hot-plug (`smart_monitor_hotplug`), and `window.urgent` surfaces monochrome attention toasts paired with `Super + U` (`smart_urgent_notify`)
+- **Named Multi-Scratchpad Drawers (`scripts/scratchpad.sh` + `SCRATCH` chord `Super + Ctrl + S`)**: instant dedicated `special:<name>` floating drawers for dropdown terminal (`Super + Shift + T`), `btop++` telemetry (`Super + Shift + B`), Markdown scratch notes in Neovim (`Super + '` → `~/Documents/scratch.md`), and quick Thunar files
+- **Workspace Session Snapshot Engine (`scripts/workspace-session.sh`)**: `save`, `restore`, `list`, `show`, `delete`, and Rofi `menu` — captures open windows, target workspaces, tiling layout, gap preset, and wallpaper to `~/.config/hypr/sessions/<profile>.json` and relaunches your entire workspace layout in one command
+- **System & Monochrome Theme Doctor (`scripts/doctor.sh`)**: 8-domain health & toolkit-theming audit accessible from terminal, Command Palette, Settings (`Super + I`), or right-clicking the Waybar sparkline; `test/smoke-test.sh` expanded to **143 automated checks**
+
 ## 2026-11-06 — 2.0.0
 
 Major visual-craft and productivity architecture upgrade.

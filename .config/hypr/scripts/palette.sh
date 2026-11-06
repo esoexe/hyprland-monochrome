@@ -131,6 +131,13 @@ build_entries() {
 ☕  Focus · Start 5m Short Break	focus:break5
 ◌  Focus · Toggle Distraction-Free Zen Mode (Super + Z)	focus:zen
 🔕  Focus · Toggle Do Not Disturb	focus:dnd
+◒  Drawer · Toggle Dropdown Terminal (Super + Shift + T)	drawer:term
+▣  Drawer · Toggle Floating btop++ Monitor (Super + Shift + B)	drawer:btop
+✎  Drawer · Toggle Scratch Markdown Notes (Super + ')	drawer:notes
+◰  Drawer · Toggle Quick File Drawer	drawer:files
+💾  Session · Save Current Workspace Snapshot ('work')	sess:save
+↺  Session · Restore Workspace Snapshot ('work')	sess:restore
+🗂  Session · Open Workspace Session Manager	sess:menu
 ⊞  Layout · Cycle Tiling Engine (Dwindle / Master / Scrolling)	layout:cycle
 ⊞  Layout · Switch to Master-Stack	layout:master
 ⊞  Layout · Switch to Scrolling Strip	layout:scrolling
@@ -158,6 +165,7 @@ build_entries() {
 ✎  Config · Edit modules/binds.lua	edit:binds
 ✎  Config · Edit waybar/config.jsonc	edit:waybar
 ↻  System · Reload Hyprland & Restart Waybar	sys:reload
+✓  System · Run Health & Monochrome Theme Doctor	sys:doctor
 ⏻  System · Lock Screen	sys:lock
 EOF
 }
@@ -184,6 +192,13 @@ run_token() {
         focus:stop)     "$SCRIPTS_DIR/focus.sh" stop ;;
         focus:zen)      "$SCRIPTS_DIR/focus.sh" zen ;;
         focus:dnd)      "$SCRIPTS_DIR/focus.sh" dnd ;;
+        drawer:term)    "$SCRIPTS_DIR/scratchpad.sh" term ;;
+        drawer:btop)    "$SCRIPTS_DIR/scratchpad.sh" btop ;;
+        drawer:notes)   "$SCRIPTS_DIR/scratchpad.sh" notes ;;
+        drawer:files)   "$SCRIPTS_DIR/scratchpad.sh" files ;;
+        sess:save)      "$SCRIPTS_DIR/workspace-session.sh" save work ;;
+        sess:restore)   "$SCRIPTS_DIR/workspace-session.sh" restore work ;;
+        sess:menu)      "$SCRIPTS_DIR/workspace-session.sh" menu ;;
         layout:cycle)   "$SCRIPTS_DIR/layout.sh" cycle ;;
         layout:master)  "$SCRIPTS_DIR/layout.sh" set master ;;
         layout:scrolling) "$SCRIPTS_DIR/layout.sh" set scrolling ;;
@@ -221,6 +236,7 @@ run_token() {
             hyprctl reload >/dev/null 2>&1 || true
             pkill -SIGUSR2 -x waybar 2>/dev/null || true
             notify "Reloaded" "Hyprland config & Waybar refreshed" ;;
+        sys:doctor)     "$SCRIPTS_DIR/doctor.sh" --rofi ;;
         sys:lock)       hyprlock >/dev/null 2>&1 & ;;
     esac
 }

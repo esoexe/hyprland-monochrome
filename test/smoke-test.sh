@@ -104,7 +104,7 @@ JSON
   "availableModes":["1920x1080@60Hz","1600x900@60Hz"]}]
 JSON
 ;;
-  clients) echo "[]" ;;
+  clients) if [ -n "${FAKE_CLIENTS:-}" ]; then cat "$FAKE_CLIENTS"; else echo "[]"; fi ;;
   version) echo "Hyprland 0.56.2 (main, abc123)" ;;
   binds) [ -n "${FAKE_BINDS:-}" ] && cat "$FAKE_BINDS" ;;
   configerrors) echo "no errors" ;;
@@ -170,9 +170,20 @@ export FAKE_BINDS="${FAKE_BINDS:-}"
 export ROFI_STDIN
 
 # ── Fake config tree ──────────────────────────────────────────────────────
-cp "$REPO/.config/hypr/modules/user.lua" "$XDG_CONFIG_HOME/hypr/modules/"
+cp "$REPO/.config/hypr/hyprland.lua" "$XDG_CONFIG_HOME/hypr/"
+cp "$REPO"/.config/hypr/modules/*.lua "$XDG_CONFIG_HOME/hypr/modules/"
 cp "$REPO"/.config/hypr/scripts/*.sh "$C"
 cp "$REPO"/.config/waybar/scripts/*.sh "$XDG_CONFIG_HOME/waybar/scripts/"
+mkdir -p "$XDG_CONFIG_HOME/gtk-3.0" "$XDG_CONFIG_HOME/gtk-4.0" \
+         "$XDG_CONFIG_HOME/qt5ct/colors" "$XDG_CONFIG_HOME/qt6ct/colors" \
+         "$XDG_CONFIG_HOME/nvim/colors" "$XDG_CONFIG_HOME/kitty"
+cp "$REPO/.config/gtk-3.0/gtk.css" "$XDG_CONFIG_HOME/gtk-3.0/"
+cp "$REPO/.config/gtk-4.0/gtk.css" "$XDG_CONFIG_HOME/gtk-4.0/"
+cp "$REPO/.config/qt5ct/colors/Monochrome.conf" "$XDG_CONFIG_HOME/qt5ct/colors/"
+cp "$REPO/.config/qt6ct/colors/Monochrome.conf" "$XDG_CONFIG_HOME/qt6ct/colors/"
+cp "$REPO/.config/nvim/colors/monochrome.lua" "$XDG_CONFIG_HOME/nvim/colors/"
+cp "$REPO/.config/kitty/theme.conf" "$XDG_CONFIG_HOME/kitty/"
+cp "$REPO/.config/waybar/style.css" "$XDG_CONFIG_HOME/waybar/"
 chmod +x "$C"/*.sh "$XDG_CONFIG_HOME"/waybar/scripts/*.sh
 : > "$XDG_CONFIG_HOME/rofi/theme.rasi"
 
@@ -537,11 +548,15 @@ eq "…and leaves the other designs alone" "0" "$others"
 timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 3 >/dev/null 2>&1
 eq "a bare number selects a design" "1" "$(ls "$GEN_DIR"/mono-03.jpg 2>/dev/null | wc -l)"
 
-# verify new procedural designs (mono-07 solar eclipse & mono-10 silk ribbon)
+# verify new procedural designs (mono-07 solar eclipse, mono-10 silk ribbon, mono-11 singularity, mono-14 bauhaus)
 timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 7 >/dev/null 2>&1
 eq "mono-07 eclipse renders cleanly" "1" "$(ls "$GEN_DIR"/mono-07.jpg 2>/dev/null | wc -l)"
 timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 10 >/dev/null 2>&1
 eq "mono-10 silk ribbon renders cleanly" "1" "$(ls "$GEN_DIR"/mono-10.jpg 2>/dev/null | wc -l)"
+timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 11 >/dev/null 2>&1
+eq "mono-11 singularity renders cleanly" "1" "$(ls "$GEN_DIR"/mono-11.jpg 2>/dev/null | wc -l)"
+timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 14 >/dev/null 2>&1
+eq "mono-14 bauhaus compass renders cleanly" "1" "$(ls "$GEN_DIR"/mono-14.jpg 2>/dev/null | wc -l)"
 
 timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only nope >/dev/null 2>&1
 eq "an unknown --only fails loudly" "1" "$?"
@@ -600,6 +615,105 @@ printf 'png' > "$OCR_SAMPLE"
 OCR_OUT="$(timeout 10 "$C/screenshot.sh" ocr-file "$OCR_SAMPLE")"
 eq "ocr-file extracts and prints text" "MONOCHROME OCR TEST 2026" "$OCR_OUT"
 contains "ocr notifies with extracted preview" "OCR copied to clipboard" "$(cat "$CALLS")"
+
+# ═══════════════════════ 18. scratchpad & sessions ═══════════════════════
+printf '\n\033[1m18. scratchpad.sh & workspace-session.sh\033[0m\n'
+: > "$CALLS"
+stub nvim 'sleep 0.1'
+timeout 10 "$C/scratchpad.sh" notes >/dev/null 2>&1
+eq "scratchpad notes creates ~/Documents/scratch.md" "yes" "$(test -f "$HOME/Documents/scratch.md" && echo yes || echo no)"
+contains "scratchpad notes toggles special:notes" "togglespecialworkspace notes" "$(cat "$CALLS")"
+eq "scratchpad status reports idle when drawers closed" "idle" "$(timeout 10 "$C/scratchpad.sh" status)"
+
+: > "$CALLS"
+cat > "$WORK/clients.json" <<'JSON'
+[ { "mapped": true, "class": "kitty", "floating": false, "title": "nvim", "workspace": { "name": "2" } } ]
+JSON
+SESS_OUT="$(FAKE_CLIENTS="$WORK/clients.json" timeout 10 "$C/workspace-session.sh" save coding)"
+contains "workspace-session saves open client" "saved coding (1 windows)" "$SESS_OUT"
+contains "workspace-session list shows profile" "coding" "$(timeout 10 "$C/workspace-session.sh" list)"
+timeout 10 "$C/workspace-session.sh" restore coding >/dev/null 2>&1
+contains "workspace-session restore dispatches onto saved workspace" "[workspace 2 silent] kitty" "$(cat "$CALLS")"
+timeout 10 "$C/workspace-session.sh" delete coding >/dev/null 2>&1
+eq "workspace-session delete removes snapshot" "" "$(timeout 10 "$C/workspace-session.sh" list)"
+
+# ═══════════════════════ 19. brightness & sysgraph ═══════════════════════
+printf '\n\033[1m19. brightness.sh & waybar/scripts/sysgraph.sh\033[0m\n'
+cat > "$BIN/brightnessctl" <<EOF
+#!/usr/bin/env bash
+printf 'brightnessctl %s\n' "\$*" >> "$CALLS"
+if [ "\${1:-}" = "-m" ]; then
+    echo "intel_backlight,backlight,75,75%,100"
+fi
+EOF
+chmod +x "$BIN/brightnessctl"
+: > "$CALLS"
+eq "brightness status reads percentage" "75%" "$(timeout 10 "$C/brightness.sh" status)"
+timeout 10 "$C/brightness.sh" up >/dev/null 2>&1
+contains "brightness up shows Dunst progress bar" "Brightness · 75%" "$(cat "$CALLS")"
+
+SYSG_JSON="$(timeout 10 "$XDG_CONFIG_HOME/waybar/scripts/sysgraph.sh")"
+contains "sysgraph emits valid JSON text" '"text":' "$SYSG_JSON"
+contains "sysgraph tooltip mentions btop++ drawer" 'btop++ drawer' "$SYSG_JSON"
+
+# ═══════════════════════ 20. smart.lua & doctor.sh ═══════════════════════
+printf '\n\033[1m20. smart.lua reactive hooks & doctor.sh\033[0m\n'
+cat > "$BIN/dunstctl" <<EOF
+#!/usr/bin/env bash
+printf 'dunstctl %s\n' "\$*" >> "$CALLS"
+if [ "\${1:-}" = "is-paused" ]; then echo "false"; fi
+EOF
+chmod +x "$BIN/dunstctl"
+: > "$CALLS"
+timeout 10 "$C/focus.sh" screenshare-on >/dev/null 2>&1
+contains "screenshare-on auto-pauses Dunst" "dunstctl set-paused true" "$(cat "$CALLS")"
+timeout 10 "$C/focus.sh" screenshare-off >/dev/null 2>&1
+contains "screenshare-off resumes Dunst" "dunstctl set-paused false" "$(cat "$CALLS")"
+
+LUA_BIN="$(command -v lua5.4 || command -v lua || true)"
+if [ -n "$LUA_BIN" ]; then
+    LUA_EVENTS="$("$LUA_BIN" -e '
+        package.path = os.getenv("XDG_CONFIG_HOME") .. "/hypr/?.lua;" .. package.path
+        local events, envs = {}, {}
+        local function mock()
+            return setmetatable({}, {
+                __call = function() return mock() end,
+                __index = function() return mock() end,
+            })
+        end
+        hl = setmetatable({
+            on = function(ev, _fn) table.insert(events, ev) end,
+            env = function(k, v) envs[k] = v end,
+            define_submap = function(_n, _r, fn) if fn then fn() end end,
+        }, { __index = function() return mock() end })
+        dofile(os.getenv("XDG_CONFIG_HOME") .. "/hypr/hyprland.lua")
+        print("EVENTS=" .. table.concat(events, ",") .. " QT=" .. tostring(envs.QT_QPA_PLATFORMTHEME))
+    ' 2>&1)"
+    contains "smart.lua registers screenshare.state hook" "screenshare.state" "$LUA_EVENTS"
+    contains "smart.lua registers monitor.added hook"     "monitor.added"     "$LUA_EVENTS"
+    contains "hyprland.lua exports QT_QPA_PLATFORMTHEME=qt6ct" "QT=qt6ct"     "$LUA_EVENTS"
+fi
+
+DOC_OUT="$(timeout 10 "$C/doctor.sh" --plain)"
+contains "doctor verifies 7/7 monochrome toolkits" "7/7 toolkits themed" "$DOC_OUT"
+
+# Monochrome purity audit across Qt5/Qt6 & Neovim palettes (R == G == B for every #rrggbb)
+PURE_CHECK="$(python3 - "$REPO" <<'PY'
+import pathlib, re, sys
+repo = pathlib.Path(sys.argv[1])
+bad = []
+for rel in (".config/qt5ct/colors/Monochrome.conf",
+            ".config/qt6ct/colors/Monochrome.conf",
+            ".config/nvim/colors/monochrome.lua"):
+    txt = (repo / rel).read_text()
+    for m in re.findall(r"#([0-9a-fA-F]{6,8})\b", txt):
+        rgb = m[-6:].lower()
+        if not (rgb[0:2] == rgb[2:4] == rgb[4:6]):
+            bad.append(f"{rel}:#{m}")
+print("pure" if not bad else ",".join(bad))
+PY
+)"
+eq "Qt5, Qt6 & Neovim palettes are 100% pure greyscale (R==G==B)" "pure" "$PURE_CHECK"
 
 # ═══════════════════════ result ══════════════════════════════════════════
 printf '\n\033[2m%s\033[0m\n' "$M_RULE"
