@@ -14,7 +14,8 @@ user = {
     mainMod = "SUPER",         -- SUPER (Windows key), ALT, or CTRL
 
     -- ── Programs ─────────────────────────────────────────────────────────
-    terminal     = "kitty",
+    terminal                = "kitty",
+    terminal_single_instance = true,     -- <3ms Kitty OS windows via shared GPU glyph cache
     terminal_float = "kitty --class kitty-float",   -- SUPER + SHIFT + RETURN
     dropdown_term  = "kitty --class dropdown-term", -- SUPER + SHIFT + T
     browser      = "firefox",      -- install.sh tries to fill this in for you
@@ -26,10 +27,11 @@ user = {
     gaps_out       = 10,
     border_size    = 2,
     rounding       = 10,
-    rounding_power = 2.0,
+    rounding_power = 4.0,      -- 4.0 = continuous G2 Apple-style squircle corners
     active_opacity   = 1.0,
     inactive_opacity = 0.94,   -- slightly dim unfocused windows
     blur_enabled     = true,   -- set to false on low-end GPUs for extra FPS
+    glass_mode       = "kawase", -- "kawase" | "xray" (fast) | "acrylic" (Liquid Glass) | "off"
 
     -- ── Keyboard / mouse ─────────────────────────────────────────────────
     kb_layout = "us",          -- e.g. "us", "fr", "de", "ara", or "us,ara" to toggle
@@ -55,10 +57,12 @@ user = {
     night_shift_temp  = 4000,     -- Kelvin, higher = less orange
     screenshot_notify = true,
 
-    -- ── Motion physics & wallpaper choreography ──────────────────────────
+    -- ── Motion physics, GPU pacing & wallpaper choreography ──────────────
     motion_profile       = "fluid",  -- "fluid" | "snappy" | "cinematic" | "minimal"
     border_loop          = false,    -- true = orbiting liquid-silver active border
     wallpaper_transition = "choreo", -- "choreo" | "grow" | "wave" | "outer" | "wipe" | "fade"
+    vrr_mode             = 2,        -- Adaptive Sync: 0=off | 1=always | 2=fullscreen | 3=video+game
+    hide_cursor_typing   = false,    -- true = hide pointer automatically while typing
 
     -- ── Reactive automation (modules/smart.lua) ──────────────────────────
     smart_screenshare_dnd = true, -- auto-pause notifications while screen-sharing

@@ -746,7 +746,7 @@ for frag in "$REPO"/.config/hypr/shaders/*.frag; do
     grep -q 'out vec4 fragColor;' "$frag" &&
     GLSL_OK=$((GLSL_OK + 1))
 done
-eq "all 4 GLSL ES 3.00 screen shaders match Hyprland uniform spec" "4" "$GLSL_OK"
+eq "all 5 GLSL ES 3.00 screen shaders match Hyprland uniform spec" "5" "$GLSL_OK"
 
 : > "$CALLS"
 timeout 10 "$C/pip-corner.sh" 2 >/dev/null 2>&1
@@ -785,7 +785,79 @@ timeout 60 python3 "$GEN_DIR/animate.py" 160 90 --frames 6 --fps 12 --only orbit
 eq "animate.py renders seamless multi-frame greyscale GIF" "6" "$(python3 -c "
 from PIL import Image
 print(Image.open('$GEN_DIR/mono-live-01-orbital.gif').n_frames)" 2>/dev/null || echo 0)"
-contains "doctor verifies 4 GLSL shaders & kinetic motion" "4 GLSL ES 3.00 shaders ready" "$(timeout 10 "$C/doctor.sh" --plain)"
+timeout 60 python3 "$GEN_DIR/animate.py" 160 90 --frames 6 --fps 12 --only lissajous >/dev/null 2>&1
+eq "animate.py renders seamless lissajous oscilloscope GIF" "6" "$(python3 -c "
+from PIL import Image
+print(Image.open('$GEN_DIR/mono-live-03-lissajous.gif').n_frames)" 2>/dev/null || echo 0)"
+contains "doctor verifies 5 GLSL shaders & kinetic motion" "5 GLSL ES 3.00 shaders ready" "$(timeout 10 "$C/doctor.sh" --plain)"
+
+# ═══════════════════════ 22. Velocity, Turbo & Liquid Glass ═══════════════
+printf '\n\033[1m22. perf.sh, 0-fork runtime & squircle GPU pipeline\033[0m\n'
+
+contains "perf status defaults to turbo=off glass=kawase" "turbo=off glass=kawase" "$(timeout 10 "$C/perf.sh" status)"
+: > "$CALLS"
+timeout 10 "$C/perf.sh" turbo on >/dev/null 2>&1
+contains "turbo on enables allow_tearing & direct_scanout" "general:allow_tearing 1" "$(cat "$CALLS")"
+contains "turbo on emits Waybar TURBO pill" "⚡ TURBO" "$(timeout 10 "$C/perf.sh" status --waybar)"
+: > "$CALLS"
+timeout 10 "$C/perf.sh" turbo off >/dev/null 2>&1
+contains "turbo off restores squircle rounding_power 4.0" "decoration:rounding_power 4.0" "$(cat "$CALLS")"
+contains "turbo off clears Waybar TURBO pill" '"class":"off"' "$(timeout 10 "$C/perf.sh" status --waybar)"
+
+: > "$CALLS"
+timeout 10 "$C/perf.sh" glass xray >/dev/null 2>&1
+contains "glass xray enables 1-pass xray blur" "decoration:blur:xray 1" "$(cat "$CALLS")"
+: > "$CALLS"
+timeout 10 "$C/perf.sh" glass acrylic >/dev/null 2>&1
+contains "glass acrylic sets variant acrylic with 0.0 aberration" "decoration:blur:acrylic:aberration 0.0" "$(cat "$CALLS")"
+timeout 10 "$C/perf.sh" glass kawase >/dev/null 2>&1
+
+: > "$CALLS"
+timeout 10 "$C/perf.sh" vrr on >/dev/null 2>&1
+contains "perf vrr on sets misc:vrr 1" "misc:vrr 1" "$(cat "$CALLS")"
+timeout 10 "$C/perf.sh" vrr fullscreen >/dev/null 2>&1
+
+BENCH_OUT="$(timeout 15 "$C/perf.sh" bench)"
+contains "perf bench measures mono_var latency" "mono_var() lookup" "$BENCH_OUT"
+contains "perf bench measures sysgraph latency" "sysgraph /proc sample" "$BENCH_OUT"
+
+: > "$CALLS"
+timeout 10 "$C/shader.sh" set oled-pitch >/dev/null 2>&1
+contains "shader oled-pitch applies oled-pitch.frag" "oled-pitch.frag" "$(cat "$CALLS")"
+timeout 10 "$C/shader.sh" set off >/dev/null 2>&1
+
+SYS_JSON="$(timeout 10 "$XDG_CONFIG_HOME/waybar/scripts/sysgraph.sh")"
+eq "zero-fork sysgraph.sh emits valid JSON" "ok" "$(printf '%s' "$SYS_JSON" | jq -r 'if (.text | length) > 0 and (.tooltip | length) > 0 then "ok" else "bad" end')"
+contains "doctor verifies Velocity engine & squircle=4.0" "Velocity engine" "$(timeout 10 "$C/doctor.sh" --plain)"
+
+if [ -n "$LUA_BIN" ]; then
+    GPU_STATS="$("$LUA_BIN" -e '
+        package.path = os.getenv("XDG_CONFIG_HOME") .. "/hypr/?.lua;" .. package.path
+        local gestures, scanout, async_c, squircle, snap_on = 0, 0, false, 0, false
+        local function mock()
+            return setmetatable({}, {
+                __call = function() return mock() end,
+                __index = function() return mock() end,
+            })
+        end
+        hl = setmetatable({
+            gesture = function() gestures = gestures + 1 end,
+            config = function(t)
+                if t.render and t.render.direct_scanout then scanout = t.render.direct_scanout end
+                if t.render and t.render.async_commit then async_c = true end
+                if t.decoration and t.decoration.rounding_power then squircle = t.decoration.rounding_power end
+                if t.general and t.general.snap and t.general.snap.enabled then snap_on = true end
+            end,
+            define_submap = function(_n, a, b) local fn = type(a) == "function" and a or b; if fn then fn() end end,
+        }, { __index = function() return mock() end })
+        dofile(os.getenv("XDG_CONFIG_HOME") .. "/hypr/hyprland.lua")
+        print(string.format("gestures=%d scanout=%d async=%s squircle=%.1f snap=%s",
+            gestures, scanout, tostring(async_c), squircle, tostring(snap_on)))
+    ' 2>&1)"
+    contains "appearance.lua configures 6 1:1 trackpad gestures" "gestures=6" "$GPU_STATS"
+    contains "appearance.lua enables direct_scanout=2 & async_commit" "scanout=2 async=true" "$GPU_STATS"
+    contains "appearance.lua enables G2 squircle=4.0 & magnetic snap" "squircle=4.0 snap=true" "$GPU_STATS"
+fi
 
 # ═══════════════════════ result ══════════════════════════════════════════
 printf '\n\033[2m%s\033[0m\n' "$M_RULE"

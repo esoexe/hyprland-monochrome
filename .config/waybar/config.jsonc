@@ -35,6 +35,7 @@
         "bluetooth",
         "pulseaudio",
         "battery",
+        "custom/perf",
         "custom/focus",
         "custom/recording",
         "tray",
@@ -117,7 +118,8 @@
         "interval": 2,
         "format": "{}",
         "on-click": "~/.config/hypr/scripts/scratchpad.sh btop",
-        "on-click-right": "~/.config/hypr/scripts/doctor.sh --rofi"
+        "on-click-right": "~/.config/hypr/scripts/doctor.sh --rofi",
+        "on-click-middle": "~/.config/hypr/scripts/perf.sh menu"
     },
 
     "cpu": {
@@ -147,10 +149,23 @@
 
     // Deep-work / Pomodoro & Zen indicator: hidden while idle, inverted
     // monochrome pill while active. Left-click pauses/resumes, right-click stops,
+    // Low-Latency Turbo / Game Mode indicator: invisible while normal, inverted
+    // monochrome pill while Turbo Mode is active.
+    "custom/perf": {
+        "exec": "~/.config/hypr/scripts/perf.sh status --waybar",
+        "interval": 10,
+        "signal": 10,
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "~/.config/hypr/scripts/perf.sh turbo toggle",
+        "on-click-right": "~/.config/hypr/scripts/perf.sh menu"
+    },
+
     // middle-click opens the Focus menu.
     "custom/focus": {
         "exec": "~/.config/hypr/scripts/focus.sh status --waybar",
-        "interval": 1,
+        "interval": 2,
         "signal": 9,
         "return-type": "json",
         "format": "{}",
@@ -165,7 +180,8 @@
     // middle click pauses (gpu-screen-recorder).
     "custom/recording": {
         "exec": "~/.config/hypr/scripts/record.sh status --waybar",
-        "interval": 1,
+        "interval": 2,
+        "signal": 8,
         "return-type": "json",
         "format": "{}",
         "tooltip": true,

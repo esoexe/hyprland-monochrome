@@ -123,10 +123,17 @@ else
 fi
 
 scount="$(find "$HYPR_DIR/shaders" -maxdepth 1 -type f -name '*.frag' 2>/dev/null | wc -l | tr -d ' ')"
-if [ "${scount:-0}" -ge 4 ]; then
+if [ "${scount:-0}" -ge 5 ]; then
     record ok "Kinetic & shaders" "motion=$($SCRIPTS_DIR/motion.sh status 2>/dev/null | awk '{print $1}') · $scount GLSL ES 3.00 shaders ready"
 else
-    record warn "Kinetic & shaders" "${scount:-0}/4 GLSL shaders in $HYPR_DIR/shaders"
+    record warn "Kinetic & shaders" "${scount:-0}/5 GLSL shaders in $HYPR_DIR/shaders"
+fi
+
+if [ -x "$SCRIPTS_DIR/perf.sh" ]; then
+    pstat="$("$SCRIPTS_DIR/perf.sh" status 2>/dev/null || echo 'turbo=off glass=kawase vrr=fullscreen')"
+    record ok "Velocity engine" "0-fork runtime · squircle=$(mono_var rounding_power 4.0) · $pstat"
+else
+    record warn "Velocity engine" "perf.sh missing in $SCRIPTS_DIR"
 fi
 
 # 8. Pristine backup vault

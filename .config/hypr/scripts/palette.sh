@@ -143,10 +143,17 @@ build_entries() {
 ✦  Motion · Cinematic Parallax + Orbiting Silver Border	motion:cinematic
 ◌  Motion · Minimal Zero-Motion (Battery / Esports)	motion:minimal
 ⟳  Motion · Toggle Orbiting Liquid-Silver Active Border	motion:loop
+⚡  Velocity · Toggle Low-Latency Turbo / Game Mode (Super + F12)	perf:turbo
+◈  Glass · Kawase 2-Pass Frosted Obsidian	perf:kawase
+⚡  Glass · Fast X-Ray 1-Pass (~2.5x Lower GPU Load)	perf:xray
+✦  Glass · Liquid Acrylic Lens Refraction (0.0 Aberration)	perf:acrylic
+○  Glass · Disable Blur (Maximum GPU Headroom)	perf:glassoff
+⏱  Velocity · Run Sub-Millisecond Stack Benchmark	perf:bench
 ◐  Shader · GLSL Noir Hardware Monochrome Enforcer	shader:noir
-🎞  Shader · GLSL 35mm Silver-Halide Film Grain	shader:grain
+◈  Shader · GLSL 35mm Silver-Halide Film Grain	shader:grain
 ▤  Shader · GLSL P4 Studio CRT Scanlines	shader:crt
-📖  Shader · GLSL Matte E-Ink Reading Tone	shader:eink
+▫  Shader · GLSL Matte E-Ink Reading Tone	shader:eink
+●  Shader · GLSL OLED Pitch True-Black Pixel-Off Saver	shader:oled
 ○  Shader · Disable GLSL Screen Shader (Off)	shader:off
 ✦  Wallpaper · Cycle Animated Live Monochrome Wallpaper	wall:live
 ◹  Window · Spring Floating / PiP Window to Next Corner (Super + .)	pip:corner
@@ -216,10 +223,17 @@ run_token() {
         motion:cinematic) "$SCRIPTS_DIR/motion.sh" set cinematic ;;
         motion:minimal) "$SCRIPTS_DIR/motion.sh" set minimal ;;
         motion:loop)    "$SCRIPTS_DIR/motion.sh" border-loop toggle ;;
+        perf:turbo)     "$SCRIPTS_DIR/perf.sh" turbo toggle ;;
+        perf:kawase)    "$SCRIPTS_DIR/perf.sh" glass kawase ;;
+        perf:xray)      "$SCRIPTS_DIR/perf.sh" glass xray ;;
+        perf:acrylic)   "$SCRIPTS_DIR/perf.sh" glass acrylic ;;
+        perf:glassoff)  "$SCRIPTS_DIR/perf.sh" glass off ;;
+        perf:bench)     "$SCRIPTS_DIR/perf.sh" bench --rofi ;;
         shader:noir)    "$SCRIPTS_DIR/shader.sh" set noir ;;
         shader:grain)   "$SCRIPTS_DIR/shader.sh" set cinema-grain ;;
         shader:crt)     "$SCRIPTS_DIR/shader.sh" set crt-studio ;;
         shader:eink)    "$SCRIPTS_DIR/shader.sh" set paper-eink ;;
+        shader:oled)    "$SCRIPTS_DIR/shader.sh" set oled-pitch ;;
         shader:off)     "$SCRIPTS_DIR/shader.sh" set off ;;
         wall:live)      "$SCRIPTS_DIR/wallpaper.sh" live ;;
         pip:corner)     "$SCRIPTS_DIR/pip-corner.sh" ;;

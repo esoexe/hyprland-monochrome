@@ -45,13 +45,15 @@ setopt TRANSIENT_RPROMPT         # right prompt disappears after you type
 unsetopt FLOW_CONTROL            # Ctrl+S / Ctrl+Q stay usable
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 
-# ── Completion ────────────────────────────────────────────────────────────
+# ── Completion (fast -C path when dump is <24h fresh) ────────────────────
 autoload -Uz compinit
-if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+_mono_zcd="${ZDOTDIR:-$HOME}/.zcompdump"
+if [[ -n ${_mono_zcd}(#qN.mh-24) ]]; then
     compinit -C
 else
     compinit
 fi
+unset _mono_zcd
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'      # case-insensitive
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
@@ -110,10 +112,29 @@ if [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
     source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
-# ── Prompt (Starship) ─────────────────────────────────────────────────────
+# ── Prompt (Starship — cached & zcompiled for <15ms shell cold-start) ─────
 if command -v starship >/dev/null 2>&1; then
-    eval "$(starship init zsh)"
+    _mono_scache="${XDG_CACHE_HOME:-$HOME/.cache}/hyprland-monochrome"
+    [[ -d "$_mono_scache" ]] || mkdir -p "$_mono_scache" 2>/dev/null
+    _mono_sbin="${commands[starship]}"
+    _mono_sinit="$_mono_scache/starship.zsh"
+    if [[ ! -r "$_mono_sinit" || "$_mono_sbin" -nt "$_mono_sinit" ]]; then
+        starship init zsh --print-full-init >| "$_mono_sinit" 2>/dev/null
+        zcompile "$_mono_sinit" 2>/dev/null
+    fi
+    source "$_mono_sinit"
+    unset _mono_scache _mono_sbin _mono_sinit
 fi
+
+# Async bytecode compilation of ~/.zshrc and ~/.zcompdump (zero blocking I/O)
+{
+    for _zwf in "${ZDOTDIR:-$HOME}/.zshrc" "${ZDOTDIR:-$HOME}/.zcompdump"; do
+        if [[ -r "$_zwf" && ( ! -r "${_zwf}.zwc" || "$_zwf" -nt "${_zwf}.zwc" ) ]]; then
+            zcompile "$_zwf" 2>/dev/null
+        fi
+    done
+    unset _zwf
+} &!
 
 # ── Aliases ───────────────────────────────────────────────────────────────
 # Modern replacements (installed by packages.txt)

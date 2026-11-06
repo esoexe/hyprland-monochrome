@@ -183,6 +183,7 @@ MODULE_SAMPLE = {
     "bluetooth": ("󰂯", ""),
     "pulseaudio": ("󰕾", "65%"),
     "battery": ("󰁹", "88%"),
+    "custom/perf": ("⚡", "TURBO"),
     "custom/focus": ("◎", "24:58"),
     "custom/recording": ("●", "00:42"),
     "tray": ("", ""),
@@ -326,9 +327,9 @@ code{font-family:var(--mono); background:var(--surface-2); border:1px solid var(
 .mod b{color:#fff; font-weight:500; margin-left:5px}
 .ws{color:#6f6f6f; padding:2px 7px; border-radius:7px; font-size:12.5px}
 .ws.active{background:#e6e6e6; color:#0a0a0a; font-weight:600}
-.mod.custom-focus,.mod.hyprland-submap{background:#e6e6e6; color:#0a0a0a; border-radius:7px;
+.mod.custom-focus,.mod.hyprland-submap,.mod.custom-perf{background:#e6e6e6; color:#0a0a0a; border-radius:7px;
        padding:1px 8px; margin:0 3px; font-weight:600; font-size:11.5px}
-.mod.custom-focus b,.mod.hyprland-submap b{color:#0a0a0a; font-weight:700}
+.mod.custom-focus b,.mod.hyprland-submap b,.mod.custom-perf b{color:#0a0a0a; font-weight:700}
 .wstage{border:1px solid var(--line-strong); border-radius:14px; overflow:hidden; margin-top:16px;
         background:#050505; position:relative}
 .wstage img{display:block; width:100%; aspect-ratio:16/9; object-fit:cover}
@@ -348,11 +349,21 @@ code{font-family:var(--mono); background:var(--surface-2); border:1px solid var(
           overflow:hidden; background:#050505; user-select:none; --dur:440ms; --ease:cubic-bezier(0.16,1,0.3,1)}
 .simstage.snappy{--dur:160ms; --ease:cubic-bezier(0.2,0,0,1)}
 .simstage.cinematic{--dur:680ms; --ease:cubic-bezier(0.12,1.04,0.28,1)}
-.simstage.minimal{--dur:0ms; --ease:linear}
+.simstage.minimal,.simstage.turbo{--dur:0ms; --ease:linear}
+.simstage.turbo .simgrid{inset:38px 0 0 0; gap:0}
+.simstage.turbo .simwin{border-radius:0; backdrop-filter:none; background:#090909}
+.simstage.glass-xray .simwin{backdrop-filter:blur(5px); background:rgba(10,10,10,.88)}
+.simstage.glass-acrylic .simwin{backdrop-filter:blur(18px) saturate(1.1) contrast(1.06); background:rgba(18,18,18,.68); border-color:rgba(255,255,255,.26)}
+.simstage.glass-off .simwin{backdrop-filter:none; background:#0b0b0b}
 .simstage.sh-noir{filter:grayscale(1) contrast(1.12)}
 .simstage.sh-grain{filter:grayscale(0.9) contrast(1.08) brightness(0.96)}
 .simstage.sh-crt{filter:grayscale(1) contrast(1.16) brightness(1.03)}
 .simstage.sh-eink{filter:grayscale(1) contrast(0.84) brightness(1.08)}
+.simstage.sh-oled{filter:grayscale(1) contrast(1.24) brightness(0.92)}
+.simtabs{display:flex; gap:4px; margin-bottom:7px}
+.simtab{appearance:none; background:rgba(24,24,24,.88); border:1px solid rgba(255,255,255,.10); color:#8a8a8a;
+        border-radius:7px; padding:2px 8px; font:inherit; font-size:10px; cursor:pointer; transition:all .16s ease}
+.simtab.active{background:#383838; color:#fff; border-color:rgba(255,255,255,.32); font-weight:600}
 .simcrt{position:absolute; inset:0; pointer-events:none; opacity:0; z-index:6;
         background:repeating-linear-gradient(0deg,rgba(0,0,0,.24) 0px,rgba(0,0,0,.24) 1px,transparent 1px,transparent 3px);
         transition:opacity 240ms ease}
@@ -554,9 +565,11 @@ def build() -> str:
   <p class="caption">Vector layout drawn to the real gap, rounding and bar geometry from
   <code>modules/appearance.lua</code> (<code>docs/preview.svg</code>).</p>
 
-  <h3>60 FPS Kinetic Desktop Simulator, GLSL Shaders &amp; 16-Design Wallpaper Studio</h3>
+  <h3>60 FPS Velocity &amp; Kinetic Simulator, Squircle Liquid Glass, GLSL Shaders &amp; 20-Wallpaper Studio</h3>
   <div class="simbar" id="sim-controls">
-    <button type="button" class="simbtn on" id="sim-live-btn">✦ Live Orrery (60fps)</button>
+    <button type="button" class="simbtn on" id="sim-live-btn">✦ Live: Orrery (60fps)</button>
+    <button type="button" class="simbtn" id="sim-turbo-btn">⚡ Turbo (Super+F12)</button>
+    <button type="button" class="simbtn" id="sim-glass-btn">Glass: Kawase</button>
     <button type="button" class="simbtn on" data-gap="default">Gaps: Default</button>
     <button type="button" class="simbtn" data-gap="airy">Airy</button>
     <button type="button" class="simbtn" data-gap="compact">Compact</button>
@@ -577,28 +590,35 @@ def build() -> str:
     <div class="simtop">
       <div><b style="color:#fff;margin-right:7px">◆</b><span class="simws active" data-ws="1">1</span> <span class="simws" data-ws="2">2</span> <span class="simws" data-ws="3">3</span> <span style="color:var(--dim);margin-left:8px" id="sim-wintitle">nvim · modules/animations.lua</span></div>
       <div style="color:var(--dim)">♫ Midnight City — M83</div>
-      <div><span style="color:#e6e6e6;margin-right:8px" id="sim-spark">▁▂▄▆▃▂ 14%</span><span style="background:#e6e6e6;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:8px">◎ 24:58</span><b style="color:#fff">21:42</b></div>
+      <div><span id="sim-turbo-pill" style="display:none;background:#fff;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:7px">⚡ TURBO</span><span style="color:#e6e6e6;margin-right:8px" id="sim-spark">▁▂▄▆▃▂ 12%</span><span style="background:#e6e6e6;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:8px">◎ 24:58</span><b style="color:#fff">21:42</b></div>
     </div>
     <div class="simgrid" id="sim-grid">
       <div class="simwin focus">
-        <div class="simtitle"><span>NORMAL · ~/.config/hypr/modules/animations.lua</span><span>silkSpring</span></div>
-        <div style="color:#686868;font-style:italic">-- Damped Apple-style physical springs + 22-leaf choreography</div>
-        <div>hl.curve(<span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, {{ type = <span style="color:#b8b8b8;font-style:italic">"spring"</span>, mass = <b style="color:#fff">1.0</b>, stiffness = <b style="color:#fff">175</b>, damping = <b style="color:#fff">22</b> }})</div>
-        <div>hl.animation({{ leaf = <span style="color:#b8b8b8;font-style:italic">"windowsIn"</span>,  enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">4.6</b>, spring = <span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, style = <span style="color:#b8b8b8;font-style:italic">"popin 86%"</span> }})</div>
-        <div>hl.animation({{ leaf = <span style="color:#b8b8b8;font-style:italic">"workspaces"</span>, enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">5.2</b>, bezier = <span style="color:#b8b8b8;font-style:italic">"expoOut"</span>,    style = <span style="color:#b8b8b8;font-style:italic">"slidefade 18%"</span> }})</div>
+        <div class="simtabs" id="sim-group-tabs">
+          <button type="button" class="simtab active" data-tab="anim">1: animations.lua</button>
+          <button type="button" class="simtab" data-tab="appear">2: appearance.lua</button>
+          <button type="button" class="simtab" data-tab="perf">3: perf.sh</button>
+        </div>
+        <div class="simtitle"><span id="sim-buf-path">NORMAL · ~/.config/hypr/modules/animations.lua</span><span id="sim-buf-tag">silkSpring · 29 leaves</span></div>
+        <div id="sim-code-body">
+          <div style="color:#686868;font-style:italic">-- Damped physical springs + 29-leaf choreography</div>
+          <div>hl.curve(<span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, {{ type = <span style="color:#b8b8b8;font-style:italic">"spring"</span>, mass = <b style="color:#fff">1.0</b>, stiffness = <b style="color:#fff">175</b>, damping = <b style="color:#fff">22</b> }})</div>
+          <div>hl.animation({{ leaf = <span style="color:#b8b8b8;font-style:italic">"windowsIn"</span>,  enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">4.6</b>, spring = <span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, style = <span style="color:#b8b8b8;font-style:italic">"popin 84%"</span> }})</div>
+          <div>hl.animation({{ leaf = <span style="color:#b8b8b8;font-style:italic">"workspaces"</span>, enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">5.2</b>, bezier = <span style="color:#b8b8b8;font-style:italic">"workspaceGlide"</span>, style = <span style="color:#b8b8b8;font-style:italic">"slidefade 18%"</span> }})</div>
+        </div>
         <div style="margin-top:auto;background:#141414;padding:3px 8px;border-radius:5px;color:var(--dim);display:flex;justify-content:space-between">
-          <span><b style="background:#e6e6e6;color:#080808;padding:0 5px;border-radius:3px">NORMAL</b> animations.lua</span><span>lua · 22 leaves</span>
+          <span><b style="background:#e6e6e6;color:#080808;padding:0 5px;border-radius:3px">GROUP</b> Super+G tab stack</span><span>squircle=4.0 · vfr+vrr</span>
         </div>
       </div>
       <div class="simwin">
-        <div class="simtitle"><span>kitty · doctor.sh (cursor_trail = 1)</span><span>zsh + starship</span></div>
+        <div class="simtitle"><span>kitty --single-instance · doctor.sh (&lt;3ms spawn)</span><span>0-fork runtime</span></div>
         <div><b style="color:#fff">❯</b> ~/.config/hypr/scripts/doctor.sh</div>
-        <div style="color:#e6e6e6">✓ Lua config &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11/11 modules parse cleanly</div>
-        <div style="color:#e6e6e6">✓ Monochrome &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7/7 toolkits (GTK3/4, Qt5/6, Nvim, Kitty, Bar)</div>
-        <div style="color:#e6e6e6">✓ Kinetic &amp; GLSL &nbsp;motion=fluid · 4 GLSL ES 3.00 shaders ready</div>
-        <div style="color:#e6e6e6">✓ Wallpapers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14 static + 2 animated live loops (120fps awww)</div>
+        <div style="color:#e6e6e6">✓ Lua config &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11/11 modules · squircle=4.0 · snap=on</div>
+        <div style="color:#e6e6e6">✓ Velocity &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0-fork bash · direct_scanout=2 · async_commit</div>
+        <div style="color:#e6e6e6">✓ Kinetic &amp; GLSL &nbsp;3 springs · 29 leaves · 5 GLSL ES 3.00 shaders</div>
+        <div style="color:#e6e6e6">✓ Wallpapers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;17 static (to 16K) + 3 live loops (120fps awww)</div>
         <div style="margin-top:auto;color:var(--dim)" id="wall-stage-title">Active: mono-live-01 — Bauhaus Celestial Orrery (60fps Live)</div>
-        <div style="color:var(--faint);font-size:10.5px" id="wall-stage-desc">Click workspace 1/2/3 in the bar for parallax · click any card below for 120fps iris wipe</div>
+        <div style="color:var(--faint);font-size:10.5px" id="wall-stage-desc">Click Live button to toggle Lissajous Oscilloscope · click tabs 1/2/3 on left</div>
       </div>
     </div>
     <div class="simdrawer" id="sim-drawer-box">
@@ -722,8 +742,9 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
   var liveBtn = document.getElementById('sim-live-btn');
   var cvs = document.getElementById('sim-live-canvas');
   var liveMode = true;
+  var liveScene = 0; // 0 = Orrery, 1 = P4 Lissajous Oscilloscope
 
-  // 60 FPS Live Bauhaus Celestial Orrery Canvas + Waybar Sparkline ticker
+  // 60 FPS Live Bauhaus Orrery + P4 Lissajous Oscilloscope Canvas
   if (cvs && cvs.getContext) {{
     var ctx = cvs.getContext('2d');
     var startT = performance.now();
@@ -733,30 +754,58 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
         var w = cvs.width, h = cvs.height, cx = w * 0.5, cy = h * 0.5;
         ctx.fillStyle = '#070707';
         ctx.fillRect(0, 0, w, h);
-        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(w*0.06, cy); ctx.lineTo(w*0.94, cy);
-        ctx.moveTo(cx, h*0.06); ctx.lineTo(cx, h*0.94); ctx.stroke();
-        var rc = h * 0.165;
-        var g = ctx.createRadialGradient(cx, cy, rc * 0.4, cx, cy, rc * (1.55 + 0.08 * Math.sin(t * 2)));
-        g.addColorStop(0, 'rgba(255,255,255,0.16)'); g.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, rc * 1.7, 0, Math.PI * 2); ctx.fill();
-        var orbs = [rc * 1.48, rc * 1.98, rc * 2.52];
-        orbs.forEach(function(r, i) {{
-          ctx.strokeStyle = 'rgba(255,255,255,' + (0.15 - i * 0.035) + ')';
-          ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-        }});
-        var sg = ctx.createLinearGradient(cx, cy - rc, cx, cy + rc);
-        sg.addColorStop(0, '#dcdcdc'); sg.addColorStop(0.55, '#545454'); sg.addColorStop(1, '#101010');
-        ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.fill();
-        ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.clip();
-        ctx.fillStyle = '#080808';
-        for (var y = cy; y < cy + rc; y += 5) ctx.fillRect(cx - rc, y, rc * 2, 2.2);
-        ctx.restore();
-        [[orbs[0], t * 1.3, 6.5, '#f4f4f4'], [orbs[1], -t * 0.85 + 1.8, 4.5, '#c4c4c4'], [orbs[2], t * 1.9 + 0.5, 3.2, '#9a9a9a']].forEach(function(m) {{
-          var mx = cx + Math.cos(m[1]) * m[0], my = cy + Math.sin(m[1]) * m[0];
-          ctx.fillStyle = m[3]; ctx.beginPath(); ctx.arc(mx, my, m[2], 0, Math.PI * 2); ctx.fill();
-        }});
+        if (liveScene === 0) {{
+          ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(w*0.06, cy); ctx.lineTo(w*0.94, cy);
+          ctx.moveTo(cx, h*0.06); ctx.lineTo(cx, h*0.94); ctx.stroke();
+          var rc = h * 0.165;
+          var g = ctx.createRadialGradient(cx, cy, rc * 0.4, cx, cy, rc * (1.55 + 0.08 * Math.sin(t * 2)));
+          g.addColorStop(0, 'rgba(255,255,255,0.16)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, rc * 1.7, 0, Math.PI * 2); ctx.fill();
+          var orbs = [rc * 1.48, rc * 1.98, rc * 2.52];
+          orbs.forEach(function(r, i) {{
+            ctx.strokeStyle = 'rgba(255,255,255,' + (0.15 - i * 0.035) + ')';
+            ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+          }});
+          var sg = ctx.createLinearGradient(cx, cy - rc, cx, cy + rc);
+          sg.addColorStop(0, '#dcdcdc'); sg.addColorStop(0.55, '#545454'); sg.addColorStop(1, '#101010');
+          ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.fill();
+          ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.clip();
+          ctx.fillStyle = '#080808';
+          for (var y = cy; y < cy + rc; y += 5) ctx.fillRect(cx - rc, y, rc * 2, 2.2);
+          ctx.restore();
+          [[orbs[0], t * 1.3, 6.5, '#f4f4f4'], [orbs[1], -t * 0.85 + 1.8, 4.5, '#c4c4c4'], [orbs[2], t * 1.9 + 0.5, 3.2, '#9a9a9a']].forEach(function(m) {{
+            var mx = cx + Math.cos(m[1]) * m[0], my = cy + Math.sin(m[1]) * m[0];
+            ctx.fillStyle = m[3]; ctx.beginPath(); ctx.arc(mx, my, m[2], 0, Math.PI * 2); ctx.fill();
+          }});
+        }} else {{
+          var gx0 = w*0.14, gx1 = w*0.86, gy0 = h*0.12, gy1 = h*0.88;
+          ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+          ctx.strokeRect(gx0, gy0, gx1 - gx0, gy1 - gy0);
+          var rx = h * 0.31, ry = h * 0.31;
+          ctx.strokeStyle = 'rgba(255,255,255,0.16)'; ctx.lineWidth = 1;
+          ctx.beginPath();
+          for (var j = 0; j <= 240; j++) {{
+            var sj = (j / 240) * Math.PI * 2;
+            var jx = cx + rx * 0.74 * Math.sin(2 * sj - t * 2.2), jy = cy + ry * 0.74 * Math.cos(3 * sj);
+            if (j === 0) ctx.moveTo(jx, jy); else ctx.lineTo(jx, jy);
+          }}
+          ctx.stroke();
+          ctx.save();
+          ctx.shadowColor = 'rgba(255,255,255,0.65)'; ctx.shadowBlur = 12;
+          ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 2;
+          ctx.beginPath();
+          for (var i = 0; i <= 300; i++) {{
+            var s = (i / 300) * Math.PI * 2;
+            var px = cx + rx * Math.sin(3 * s + t * 2.4), py = cy + ry * Math.sin(2 * s);
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }}
+          ctx.stroke();
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath(); ctx.arc(cx + rx * Math.sin(t * 2.4), cy, 4, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        }}
       }}
       requestAnimationFrame(drawOrrery);
     }}
@@ -801,11 +850,60 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
     }});
   }}
   if (liveBtn) liveBtn.addEventListener('click', function() {{
+    if (liveMode) liveScene = (liveScene + 1) % 2;
     liveMode = true;
     liveBtn.classList.add('on');
     bgImg.classList.remove('show');
-    document.getElementById('wall-stage-title').textContent = 'Active: mono-live-01 — Bauhaus Celestial Orrery (60fps Live)';
-    document.getElementById('wall-stage-desc').textContent = 'Real-time 60fps monochrome orbital canvas';
+    if (liveScene === 0) {{
+      liveBtn.textContent = '✦ Live: Orrery (60fps)';
+      document.getElementById('wall-stage-title').textContent = 'Active: mono-live-01 — Bauhaus Celestial Orrery (60fps Live)';
+      document.getElementById('wall-stage-desc').textContent = 'Click again to switch to P4 Harmonic Lissajous Oscilloscope';
+    }} else {{
+      liveBtn.textContent = '∿ Live: Lissajous (60fps)';
+      document.getElementById('wall-stage-title').textContent = 'Active: mono-live-03 — P4 White-Phosphor Lissajous (60fps Live)';
+      document.getElementById('wall-stage-desc').textContent = 'Harmonic 3:2 phase figure · click again for Bauhaus Orrery';
+    }}
+  }});
+
+  var turboBtn = document.getElementById('sim-turbo-btn');
+  var turboPill = document.getElementById('sim-turbo-pill');
+  if (turboBtn) turboBtn.addEventListener('click', function() {{
+    var on = stage.classList.toggle('turbo');
+    turboBtn.classList.toggle('on', on);
+    if (turboPill) turboPill.style.display = on ? 'inline-block' : 'none';
+  }});
+
+  var glasses = [['','Glass: Kawase'],['glass-xray','Glass: X-Ray'],['glass-acrylic','Glass: Acrylic'],['glass-off','Glass: Off']];
+  var glIdx = 0;
+  var glBtn = document.getElementById('sim-glass-btn');
+  if (glBtn) glBtn.addEventListener('click', function() {{
+    glIdx = (glIdx + 1) % glasses.length;
+    stage.classList.remove('glass-xray','glass-acrylic','glass-off');
+    if (glasses[glIdx][0]) stage.classList.add(glasses[glIdx][0]);
+    glBtn.textContent = glasses[glIdx][1];
+    glBtn.classList.toggle('on', glIdx > 0);
+  }});
+
+  var tabBufs = {{
+    anim: ['NORMAL · ~/.config/hypr/modules/animations.lua', 'silkSpring · 29 leaves',
+      '<div style="color:#686868;font-style:italic">-- Damped physical springs + 29-leaf choreography</div><div>hl.curve(<span style="color:#b8b8b8">"silkSpring"</span>, {{ type = <span style="color:#b8b8b8">"spring"</span>, mass = <b style="color:#fff">1.0</b>, stiffness = <b style="color:#fff">175</b>, damping = <b style="color:#fff">22</b> }})</div><div>hl.animation({{ leaf = <span style="color:#b8b8b8">"windowsIn"</span>, enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">4.6</b>, spring = <span style="color:#b8b8b8">"silkSpring"</span>, style = <span style="color:#b8b8b8">"popin 84%"</span> }})</div>'],
+    appear: ['NORMAL · ~/.config/hypr/modules/appearance.lua', 'squircle=4.0 · vrr=2',
+      '<div style="color:#686868;font-style:italic">-- G2 squircles, direct scanout, async cursor &amp; Liquid Glass</div><div>decoration = {{ rounding = <b style="color:#fff">10</b>, rounding_power = <b style="color:#fff">4.0</b> }},</div><div>render = {{ direct_scanout = <b style="color:#fff">2</b>, new_render_scheduling = <b style="color:#fff">true</b>, async_commit = <b style="color:#fff">true</b> }}</div>'],
+    perf: ['NORMAL · ~/.config/hypr/scripts/perf.sh', 'turbo · glass · bench',
+      '<div style="color:#686868;font-style:italic"># Sub-ms Turbo / Game Mode &amp; Optical Glass Engine</div><div>hyprctl --batch <span style="color:#b8b8b8">"keyword general:allow_tearing 1; keyword render:direct_scanout 1; keyword misc:vrr 1"</span></div><div><span style="color:#8a8a8a"># mono_var: 0.18ms (0 forks) · sysgraph: 0.35ms (0 forks)</span></div>']
+  }};
+  document.querySelectorAll('.simtab').forEach(function(tb) {{
+    tb.addEventListener('click', function() {{
+      document.querySelectorAll('.simtab').forEach(function(x){{ x.classList.remove('active'); }});
+      tb.classList.add('active');
+      var d = tabBufs[tb.getAttribute('data-tab')];
+      if (d) {{
+        document.getElementById('sim-buf-path').textContent = d[0];
+        document.getElementById('sim-buf-tag').textContent = d[1];
+        document.getElementById('sim-code-body').innerHTML = d[2];
+        document.getElementById('sim-wintitle').textContent = 'nvim · ' + tb.textContent.split(': ')[1];
+      }}
+    }});
   }});
 
   // Dynamic-Island Workspace Pill Morph + Slidefade Parallax
@@ -841,12 +939,12 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
     }});
   }});
 
-  var shaders = [['off','Shader: Off'],['sh-noir','Shader: Noir'],['sh-grain','Shader: 35mm'],['sh-crt','Shader: P4 CRT'],['sh-eink','Shader: E-Ink']];
+  var shaders = [['off','Shader: Off'],['sh-noir','Shader: Noir'],['sh-grain','Shader: 35mm'],['sh-crt','Shader: P4 CRT'],['sh-eink','Shader: E-Ink'],['sh-oled','Shader: OLED Pitch']];
   var shIdx = 0;
   var shBtn = document.getElementById('sim-shader-btn');
   if (shBtn) shBtn.addEventListener('click', function() {{
     shIdx = (shIdx + 1) % shaders.length;
-    stage.classList.remove('sh-noir','sh-grain','sh-crt','sh-eink');
+    stage.classList.remove('sh-noir','sh-grain','sh-crt','sh-eink','sh-oled');
     if (shaders[shIdx][0] !== 'off') stage.classList.add(shaders[shIdx][0]);
     shBtn.textContent = shaders[shIdx][1];
     shBtn.classList.toggle('on', shIdx > 0);

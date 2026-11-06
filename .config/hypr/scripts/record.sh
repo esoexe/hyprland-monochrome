@@ -40,8 +40,17 @@ AUDIO_FILE="$CACHE_DIR/record.audio"
 
 # ── State helpers ──────────────────────────────────────────────────────────
 
-state_get() {  # state_get <key>  →  the value, or nothing
-    sed -n "s/^$1=//p" "$STATE" 2>/dev/null | head -1
+refresh_bar() { pkill -RTMIN+8 -x waybar 2>/dev/null || true; }
+
+state_get() {  # state_get <key>  →  the value, or nothing (pure Bash, 0 forks)
+    [ -f "$STATE" ] || return 0
+    local k v
+    while IFS='=' read -r k v; do
+        if [ "$k" = "$1" ]; then
+            printf '%s' "$v"
+            return 0
+        fi
+    done < "$STATE"
 }
 
 rec_alive() { [ -n "${1:-}" ] && kill -0 "$1" 2>/dev/null; }
@@ -52,7 +61,7 @@ recording() { rec_alive "$(rec_pid)"; }
 
 is_replay() { [ -n "$(state_get replay)" ]; }
 
-forget() { rm -f "$STATE" "$PAUSED"; }
+forget() { rm -f "$STATE" "$PAUSED"; refresh_bar; }
 
 backend_name() {  # what is running, or what we would use
     local b
@@ -220,6 +229,7 @@ write_state() {  # write_state pid backend mode audio file [replay]
         [ "${6:-}" = "1" ] && printf 'replay=1\n'
         printf 'started=%s\n' "$(date +%s)"
     } > "$STATE"
+    refresh_bar
 }
 
 # ── Actions ────────────────────────────────────────────────────────────────
@@ -364,9 +374,11 @@ pause() {
             kill -USR2 "$pid" 2>/dev/null || true     # SIGUSR2 = pause / unpause
             if [ -f "$PAUSED" ]; then
                 rm -f "$PAUSED"
+                refresh_bar
                 notify "Recording resumed" "$(basename "$(state_get file)")"
             else
                 : > "$PAUSED"
+                refresh_bar
                 notify "Recording paused" "Press again to resume"
             fi ;;
         *)

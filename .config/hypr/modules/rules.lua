@@ -16,6 +16,19 @@ local function v(x) return tostring(x) end
 -- Ignore "please maximize me" requests: tiling windows already fill the screen.
 hl.window_rule({ name = "no-maximize-requests", match = { class = ".*" }, suppress_event = "maximize" })
 
+-- Zero-latency direct scanout & tearing hints for games, plus VRR video hints.
+hl.window_rule({
+    name      = "game-low-latency",
+    match     = { class = "^(cs2|osu!|steam_app_.*|gamescope|Minecraft.*|lutris)$" },
+    content   = "game",
+    immediate = true,
+})
+hl.window_rule({
+    name    = "video-vrr-content",
+    match   = { class = "^(mpv|vlc|io\\.github\\.celluloid_player\\.Celluloid)$" },
+    content = "video",
+})
+
 -- Fix occasional drag weirdness of XWayland windows.
 hl.window_rule({
     name  = "xwayland-drag-fix",

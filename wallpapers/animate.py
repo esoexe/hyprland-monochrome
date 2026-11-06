@@ -169,9 +169,77 @@ def render_pulse_frame(w: int, h: int, phase: float) -> Image.Image:
     return img
 
 
+def render_lissajous_frame(w: int, h: int, phase: float) -> Image.Image:
+    """Seamless 0..1 loop: Braun/Tektronix P4 white-phosphor harmonic Lissajous figure."""
+    k = min(w, h) / 1080.0
+    cx, cy = w * 0.5, h * 0.5
+    tau = math.tau * phase
+
+    img = Image.new("L", (w, h), 6)
+    d = ImageDraw.Draw(img)
+
+    # Studio oscilloscope graticule (subtle 1px grid + center vernier ticks)
+    gx0, gx1 = int(w * 0.14), int(w * 0.86)
+    gy0, gy1 = int(h * 0.12), int(h * 0.88)
+    d.rectangle((gx0, gy0, gx1, gy1), outline=22, width=1)
+    for div in range(1, 8):
+        x = gx0 + (gx1 - gx0) * div // 8
+        d.line([(x, gy0), (x, gy1)], fill=14 if div != 4 else 24, width=1)
+    for div in range(1, 6):
+        y = gy0 + (gy1 - gy0) * div // 6
+        d.line([(gx0, y), (gx1, y)], fill=14 if div != 3 else 24, width=1)
+    for t in range(-15, 16):
+        if t == 0:
+            continue
+        tx = int(cx + t * (gx1 - gx0) / 34.0)
+        ty = int(cy + t * (gy1 - gy0) / 34.0)
+        d.line([(tx, int(cy - 3 * k)), (tx, int(cy + 3 * k))], fill=34, width=1)
+        d.line([(int(cx - 3 * k), ty), (int(cx + 3 * k), ty)], fill=34, width=1)
+
+    rx, ry = min(w, h) * 0.31, min(w, h) * 0.31
+    glow = Image.new("L", (w, h), 0)
+    gd = ImageDraw.Draw(glow)
+    core = Image.new("L", (w, h), 0)
+    cd = ImageDraw.Draw(core)
+
+    # Secondary ghost harmonic (2:3 counter-phase)
+    ghost_pts = []
+    steps = 360
+    for i in range(steps + 1):
+        s = math.tau * (i / steps)
+        px = cx + rx * 0.74 * math.sin(2.0 * s - tau)
+        py = cy + ry * 0.74 * math.cos(3.0 * s)
+        ghost_pts.append((px, py))
+    cd.line(ghost_pts, fill=54, width=max(1, int(1.2 * k)))
+
+    # Primary 3:2 harmonic Lissajous curve with phosphor intensity modulation
+    pts = []
+    for i in range(steps + 1):
+        s = math.tau * (i / steps)
+        px = cx + rx * math.sin(3.0 * s + tau)
+        py = cy + ry * math.sin(2.0 * s)
+        pts.append((px, py))
+
+    gd.line(pts, fill=145, width=max(3, int(6.0 * k)))
+    cd.line(pts, fill=236, width=max(1, int(2.0 * k)))
+
+    # Travelling electron-beam focal node (integer 1x phase -> seamless loop)
+    head_x = cx + rx * math.sin(tau)
+    head_y = cy
+    hr = 5.5 * k
+    gd.ellipse((head_x - hr * 3.0, head_y - hr * 3.0, head_x + hr * 3.0, head_y + hr * 3.0), fill=210)
+    cd.ellipse((head_x - hr, head_y - hr, head_x + hr, head_y + hr), fill=255)
+
+    glow = glow.filter(ImageFilter.GaussianBlur(8.5 * k))
+    img = ImageChops.add(img, glow)
+    img = ImageChops.add(img, core)
+    return img
+
+
 ANIMATIONS = {
-    "orbital": ("mono-live-01-orbital.gif", "Bauhaus celestial orrery loop", render_orbital_frame),
-    "pulse":   ("mono-live-02-pulse.gif",   "breathing relativistic singularity loop", render_pulse_frame),
+    "orbital":   ("mono-live-01-orbital.gif",   "Bauhaus celestial orrery loop", render_orbital_frame),
+    "pulse":     ("mono-live-02-pulse.gif",     "breathing relativistic singularity loop", render_pulse_frame),
+    "lissajous": ("mono-live-03-lissajous.gif", "P4 white-phosphor harmonic Lissajous oscilloscope", render_lissajous_frame),
 }
 
 

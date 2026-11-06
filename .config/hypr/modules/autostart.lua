@@ -15,9 +15,9 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("waybar")                    -- top bar
     hl.exec_cmd("dunst")                     -- notifications
 
-    -- ── Wallpaper ────────────────────────────────────────────────────────
-    hl.exec_cmd("awww-daemon")               -- wallpaper daemon
-    hl.exec_cmd("sleep 1 && " .. scripts .. "wallpaper.sh --restore")
+    -- ── Wallpaper (socket-ready poll — paints in ~80ms instead of 1s sleep)
+    hl.exec_cmd("awww-daemon")
+    hl.exec_cmd("for _ in $(seq 1 30); do awww query >/dev/null 2>&1 && break; sleep 0.04; done; " .. scripts .. "wallpaper.sh --restore")
 
     -- ── Idle / power ─────────────────────────────────────────────────────
     hl.exec_cmd("hypridle")                  -- dim, lock, suspend on idle

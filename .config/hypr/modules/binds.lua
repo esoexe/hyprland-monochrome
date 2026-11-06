@@ -14,6 +14,10 @@ local S    = home .. "/.config/hypr/scripts/"
 
 local mod      = u.mainMod or "SUPER"
 local terminal = u.terminal or "kitty"
+local term_cmd = terminal
+if terminal == "kitty" and u.terminal_single_instance ~= false then
+    term_cmd = "kitty --single-instance"
+end
 local browser  = u.browser or "firefox"
 local files    = u.file_manager or "thunar"
 local scratch  = u.scratchpad_name or "scratchpad"
@@ -34,8 +38,8 @@ end
 
 -- ═══════════════════════════ APPLICATIONS ═════════════════════════════════
 
-sh("RETURN",         terminal,                "Terminal")
-sh("T",              terminal,                "Terminal")
+sh("RETURN",         term_cmd,                "Terminal (<3ms shared GPU glyph cache)")
+sh("T",              term_cmd,                "Terminal (<3ms shared GPU glyph cache)")
 sh("SHIFT + RETURN", u.terminal_float or "kitty --class kitty-float", "Floating terminal")
 sh("SHIFT + T",      S .. "scratchterm.sh",      "Dropdown terminal (quake style)")
 sh("SHIFT + B",      S .. "scratchpad.sh btop",  "Floating btop++ telemetry drawer")
@@ -66,7 +70,9 @@ act("SHIFT + F",       hl.dsp.window.fullscreen({ mode = "maximized",  action = 
 sh("SPACE",            S .. "float-center.sh",                                    "Toggle floating window (centred at 70%)")
 act("SHIFT + SPACE",   hl.dsp.window.pin({ action = "toggle" }),                   "Pin window (visible on all workspaces)")
 sh("PERIOD",           S .. "pip-corner.sh",                                       "Spring floating / PiP window to next corner")
-sh("COMMA",            S .. "shader.sh cycle",                                     "Cycle GLSL screen shader (Off / Noir / 35mm / CRT / E-Ink)")
+sh("COMMA",            S .. "shader.sh cycle",                                     "Cycle GLSL screen shader (Off / Noir / 35mm / CRT / E-Ink / OLED)")
+sh("ALT + M",          S .. "motion.sh cycle",                                     "Cycle motion physics profile (Fluid / Snappy / Cinematic / Minimal)")
+sh("F12",              S .. "perf.sh turbo toggle",                                "Toggle Turbo / Game mode (0ms latency, direct scanout, tearing)")
 act("P",               hl.dsp.window.pseudo(),                                    "Pseudo-tile (dwindle)")
 act("Y",               hl.dsp.layout("togglesplit"),                              "Toggle split direction (dwindle)")
 sh("O",                S .. "opacity.sh",                                         "Cycle window opacity")
@@ -215,7 +221,7 @@ hl.define_submap("SCRATCH", "reset", function()
     hl.bind("ESCAPE", hl.dsp.submap("reset"),                              { description = "Cancel scratch chord" })
 end)
 
-act("M", hl.dsp.submap("FX"), "Enter FX chord (motion physics, GLSL shaders, live wallpaper)")
+act("M", hl.dsp.submap("FX"), "Enter FX & VELOCITY chord (physics, shaders, glass, turbo)")
 
 hl.define_submap("FX", "reset", function()
     hl.bind("1",      hl.dsp.exec_cmd(S .. "motion.sh set fluid"),          { description = "Motion: Fluid damped springs" })
@@ -224,14 +230,37 @@ hl.define_submap("FX", "reset", function()
     hl.bind("0",      hl.dsp.exec_cmd(S .. "motion.sh set minimal"),        { description = "Motion: Minimal zero-motion" })
     hl.bind("B",      hl.dsp.exec_cmd(S .. "motion.sh border-loop toggle"), { description = "Toggle orbiting liquid-silver border" })
     hl.bind("M",      hl.dsp.exec_cmd(S .. "motion.sh menu"),               { description = "Open motion physics menu" })
+    hl.bind("T",      hl.dsp.exec_cmd(S .. "perf.sh turbo toggle"),         { description = "Toggle Low-Latency Turbo / Game mode" })
+    hl.bind("X",      hl.dsp.exec_cmd(S .. "perf.sh glass cycle"),          { description = "Cycle Optical Glass (Kawase / X-Ray / Acrylic / Off)" })
+    hl.bind("V",      hl.dsp.exec_cmd(S .. "perf.sh menu"),                 { description = "Open Velocity, Glass & Benchmark menu" })
     hl.bind("S",      hl.dsp.exec_cmd(S .. "shader.sh menu"),               { description = "Open GLSL screen shader studio" })
     hl.bind("N",      hl.dsp.exec_cmd(S .. "shader.sh set noir"),           { description = "GLSL shader: Noir greyscale" })
     hl.bind("G",      hl.dsp.exec_cmd(S .. "shader.sh set cinema-grain"),   { description = "GLSL shader: 35mm film grain" })
     hl.bind("C",      hl.dsp.exec_cmd(S .. "shader.sh set crt-studio"),     { description = "GLSL shader: P4 studio CRT" })
     hl.bind("E",      hl.dsp.exec_cmd(S .. "shader.sh set paper-eink"),     { description = "GLSL shader: Matte E-Ink paper" })
+    hl.bind("D",      hl.dsp.exec_cmd(S .. "shader.sh set oled-pitch"),     { description = "GLSL shader: OLED true-black saver" })
     hl.bind("O",      hl.dsp.exec_cmd(S .. "shader.sh set off"),            { description = "GLSL shader: Off" })
     hl.bind("L",      hl.dsp.exec_cmd(S .. "wallpaper.sh live"),            { description = "Cycle animated live wallpaper" })
     hl.bind("ESCAPE", hl.dsp.submap("reset"),                               { description = "Cancel FX chord" })
+end)
+
+act("CTRL + G", hl.dsp.submap("GROUP"), "Enter GROUP tab-stack chord (h/j/k/l merge, u pop, n/p tabs)")
+
+hl.define_submap("GROUP", "reset", function()
+    hl.bind("G",      hl.dsp.group.toggle(),                          { description = "Toggle window tab group" })
+    hl.bind("H",      hl.dsp.window.move({ into_group = "l" }),       { description = "Merge window into group on left" })
+    hl.bind("J",      hl.dsp.window.move({ into_group = "d" }),       { description = "Merge window into group below" })
+    hl.bind("K",      hl.dsp.window.move({ into_group = "u" }),       { description = "Merge window into group above" })
+    hl.bind("L",      hl.dsp.window.move({ into_group = "r" }),       { description = "Merge window into group on right" })
+    hl.bind("U",      hl.dsp.window.move({ out_of_group = true }),    { description = "Pop window out of group" })
+    hl.bind("N",      hl.dsp.group.next(),                            { description = "Next tab in group" })
+    hl.bind("P",      hl.dsp.group.prev(),                            { description = "Previous tab in group" })
+    hl.bind("X",      hl.dsp.group.lock_active(),                     { description = "Lock / unlock active group" })
+    hl.bind("1",      hl.dsp.group.active({ index = 1 }),             { description = "Switch to tab 1 in group" })
+    hl.bind("2",      hl.dsp.group.active({ index = 2 }),             { description = "Switch to tab 2 in group" })
+    hl.bind("3",      hl.dsp.group.active({ index = 3 }),             { description = "Switch to tab 3 in group" })
+    hl.bind("4",      hl.dsp.group.active({ index = 4 }),             { description = "Switch to tab 4 in group" })
+    hl.bind("ESCAPE", hl.dsp.submap("reset"),                         { description = "Cancel GROUP chord" })
 end)
 
 

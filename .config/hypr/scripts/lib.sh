@@ -13,9 +13,16 @@ ROFI_DIR="$CONFIG_DIR/rofi"
 CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/hyprland-monochrome"
 USER_LUA="$HYPR_DIR/modules/user.lua"
 
-mkdir -p "$CACHE_DIR" 2>/dev/null || true
+[ -d "$CACHE_DIR" ] || mkdir -p "$CACHE_DIR" 2>/dev/null || true
 
-# ── Read a value from modules/user.lua ─────────────────────────────────────
+_mono_trim() {
+    local s="$1"
+    s="${s#"${s%%[![:space:]]*}"}"
+    s="${s%"${s##*[![:space:]]}"}"
+    REPLY="$s"
+}
+
+# ── Read a value from modules/user.lua (pure Bash, zero subprocess forks) ──
 #   mono_var gaps_in 5                    →  5
 #   mono_var wallpaper_dir                →  /home/you/Pictures/Wallpapers
 #   mono_var terminal_float               →  kitty --class kitty-float
@@ -24,29 +31,43 @@ mkdir -p "$CACHE_DIR" 2>/dev/null || true
 # you never have to set the same thing in two places. Quote-aware: a "--"
 # inside a string is kept, a trailing "-- comment" is dropped.
 mono_var() {
-    local name="$1" fallback="${2:-}" val
+    local name="$1" fallback="${2:-}" line rest val=""
 
-    val="$(awk -v key="$name" '
-        function strip_comment(s,   i, c, q, out, n) {
-            SQ = sprintf("%c", 39)            # single quote
-            q = ""; out = ""; n = length(s)
-            for (i = 1; i <= n; i++) {
-                c = substr(s, i, 1)
-                if (q != "") { if (c == q) q = ""; out = out c }
-                else if (c == "\"" || c == SQ) { q = c; out = out c }
-                else if (c == "-" && substr(s, i + 1, 1) == "-") break
-                else out = out c
-            }
-            return out
-        }
-        BEGIN { pat = "^[[:space:]]*" key "[[:space:]]*=" }
-        $0 ~ pat {
-            line = $0
-            sub(pat, "", line)
-            print strip_comment(line)
-            exit
-        }
-    ' "$USER_LUA" 2>/dev/null)"
+    if [ -r "$USER_LUA" ]; then
+        while IFS= read -r line || [ -n "$line" ]; do
+            rest="${line#"${line%%[![:space:]]*}"}"
+            case "$rest" in
+                "${name}"[[:space:]=]*)
+                    rest="${rest#"$name"}"
+                    rest="${rest#"${rest%%[![:space:]]*}"}"
+                    case "$rest" in
+                        =*) rest="${rest#=}" ;;
+                        *)  continue ;;
+                    esac
+                    local i=0 len="${#rest}" ch nxt q="" out=""
+                    while [ "$i" -lt "$len" ]; do
+                        ch="${rest:$i:1}"
+                        if [ -n "$q" ]; then
+                            [ "$ch" = "$q" ] && q=""
+                            out+="$ch"
+                        elif [ "$ch" = '"' ] || [ "$ch" = "'" ]; then
+                            q="$ch"
+                            out+="$ch"
+                        elif [ "$ch" = "-" ]; then
+                            nxt="${rest:$((i + 1)):1}"
+                            [ "$nxt" = "-" ] && break
+                            out+="$ch"
+                        else
+                            out+="$ch"
+                        fi
+                        i=$((i + 1))
+                    done
+                    val="$out"
+                    break
+                    ;;
+            esac
+        done < "$USER_LUA"
+    fi
 
     if [ -z "$val" ]; then
         printf '%s' "$fallback"
@@ -54,18 +75,26 @@ mono_var() {
     fi
 
     # trailing comma / whitespace
-    val="$(printf '%s' "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/,*$//' -e 's/[[:space:]]*$//')"
+    _mono_trim "$val"; val="$REPLY"
+    while [ "${val%,}" != "$val" ]; do
+        val="${val%,}"
+        _mono_trim "$val"; val="$REPLY"
+    done
 
     # "home .. \"/Pictures\"" (a Lua concatenation) → "$HOME" + "/Pictures"
     local prefix=""
     case "$val" in
-        home[[:space:]]*..*|HOME[[:space:]]*..*|\$HOME[[:space:]]*..*)
+        home[[:space:]]*..*|HOME[[:space:]]*..*|\$HOME[[:space:]]*..*|home..*|HOME..*|\$HOME..*)
             prefix="$HOME"
             val="${val#*..}" ;;
     esac
 
     # trim, then drop surrounding quotes
-    val="$(printf '%s' "$val" | sed -e 's/^[[:space:]]*//' -e 's/^+[[:space:]]*//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    _mono_trim "$val"; val="$REPLY"
+    while [ "${val#+}" != "$val" ]; do
+        val="${val#+}"
+        _mono_trim "$val"; val="$REPLY"
+    done
     case "$val" in
         \"*\") val="${val#\"}"; val="${val%\"}" ;;
     esac
@@ -76,7 +105,7 @@ mono_var() {
     val="${prefix}${val}"
     val="${val//\$\{HOME\}/$HOME}"
     val="${val//\$HOME/$HOME}"
-    val="$(printf '%s' "$val" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    _mono_trim "$val"; val="$REPLY"
 
     if [ -z "$val" ]; then val="$fallback"; fi
     printf '%s' "$val"

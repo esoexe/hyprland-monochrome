@@ -23,8 +23,8 @@ The **main modifier is `Super`**. Change it in one place:
 
 | Keys | Action |
 | --- | --- |
-| `Super + Enter` | Terminal |
-| `Super + T` | Terminal |
+| `Super + Enter` | Terminal (<3ms shared GPU glyph cache) |
+| `Super + T` | Terminal (<3ms shared GPU glyph cache) |
 | `Super + Shift + Enter` | Floating terminal |
 | `Super + Shift + T` | Dropdown terminal (quake style) |
 | `Super + Shift + B` | Floating btop++ telemetry drawer |
@@ -56,7 +56,9 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + Space` | Toggle floating window (centred at 70%) |
 | `Super + Shift + Space` | Pin window (visible on all workspaces) |
 | `Super + .` | Spring floating / PiP window to next corner |
-| `Super + ,` | Cycle GLSL screen shader (Off / Noir / 35mm / CRT / E-Ink) |
+| `Super + ,` | Cycle GLSL screen shader (Off / Noir / 35mm / CRT / E-Ink / OLED) |
+| `Alt + M` | Cycle motion physics profile (Fluid / Snappy / Cinematic / Minimal) |
+| `Super + F12` | Toggle Turbo / Game mode (0ms latency, direct scanout, tearing) |
 | `Super + P` | Pseudo-tile (dwindle) |
 | `Super + Y` | Toggle split direction (dwindle) |
 | `Super + O` | Cycle window opacity |
@@ -174,21 +176,40 @@ The **main modifier is `Super`**. Change it in one place:
 | `[SCRATCH] R` | Restore saved workspace session |
 | `[SCRATCH] M` | Open workspace session manager |
 | `[SCRATCH] Escape` | Cancel scratch chord |
-| `Super + M` | Enter FX chord (motion physics, GLSL shaders, live wallpaper) |
+| `Super + M` | Enter FX & VELOCITY chord (physics, shaders, glass, turbo) |
 | `[FX] 1` | Motion: Fluid damped springs |
 | `[FX] 2` | Motion: Snappy 140ms studio |
 | `[FX] 3` | Motion: Cinematic parallax + liquid border |
 | `[FX] 0` | Motion: Minimal zero-motion |
 | `[FX] B` | Toggle orbiting liquid-silver border |
 | `[FX] M` | Open motion physics menu |
+| `[FX] T` | Toggle Low-Latency Turbo / Game mode |
+| `[FX] X` | Cycle Optical Glass (Kawase / X-Ray / Acrylic / Off) |
+| `[FX] V` | Open Velocity, Glass & Benchmark menu |
 | `[FX] S` | Open GLSL screen shader studio |
 | `[FX] N` | GLSL shader: Noir greyscale |
 | `[FX] G` | GLSL shader: 35mm film grain |
 | `[FX] C` | GLSL shader: P4 studio CRT |
 | `[FX] E` | GLSL shader: Matte E-Ink paper |
+| `[FX] D` | GLSL shader: OLED true-black saver |
 | `[FX] O` | GLSL shader: Off |
 | `[FX] L` | Cycle animated live wallpaper |
 | `[FX] Escape` | Cancel FX chord |
+| `Ctrl + G` | Enter GROUP tab-stack chord (h/j/k/l merge, u pop, n/p tabs) |
+| `[GROUP] G` | Toggle window tab group |
+| `[GROUP] H` | Merge window into group on left |
+| `[GROUP] J` | Merge window into group below |
+| `[GROUP] K` | Merge window into group above |
+| `[GROUP] L` | Merge window into group on right |
+| `[GROUP] U` | Pop window out of group |
+| `[GROUP] N` | Next tab in group |
+| `[GROUP] P` | Previous tab in group |
+| `[GROUP] X` | Lock / unlock active group |
+| `[GROUP] 1` | Switch to tab 1 in group |
+| `[GROUP] 2` | Switch to tab 2 in group |
+| `[GROUP] 3` | Switch to tab 3 in group |
+| `[GROUP] 4` | Switch to tab 4 in group |
+| `[GROUP] Escape` | Cancel GROUP chord |
 
 ## Media & Hardware Keys
 

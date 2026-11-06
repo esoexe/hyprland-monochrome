@@ -314,12 +314,13 @@ cat > "$WORK/scene3.sh" <<'EOF'
 B=$'\033[1m'; D=$'\033[2m'; G=$'\033[32m'; R=$'\033[0m'
 show_cmd() { printf '\n%smono%s %s$%s %s%s%s\n' "$D" "$R" "$G" "$R" "$B" "$1" "$R"; sleep 0.35; }
 
-printf '%s▎ 3.0 Studio Edition · Doctor, Sessions, 14 Wallpapers, OCR & Zen%s\n' "$B" "$R"
+printf '%s▎ 5.0 Velocity & Precision · 0-Fork Runtime, Doctor (11/11), Bench, OCR & Zen%s\n' "$B" "$R"
 sleep 0.5
 
-show_cmd '~/.config/hypr/scripts/doctor.sh   # 7/7 monochrome toolkits audited'
+show_cmd '~/.config/hypr/scripts/doctor.sh && ~/.config/hypr/scripts/perf.sh bench'
 ~/.config/hypr/scripts/doctor.sh
-# Wait while 3x2 Wallpaper Studio switches across Singularity & Liquid Mercury
+~/.config/hypr/scripts/perf.sh bench
+# Wait while Wallpaper Studio transitions across Singularity, Lissajous & Liquid Mercury
 while [ ! -f "$WORK/wall.done" ]; do sleep 0.2; done
 sleep 0.4
 
@@ -474,6 +475,21 @@ dbus-run-session -- bash -c '
     wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
     sleep 0.35
 
+    # Velocity & Liquid Glass Menu (perf.sh menu) + Live Turbo Mode Toggle (watch Waybar TURBO pill!)
+    ~/.config/hypr/scripts/perf.sh menu >/dev/null 2>&1 </dev/null &
+    RF=$!
+    wait_rofi; sleep 0.9
+    xdotool key Down; sleep 0.4
+    xdotool key Down; sleep 0.6
+    xdotool key Escape
+    wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
+    sleep 0.3
+
+    ~/.config/hypr/scripts/perf.sh turbo on >/dev/null 2>&1
+    sleep 1.1
+    ~/.config/hypr/scripts/perf.sh turbo off >/dev/null 2>&1
+    sleep 0.45
+
     # Smooth 30fps modal RESIZE glide -> Waybar lights up [RESIZE] pill!
     swaymsg "mode RESIZE" >/dev/null
     sleep 0.35
@@ -524,9 +540,11 @@ dbus-run-session -- bash -c '
     wait "$RF" 2>/dev/null || true
     sleep 1.2
 
-    # Close Thunar window so Liquid Mercury & Zen Mode framing shine unobstructed!
+    # Close Thunar window so P4 Lissajous Oscilloscope, Liquid Mercury & Zen Mode shine!
     swaymsg "[app_id=thunar] kill" >/dev/null 2>&1 || kill "$W2_TH" 2>/dev/null || true
-    sleep 0.8
+    sleep 0.6
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-live-03-lissajous.gif" >/dev/null 2>&1
+    sleep 1.4
     ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-12.jpg" >/dev/null 2>&1
     sleep 0.8
     touch "$WORK/wall.done"
