@@ -52,7 +52,7 @@ skip()  {  # skip <tool>  — remembered, so the summary cannot claim a full pas
 
 printf '\n\033[1m0. C++20 tools & zero-Python guard\033[0m\n'
 if make -s -j"$(nproc 2>/dev/null || echo 2)"; then
-    green "all 6 C++20 tools & mono-calc compiled cleanly (-std=c++20 -Wall -Wextra -Werror)"
+    green "all 7 C++20 tools & mono-calc compiled cleanly (-std=c++20 -Wall -Wextra -Werror)"
 else
     red "C++20 compilation failed (run: make)"
 fi

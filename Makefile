@@ -25,9 +25,10 @@ BINS := \
 	$(BIN_DIR)/keybind-table \
 	$(BIN_DIR)/build-windows-kit \
 	$(BIN_DIR)/build-preview \
-	$(BIN_DIR)/mono-util
+	$(BIN_DIR)/mono-util \
+	$(BIN_DIR)/serve-site
 
-.PHONY: all docs wallpapers test check clean
+.PHONY: all docs site serve wallpapers test check clean
 
 all: $(BINS)
 
@@ -55,10 +56,20 @@ $(BIN_DIR)/build-preview: tools/build-preview.cpp include/keybind_table.hpp incl
 $(BIN_DIR)/mono-util: tools/mono-util.cpp include/mono_config.hpp include/mono_image.hpp | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $< -o $@
 
-docs: $(BIN_DIR)/keybind-table $(BIN_DIR)/build-windows-kit $(BIN_DIR)/build-preview
+$(BIN_DIR)/serve-site: tools/serve-site.cpp | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $< -o $@
+
+docs: $(BIN_DIR)/keybind-table $(BIN_DIR)/build-windows-kit $(BIN_DIR)/build-preview $(BIN_DIR)/mono-util
 	./$(BIN_DIR)/keybind-table
 	./$(BIN_DIR)/build-windows-kit
+	@mkdir -p site
+	./$(BIN_DIR)/mono-util keybinds-json docs/KEYBINDS.md site/keybinds.json
 	./$(BIN_DIR)/build-preview
+
+site: docs $(BIN_DIR)/serve-site
+
+serve: $(BIN_DIR)/serve-site
+	./$(BIN_DIR)/serve-site --port 8080
 
 wallpapers: $(BIN_DIR)/wallpaper-gen $(BIN_DIR)/wallpaper-anim
 	./$(BIN_DIR)/wallpaper-gen --out-dir wallpapers

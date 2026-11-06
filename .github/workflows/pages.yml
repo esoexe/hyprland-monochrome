@@ -1,0 +1,46 @@
+name: Deploy Live Website to GitHub Pages
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Assemble static website bundle
+        run: |
+          mkdir -p _pages/wallpapers _pages/media
+          cp -a site/* _pages/
+          cp -a wallpapers/*.jpg wallpapers/*.gif _pages/wallpapers/
+          cp -a docs/desktop-demo.mp4 docs/test-run.mp4 _pages/media/
+          cp -a docs/preview.html _pages/preview.html
+          cp -a .config/browser/opencode/startpage.html _pages/startpage.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "_pages"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
