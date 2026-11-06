@@ -74,7 +74,7 @@ end, { description = "Open the browser on workspace 4" })
 Refresh the documentation afterwards:
 
 ```bash
-python3 tools/keybind-table.py      # rewrites docs/KEYBINDS.md from binds.lua
+make docs      # compiles & runs ./bin/keybind-table, ./bin/build-windows-kit, ./bin/build-preview
 ```
 
 ## 3. Colours
@@ -125,15 +125,17 @@ somewhere else) and they show up in the picker. Thumbnails are cached in
 
 ### Regenerating the wallpapers
 
-The six bundled images are drawn, not photographed — `wallpapers/generate.py` renders them
-from maths, so you can have any size you like:
+The 14 bundled static wallpapers and 3 animated live loops are drawn procedurally in
+multi-threaded, zero-dependency **C++20** (`wallpapers/generate.cpp` and `wallpapers/animate.cpp`),
+so you can render any resolution you like in milliseconds:
 
 ```bash
-cd wallpapers
-python3 generate.py                      # 1920x1080 (as shipped)
-python3 generate.py 3440 1440            # ultrawide
-python3 generate.py 3840 2160            # 4K
-python3 generate.py 15360 8640 --only 6 --suffix -16k --quality 95   # 16K master
+make                                                         # compile ./bin/wallpaper-gen & ./bin/wallpaper-anim
+./bin/wallpaper-gen                                          # 1920x1080 (all 14 designs)
+./bin/wallpaper-gen 3440 1440                                # ultrawide
+./bin/wallpaper-gen 3840 2160                                # 4K UHD
+./bin/wallpaper-gen 15360 8640 --only 6 --suffix -16k --quality 95   # 16K master
+./bin/wallpaper-anim 1280 720 --frames 36 --fps 24           # seamless animated GIF loops
 ```
 
 Every design is expressed in multiples of the 1080p reference height, so a bigger canvas adds
@@ -142,9 +144,9 @@ curve where the 1080p file has visible stair-steps.
 
 * `--only 6` (or `6`, or `mono-06`) renders one design.
 * `--suffix -16k` names the output `mono-06-16k.jpg` instead of overwriting the 1080p file.
-* `--quality 95` raises the JPEG quality (default 88).
-* `gradient_mesh` and `spotlight` walk every pixel in Python — 4K is quick, 8K and up take a
-  few minutes. The other four are vector draws and scale cheaply.
+* `--quality 95` raises the ITU-T T.81 Grayscale JPEG quality (default 92).
+* Per-pixel shaders (`mono-01`..`mono-14`) parallelize across `std::thread::hardware_concurrency()`
+  in `-O3` C++20, so 1080p and 4K renders finish almost instantaneously.
 
 `mono-06-16k.jpg` (15360×8640) ships alongside the 1080p set; nothing else needed to change,
 the wallpaper picker lists whatever is in the folder.

@@ -287,12 +287,27 @@ done < <(find "$REPO_DIR/.config" -type f -print0)
 
 ok "$INSTALLED files installed ($SKIPPED skipped)"
 
-# Scripts must be executable
+# Scripts must be executable + native C++20 calculator helper compiled
 if [ "$DRY_RUN" = "0" ]; then
     chmod +x "$CONFIG_DIR"/hypr/scripts/*.sh 2>/dev/null || true
     chmod +x "$CONFIG_DIR"/waybar/scripts/*.sh 2>/dev/null || true
     chmod +x "$CONFIG_DIR"/hypr/scripts/* 2>/dev/null || true
     ok "Scripts marked executable"
+
+    if [ "$USE_LINKS" = "0" ] && [ -f "$CONFIG_DIR/hypr/src/mono-calc.cpp" ]; then
+        cxx_bin=""
+        if command -v g++ >/dev/null 2>&1; then cxx_bin="g++"
+        elif command -v clang++ >/dev/null 2>&1; then cxx_bin="clang++"
+        elif command -v c++ >/dev/null 2>&1; then cxx_bin="c++"
+        fi
+        if [ -n "$cxx_bin" ]; then
+            mkdir -p "$CONFIG_DIR/hypr/bin"
+            if "$cxx_bin" -std=c++20 -O3 "$CONFIG_DIR/hypr/src/mono-calc.cpp" \
+                -o "$CONFIG_DIR/hypr/bin/mono-calc" 2>/dev/null; then
+                ok "Compiled native C++20 helper (hypr/bin/mono-calc)"
+            fi
+        fi
+    fi
 fi
 
 # ── Personalise: browser & Qt palette path ───────────────────────────────
@@ -334,7 +349,7 @@ if [ -d "$REPO_DIR/wallpapers" ]; then
         [ -f "$wp" ] || continue
         case "${wp,,}" in
             *.jpg|*.jpeg|*.png|*.webp|*.gif|*.bmp) ;;
-            *) continue ;;   # skip generate.py and anything else non-image
+            *) continue ;;   # skip generate.cpp / generate.hpp and anything else non-image
         esac
         name="$(basename "$wp")"
         if [ -e "$WALLPAPER_DIR/$name" ]; then

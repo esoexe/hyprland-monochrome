@@ -3,14 +3,15 @@
 #
 #     ./test/run-all.sh
 #
+#   • C++20 toolchain build (`make -Wall -Wextra -Werror`) + zero-Python guard
 #   • shell syntax + shellcheck (if installed) on every script
 #   • Lua syntax (luac, if installed) on the Hyprland config
-#   • JSON validity of the Waybar + fastfetch configs
+#   • JSON + TOML validity of Waybar, fastfetch, Starship + Windows Terminal
 #   • the script smoke test (test/smoke-test.sh)
-#   • documentation drift (tools/keybind-table.py --check)
-#   • preview page drift (tools/build-preview.py --check)
+#   • documentation drift (bin/keybind-table --check)
+#   • preview page drift (bin/build-preview --check)
 #   • executable bits on every file that has a shebang
-#   • the Windows kit (windows/) matching the palette
+#   • the Windows kit (bin/build-windows-kit --check)
 
 set -uo pipefail
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -49,6 +50,19 @@ skip()  {  # skip <tool>  — remembered, so the summary cannot claim a full pas
     SKIPPED=$((SKIPPED + 1)); SKIP_WHAT="$SKIP_WHAT $1"
 }
 
+printf '\n\033[1m0. C++20 tools & zero-Python guard\033[0m\n'
+if make -s -j"$(nproc 2>/dev/null || echo 2)"; then
+    green "all 6 C++20 tools & mono-calc compiled cleanly (-std=c++20 -Wall -Wextra -Werror)"
+else
+    red "C++20 compilation failed (run: make)"
+fi
+PY_FILES="$(find . -name '*.py' -not -path './.git/*' | sort)"
+if [ -z "$PY_FILES" ]; then
+    green "zero .py files in repository (100% C++20 + Lua + Bash)"
+else
+    red "unexpected .py files present: $PY_FILES"
+fi
+
 printf '\n\033[1m1. shell syntax\033[0m\n'
 while IFS= read -r f; do
     if bash -n "$f" 2>/dev/null; then green "$f"; else red "$f"; bash -n "$f"; fi
@@ -77,33 +91,27 @@ else
 fi
 
 printf '\n\033[1m4. JSON + TOML configs\033[0m\n'
-python3 - <<'PYJSON' && green "waybar, fastfetch, starship + windows-terminal configs parse" || FAIL=$((FAIL+1))
-import json, pathlib, re, sys, tomllib
-def load(p):
-    s = re.sub(r"(?m)^\s*//.*$", "", open(p).read())
-    return json.loads(re.sub(r"/\*.*?\*/", "", s, flags=re.S))
-for p in (".config/waybar/config.jsonc", ".config/fastfetch/config.jsonc",
-          "windows/windows-terminal-scheme.json", "windows/windows-terminal-settings.json"):
-    load(p)
-tomllib.loads(pathlib.Path(".config/starship.toml").read_text())
-sys.exit(0)
-PYJSON
+if ./bin/mono-util check-configs "$REPO"; then
+    green "waybar, fastfetch, starship + windows-terminal configs parse (C++20)"
+else
+    red "config validation failed (./bin/mono-util check-configs)"
+fi
 
 printf '\n\033[1m5. script smoke test\033[0m\n'
 if bash test/smoke-test.sh; then green "smoke test passed"; else red "smoke test failed"; fi
 
 printf '\n\033[1m6. documentation in sync\033[0m\n'
-if python3 tools/keybind-table.py --check >/dev/null 2>&1; then
+if ./bin/keybind-table --check >/dev/null 2>&1; then
     green "docs/KEYBINDS.md matches binds.lua"
 else
-    red "docs/KEYBINDS.md is stale — run: python3 tools/keybind-table.py"
+    red "docs/KEYBINDS.md is stale — run: make docs"
 fi
 
 printf '\n\033[1m7. preview page in sync\033[0m\n'
-if python3 tools/build-preview.py --check >/dev/null 2>&1; then
+if ./bin/build-preview --check >/dev/null 2>&1; then
     green "docs/preview.html matches the config"
 else
-    red "docs/preview.html is stale — run: python3 tools/build-preview.py"
+    red "docs/preview.html is stale — run: make docs"
 fi
 
 printf '\n\033[1m8. executable bits\033[0m\n'
@@ -136,10 +144,10 @@ else
 fi
 
 printf '\n\033[1m9. windows kit in sync\033[0m\n'
-if python3 tools/build-windows-kit.py --check >/dev/null 2>&1; then
+if ./bin/build-windows-kit --check >/dev/null 2>&1; then
     green "windows/ matches the palette and modules/user.lua"
 else
-    red "windows/ is stale — run: python3 tools/build-windows-kit.py"
+    red "windows/ is stale — run: make docs"
 fi
 if grep -qP '^\t' windows/glazewm-config.yaml 2>/dev/null; then
     red "windows/glazewm-config.yaml contains tabs (YAML forbids them)"

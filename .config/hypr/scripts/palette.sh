@@ -3,8 +3,8 @@
 #
 # Aggregates open windows across workspaces, focus/Zen sprints, tiling & gap
 # presets, screen capture + OCR, wallpaper studio, config quick-edit, and a
-# safe Python-AST math / hex / unit calculator (prefix with '=' or type an
-# arithmetic expression and press Enter).
+# safe sub-millisecond C++20 math / hex / bitwise calculator (prefix with '='
+# or type an arithmetic expression and press Enter).
 #
 #   palette.sh              interactive Rofi command palette
 #   palette.sh calc "expr"  evaluate a math/hex expression safely
@@ -15,83 +15,41 @@ set -u
 
 case "${1:-}" in --*) set -- "${1#--}" "${@:2}" ;; esac
 
+resolve_calc_bin() {
+    local cand
+    for cand in \
+        "$SCRIPTS_DIR/../bin/mono-calc" \
+        "$SCRIPTS_DIR/../../../bin/mono-calc" \
+        "$CACHE_DIR/mono-calc"
+    do
+        if [ -x "$cand" ]; then
+            printf '%s\n' "$cand"
+            return 0
+        fi
+    done
+
+    local src="$SCRIPTS_DIR/../src/mono-calc.cpp"
+    local cxx=""
+    if [ -f "$src" ]; then
+        if have g++; then cxx="g++"
+        elif have clang++; then cxx="clang++"
+        elif have c++; then cxx="c++"
+        fi
+        if [ -n "$cxx" ]; then
+            mkdir -p "$CACHE_DIR"
+            if "$cxx" -std=c++20 -O2 "$src" -o "$CACHE_DIR/mono-calc" 2>/dev/null; then
+                printf '%s\n' "$CACHE_DIR/mono-calc"
+                return 0
+            fi
+        fi
+    fi
+    return 1
+}
+
 eval_math() {
-    local raw="${1:-}"
-    have python3 || return 1
-    python3 - "$raw" <<'PY'
-import ast, math, operator, sys
-
-expr = sys.argv[1].strip()
-if expr.startswith("="):
-    expr = expr[1:].strip()
-if not expr or len(expr) > 256:
-    sys.exit(1)
-
-OPS = {
-    ast.Add: operator.add,
-    ast.Sub: operator.sub,
-    ast.Mult: operator.mul,
-    ast.Div: operator.truediv,
-    ast.FloorDiv: operator.floordiv,
-    ast.Mod: operator.mod,
-    ast.BitOr: operator.or_,
-    ast.BitAnd: operator.and_,
-    ast.BitXor: operator.xor,
-    ast.LShift: operator.lshift,
-    ast.RShift: operator.rshift,
-}
-UNARY = {
-    ast.UAdd: operator.pos,
-    ast.USub: operator.neg,
-    ast.Invert: operator.inv,
-}
-FUNCS = {
-    "sqrt": math.sqrt, "sin": math.sin, "cos": math.cos, "tan": math.tan,
-    "log": math.log, "log2": math.log2, "log10": math.log10,
-    "ceil": math.ceil, "floor": math.floor, "round": round, "abs": abs,
-    "hex": hex, "bin": bin, "oct": oct, "int": int, "float": float,
-    "min": min, "max": max,
-}
-CONSTS = {"pi": math.pi, "e": math.e, "tau": math.tau}
-
-def safe_eval(node):
-    if isinstance(node, ast.Expression):
-        return safe_eval(node.body)
-    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
-        return node.value
-    if isinstance(node, ast.Name) and node.id in CONSTS:
-        return CONSTS[node.id]
-    if isinstance(node, ast.UnaryOp) and type(node.op) in UNARY:
-        return UNARY[type(node.op)](safe_eval(node.operand))
-    if isinstance(node, ast.BinOp):
-        if isinstance(node.op, ast.Pow):
-            base, exp = safe_eval(node.left), safe_eval(node.right)
-            if abs(exp) > 1024:
-                raise ValueError("exponent too large")
-            return base ** exp
-        if type(node.op) in OPS:
-            return OPS[type(node.op)](safe_eval(node.left), safe_eval(node.right))
-    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in FUNCS:
-        if node.keywords:
-            raise ValueError("keywords not supported")
-        args = [safe_eval(a) for a in node.args]
-        return FUNCS[node.func.id](*args)
-    raise ValueError("unsupported expression")
-
-try:
-    tree = ast.parse(expr, mode="eval")
-    val = safe_eval(tree)
-except Exception:
-    sys.exit(1)
-
-if isinstance(val, float):
-    if val.is_integer() and abs(val) < 10**15:
-        print(int(val))
-    else:
-        print(f"{val:.8g}")
-else:
-    print(val)
-PY
+    local raw="${1:-}" calc_bin
+    calc_bin="$(resolve_calc_bin)" || return 1
+    "$calc_bin" "$raw"
 }
 
 # Build TSV: "<visible label>\t<action token>"

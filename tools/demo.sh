@@ -58,9 +58,10 @@ bash test/install-sandbox.sh 2>&1 | tail -24 | sed 's/^/  /'
 pause 2.5
 
 # ── 3. generated docs ────────────────────────────────────────────────────
-say "3 · the docs are generated from the config"
-cmd python3 tools/keybind-table.py
-cmd python3 tools/build-preview.py --check
+say "3 · the docs are generated from the config (C++20)"
+[ -x bin/keybind-table ] || make -s -j"$(nproc 2>/dev/null || echo 2)"
+cmd ./bin/keybind-table
+cmd ./bin/build-preview --check
 dim "docs/KEYBINDS.md — parsed out of modules/binds.lua, never hand-edited:"
 pause 1.2
 sed -n '/^## Applications/,/^## Window/p' docs/KEYBINDS.md | head -13 | sed 's/^/  /'
@@ -121,8 +122,8 @@ pause 2
 # ── wrap up ──────────────────────────────────────────────────────────────
 say "That is the whole loop."
 dim "Everything you just watched is reproducible:"
-dim "   ./test/run-all.sh              # 9 checks, 100 script checks"
-dim "   python3 tools/build-preview.py  # the preview page, from the config"
+dim "   make test                      # C++20 + shellcheck + Lua + 178 script checks"
+dim "   make docs                      # rebuild KEYBINDS.md, windows/* & preview.html"
 dim "   Super + Alt + Print            # screen recording, and Super + Alt + S for a replay"
 pause 3
 printf '\n'

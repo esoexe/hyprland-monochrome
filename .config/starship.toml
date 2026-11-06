@@ -35,7 +35,6 @@ $c\
 $rust\
 $golang\
 $nodejs\
-$python\
 $lua\
 $java\
 $php\
@@ -157,11 +156,6 @@ format = "[$symbol($version )]($style)"
 symbol = " "
 style = "fg:text"
 format = "[$symbol($version )]($style)"
-
-[python]
-symbol = " "
-style = "fg:text"
-format = '[$symbol($version )(\($virtualenv\) )]($style)'
 
 [lua]
 symbol = " "

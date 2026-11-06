@@ -6,8 +6,8 @@ machine-specific quirk, a clearer comment.
 ## Before you open a pull request
 
 ```bash
-./test/run-all.sh              # shell syntax + shellcheck + Lua + JSON + smoke test + docs
-python3 tools/keybind-table.py # refresh docs/KEYBINDS.md if you touched binds.lua
+make test                      # C++20 build + shellcheck + Lua + JSON/TOML + smoke test + docs
+make docs                      # refresh docs/KEYBINDS.md, windows/* & docs/preview.html
 ```
 
 Both must be clean. `test/run-all.sh` prints exactly what is wrong if something fails.

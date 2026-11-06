@@ -73,8 +73,8 @@ it with a shim; Hyprland does not). Use WSL for what it is genuinely good at wit
 running the tooling and the test suite:
 
 ```bash
-sudo apt install shellcheck lua5.4 jq python3
-bash test/run-all.sh      # the same 9 checks, from inside Windows
+sudo apt install g++ make shellcheck lua5.4 jq
+make test                 # compiles C++20 tools & runs all 10 verification suites from inside Windows
 ```
 
 ---
@@ -158,7 +158,7 @@ every launch. Once Zebar works, uncomment these two lines in the config:
 
 The gaps (`5px` inner, `10px` outer), the focused-window border colour (`#e6e6e6`), the inactive
 opacity (`94%`) and the terminal palette all come from `modules/user.lua` and
-`kitty/theme.conf` — change them there, run `python3 tools/build-windows-kit.py`, and the
+`kitty/theme.conf` — change them there, run `make docs` (`./bin/build-windows-kit`), and the
 Windows side follows.
 
 ### Honest limits
@@ -183,5 +183,5 @@ If you have both, this is the pragmatic split:
 * **Keep Windows for the things that need it** (games, school/work software, hardware tools) and
   make it feel familiar with the kit above — same greys, same gaps, same Alt+H/J/K/L.
 * **Edit the config in one place**: `modules/user.lua` and `.config/kitty/theme.conf` are the
-  source of truth for *both* halves. `tools/build-windows-kit.py --check` fails if the Windows
+  source of truth for *both* halves. `./bin/build-windows-kit --check` fails if the Windows
   kit falls behind, so the two cannot silently disagree.

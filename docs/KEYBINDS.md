@@ -1,7 +1,7 @@
 # Keybinds
 
 > This file is generated from `~/.config/hypr/modules/binds.lua`.
-> Edit the Lua file, then run `python3 tools/keybind-table.py` to refresh
+> Edit the Lua file, then run `make docs` (`./bin/keybind-table`) to refresh
 > this page. Every bind also carries a description, so `hyprctl binds`
 > and the cheat sheet (`Super + /`) show the same words.
 

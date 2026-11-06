@@ -150,8 +150,9 @@ resize with `Super + Ctrl + H/J/K/L`, drag with `Super + left mouse`, resize wit
 │   ├── binds.lua             every keybind + RESIZE / CAPTURE / SCRATCH / FX chords
 │   ├── rules.lua             window + choreographed layer rules
 │   └── smart.lua             reactive hl.on() event hooks (screenshare DND, hotplug)
-├── shaders/                  GLSL ES 3.00 screen shaders (noir, 35mm, P4 CRT, E-Ink)
-└── scripts/                  bash that powers motion, shaders, drawers, sessions & doctor
+├── shaders/                  GLSL ES 3.00 screen shaders (noir, 35mm, P4 CRT, E-Ink, OLED)
+├── src/                      native C++20 runtime helper (mono-calc expression engine)
+└── scripts/                  0-fork bash powering motion, shaders, drawers, sessions & doctor
 ```
 
 Everything else is where you would expect it: `~/.config/waybar`, `~/.config/rofi`,
@@ -159,7 +160,7 @@ Everything else is where you would expect it: `~/.config/waybar`, `~/.config/rof
 `~/.config/dunst`, `~/.config/starship.toml`, `~/.config/btop`, `~/.config/fastfetch`, `~/.zshrc`.
 
 Config files are hot-reloaded when you save them (`hyprctl reload` does it by hand).
-After editing `binds.lua`, refresh the docs with `python3 tools/keybind-table.py`.
+After editing `binds.lua`, refresh the docs with `make docs` (`./bin/keybind-table`).
 
 ---
 
@@ -228,13 +229,13 @@ Useful scripts, if you prefer the terminal:
 The scripts are tested without a running compositor, so you can hack on them safely:
 
 ```bash
-./test/run-all.sh                # everything below, in one go
-./test/smoke-test.sh             # 100 checks: stubs hyprctl/rofi/awww/gpu-screen-recorder/…
+make test                        # C++20 build + everything below, in one go
+./test/smoke-test.sh             # 178 checks: stubs hyprctl/rofi/awww/gpu-screen-recorder/…
 ./test/install-sandbox.sh        # installs into a throw-away HOME: backups, --link, uninstall
-python3 tools/keybind-table.py --check   # is docs/KEYBINDS.md still accurate?
-python3 tools/build-preview.py --check   # is docs/preview.html still accurate?
-python3 tools/build-preview.py           # rebuild docs/preview.html after editing the config
-python3 tools/build-windows-kit.py --check  # is the Windows kit still in step with the palette?
+./bin/keybind-table --check      # is docs/KEYBINDS.md still accurate?
+./bin/build-preview --check      # is docs/preview.html still accurate?
+make docs                        # rebuild docs/KEYBINDS.md, windows/* & docs/preview.html
+./bin/build-windows-kit --check  # is the Windows kit still in step with the palette?
 ```
 
 The smoke test builds a throw-away `$HOME`, stubs every external tool and asserts on what

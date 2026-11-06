@@ -68,6 +68,8 @@ jq                       # JSON parsing for the scripts below
 fastfetch                # system info
 btop                     # resource monitor
 neovim                   # zero-plugin monochrome editor & scratchpad notes
+gcc                      # C++20 compiler (`g++`) for mono-calc & wallpaper studio
+make                     # build automation (`make`, `make docs`, `make wallpapers`)
 libnotify                # notify-send
 xdg-utils                # xdg-open
 

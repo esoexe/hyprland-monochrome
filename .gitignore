@@ -1,6 +1,6 @@
-# Python helpers
-__pycache__/
-*.pyc
+# Compiled C++20 binaries
+bin/
+.config/hypr/bin/
 
 # generated / local files
 .config/hypr/modules/monitors-user.lua

@@ -48,30 +48,10 @@ printf '==> Installing hyprland-monochrome into isolated HOME (%s)…\n' "$DEMO_
     bash install.sh --yes --no-packages --no-zsh
 ) >"$WORK/install.log" 2>&1
 
-# Export all 117 real keybinds (including [RESIZE] & [CAPTURE] submaps) from
+# Export all real keybinds (including [RESIZE] & [CAPTURE] submaps) from
 # docs/KEYBINDS.md into `hyprctl binds -j` format for `menu.sh keybinds`.
-python3 - "$REPO/docs/KEYBINDS.md" "$WORK/binds.json" <<'PY'
-import json, pathlib, re, sys
-md = pathlib.Path(sys.argv[1]).read_text()
-out = []
-for m in re.finditer(r'^\|\s*`([^`]+)`\s*\|\s*([^|]+?)\s*\|', md, flags=re.M):
-    combo, desc = m.group(1).strip(), m.group(2).strip()
-    submap = ""
-    if combo.startswith("["):
-        tag, _, combo = combo.partition("] ")
-        submap = tag.lstrip("[")
-    parts = [p.strip() for p in combo.split('+')]
-    mask = 0
-    key = parts[-1] if parts else ""
-    for mod in parts[:-1]:
-        u = mod.upper()
-        if u == "SUPER": mask |= 64
-        elif u == "CTRL": mask |= 4
-        elif u == "ALT": mask |= 8
-        elif u == "SHIFT": mask |= 1
-    out.append({"key": key, "keycode": 0, "modmask": mask, "submap": submap, "description": desc})
-pathlib.Path(sys.argv[2]).write_text(json.dumps(out))
-PY
+[ -x "$REPO/bin/mono-util" ] || make -C "$REPO" -s bin/mono-util
+"$REPO/bin/mono-util" keybinds-json "$REPO/docs/KEYBINDS.md" "$WORK/binds.json"
 
 # Bridge Hyprland IPC calls (clients, binds, activewindow, batch gap keywords)
 # to live Sway IPC so palette.sh, focus.sh, layout.sh and screenshot.sh act on
@@ -215,24 +195,7 @@ EOF
 chmod +x "$DEMO_BIN/hyprctl" "$DEMO_BIN/awww" "$DEMO_BIN/awww-daemon" "$DEMO_BIN/wpctl"
 
 # Adapt the throw-away copy of Waybar's config to Sway workspace/mode/window IPC
-python3 - "$DEMO_HOME/.config/waybar/config.jsonc" "$DEMO_HOME/.config/waybar/style.css" <<'PY'
-import pathlib, sys
-cfg = pathlib.Path(sys.argv[1])
-s = cfg.read_text()
-s = s.replace('"hyprland/workspaces"', '"sway/workspaces"')
-s = s.replace('"hyprland/submap"', '"sway/mode"')
-s = s.replace('"hyprland/window"', '"sway/window"')
-s = s.replace('"separate-outputs": true', '"max-length": 70')
-for mod in ('"temperature",\n', '"bluetooth",\n', '"battery",\n', '"custom/updates",\n'):
-    s = s.replace('        ' + mod, '')
-cfg.write_text(s)
-
-css = pathlib.Path(sys.argv[2])
-text = css.read_text()
-text = text.replace('#workspaces button.active {', '#workspaces button.active,\n#workspaces button.focused {')
-text = text.replace('#submap {', '#submap,\n#mode {')
-css.write_text(text)
-PY
+"$REPO/bin/mono-util" sway-waybar "$DEMO_HOME/.config/waybar/config.jsonc" "$DEMO_HOME/.config/waybar/style.css"
 
 # Clean, curated .desktop entries for Rofi drun
 mkdir -p "$DEMO_HOME/.local/share/applications"

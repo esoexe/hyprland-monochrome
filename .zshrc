@@ -233,7 +233,14 @@ extract() {                                  # extract almost anything
     esac
 }
 targz()  { tar -czf "${1%/}.tar.gz" "$1"; }
-serve()  { python3 -m http.server "${1:-8000}"; }        # quick file server
+serve() {                                                # quick static file server
+    local p="${1:-8000}"
+    if command -v miniserve >/dev/null 2>&1; then miniserve -p "$p" .
+    elif command -v darkhttpd >/dev/null 2>&1; then darkhttpd . --port "$p"
+    elif command -v busybox >/dev/null 2>&1; then busybox httpd -f -p "$p"
+    else echo "install darkhttpd or miniserve (pacman -S darkhttpd)" >&2; return 1
+    fi
+}
 weather(){ curl -s "wttr.in/${1:-Bechar}?format=3"; echo; }
 note()   { ${EDITOR:-nano} "$HOME/Notes/$(date +%Y-%m-%d)-${1:-note}.md"; }
 fkill()  { ps -u "$USER" -o pid,cmd | fzf -m | awk '{print $1}' | xargs -r kill -9; }

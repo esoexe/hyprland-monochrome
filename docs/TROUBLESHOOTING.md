@@ -40,7 +40,8 @@ pkill waybar && waybar      # in case it is stuck
 ```
 
 * `Failed to parse config` → a JSON syntax error in `~/.config/waybar/config.jsonc`
-  (a missing comma or trailing comma). `python3 -c "import json,re,sys;print(json.loads(re.sub(r'(?m)^\s*//.*$','',open('$HOME/.config/waybar/config.jsonc').read())))"` will tell you.
+  (a missing comma or trailing comma). Run `make && ./bin/mono-util check-configs .` (or
+  `sed -E 's|^[[:space:]]*//.*||' ~/.config/waybar/config.jsonc | jq .`) to pinpoint it.
 * A module shows an error box (the `temperature` module is the usual suspect) → remove it
   from `modules-right` in the config, or point it at the right sensor (see CUSTOMIZE.md §5).
 * Bar visible but empty/transparent → check the CSS: `gtk.css` errors are printed to the

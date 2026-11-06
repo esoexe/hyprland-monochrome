@@ -172,12 +172,21 @@ export ROFI_STDIN
 # ── Fake config tree ──────────────────────────────────────────────────────
 cp "$REPO/.config/hypr/hyprland.lua" "$XDG_CONFIG_HOME/hypr/"
 cp "$REPO"/.config/hypr/modules/*.lua "$XDG_CONFIG_HOME/hypr/modules/"
+# Ensure C++20 tools & runtime calculator are built before running isolated tests
+if [ ! -x "$REPO/bin/mono-calc" ] || [ ! -x "$REPO/bin/wallpaper-gen" ] || \
+   [ ! -x "$REPO/bin/wallpaper-anim" ] || [ ! -x "$REPO/bin/mono-util" ]; then
+    make -C "$REPO" -s -j"$(nproc 2>/dev/null || echo 2)"
+fi
+
 cp "$REPO"/.config/hypr/scripts/*.sh "$C"
 cp "$REPO"/.config/waybar/scripts/*.sh "$XDG_CONFIG_HOME/waybar/scripts/"
 mkdir -p "$XDG_CONFIG_HOME/gtk-3.0" "$XDG_CONFIG_HOME/gtk-4.0" \
          "$XDG_CONFIG_HOME/qt5ct/colors" "$XDG_CONFIG_HOME/qt6ct/colors" \
          "$XDG_CONFIG_HOME/nvim/colors" "$XDG_CONFIG_HOME/kitty" \
-         "$XDG_CONFIG_HOME/hypr/shaders"
+         "$XDG_CONFIG_HOME/hypr/shaders" "$XDG_CONFIG_HOME/hypr/src" \
+         "$XDG_CONFIG_HOME/hypr/bin"
+cp "$REPO/.config/hypr/src/mono-calc.cpp" "$XDG_CONFIG_HOME/hypr/src/"
+cp "$REPO/bin/mono-calc" "$XDG_CONFIG_HOME/hypr/bin/"
 cp "$REPO"/.config/hypr/shaders/*.frag "$XDG_CONFIG_HOME/hypr/shaders/"
 cp "$REPO/.config/gtk-3.0/gtk.css" "$XDG_CONFIG_HOME/gtk-3.0/"
 cp "$REPO/.config/gtk-4.0/gtk.css" "$XDG_CONFIG_HOME/gtk-4.0/"
@@ -526,41 +535,39 @@ mv "$BIN/.gsr" "$BIN/gpu-screen-recorder"
 mv "$BIN/.wf"  "$BIN/wf-recorder"
 eq "record.sh path prints the folder" "$REC_DIR" "$(timeout 10 "$C/record.sh" path)"
 
-# ═══════════════════════ 13. wallpaper generator ════════════════════════
-printf '\n\033[1m13. wallpapers/generate.py\033[0m\n'
+# ═══════════════════════ 13. wallpaper generator (C++20) ════════════════
+printf '\n\033[1m13. wallpapers/generate.cpp (C++20)\033[0m\n'
 # run it in the throw-away workspace, so nothing is written into the repo
 GEN_DIR="$WORK/wallpapers"
 mkdir -p "$GEN_DIR"
-cp "$REPO/wallpapers/generate.py" "$GEN_DIR/"
+cp "$REPO/bin/wallpaper-gen" "$GEN_DIR/"
 
-if timeout 60 python3 "$GEN_DIR/generate.py" 320 180 --only 6 --suffix -test >/dev/null 2>&1; then
+if timeout 60 "$GEN_DIR/wallpaper-gen" 320 180 --only 6 --suffix -test >/dev/null 2>&1; then
     green "renders a design on demand"
 else
-    red "renders a design on demand" "$(cd "$GEN_DIR" && timeout 60 python3 generate.py 320 180 --only 6 2>&1 | tail -2)"
+    red "renders a design on demand" "$(cd "$GEN_DIR" && timeout 60 ./wallpaper-gen 320 180 --only 6 2>&1 | tail -2)"
 fi
-eq "…writes exactly the file asked for" "1" "$(ls "$GEN_DIR"/mono-06-test.jpg 2>/dev/null | wc -l)"
-eq "…at the requested size" "320x180" "$(python3 -c "
-from PIL import Image
-print('%dx%d' % Image.open('$GEN_DIR/mono-06-test.jpg').size)" 2>/dev/null || echo 'no-pillow')"
+eq "…writes exactly the file asked for" "1" "$(find "$GEN_DIR" -maxdepth 1 -name 'mono-06-test.jpg' | wc -l)"
+eq "…at the requested size" "320x180" "$("$REPO/bin/mono-util" image-size "$GEN_DIR/mono-06-test.jpg" 2>/dev/null || echo 'bad-jpg')"
 others=0
 for f in "$GEN_DIR"/mono-0[1-5].jpg; do [ -e "$f" ] && others=$((others + 1)); done
 eq "…and leaves the other designs alone" "0" "$others"
 
-# --only used to match nothing unless you zero-padded it ("--only 3" did nothing)
-timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 3 >/dev/null 2>&1
-eq "a bare number selects a design" "1" "$(ls "$GEN_DIR"/mono-03.jpg 2>/dev/null | wc -l)"
+# --only accepts bare numbers ("--only 3" -> mono-03.jpg)
+timeout 60 "$GEN_DIR/wallpaper-gen" 160 90 --only 3 >/dev/null 2>&1
+eq "a bare number selects a design" "1" "$(find "$GEN_DIR" -maxdepth 1 -name 'mono-03.jpg' | wc -l)"
 
-# verify new procedural designs (mono-07 solar eclipse, mono-10 silk ribbon, mono-11 singularity, mono-14 bauhaus)
-timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 7 >/dev/null 2>&1
-eq "mono-07 eclipse renders cleanly" "1" "$(ls "$GEN_DIR"/mono-07.jpg 2>/dev/null | wc -l)"
-timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 10 >/dev/null 2>&1
-eq "mono-10 silk ribbon renders cleanly" "1" "$(ls "$GEN_DIR"/mono-10.jpg 2>/dev/null | wc -l)"
-timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 11 >/dev/null 2>&1
-eq "mono-11 singularity renders cleanly" "1" "$(ls "$GEN_DIR"/mono-11.jpg 2>/dev/null | wc -l)"
-timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 14 >/dev/null 2>&1
-eq "mono-14 bauhaus compass renders cleanly" "1" "$(ls "$GEN_DIR"/mono-14.jpg 2>/dev/null | wc -l)"
+# verify procedural designs (mono-07 solar eclipse, mono-10 silk ribbon, mono-11 singularity, mono-14 bauhaus)
+timeout 60 "$GEN_DIR/wallpaper-gen" 160 90 --only 7 >/dev/null 2>&1
+eq "mono-07 eclipse renders cleanly" "1" "$(find "$GEN_DIR" -maxdepth 1 -name 'mono-07.jpg' | wc -l)"
+timeout 60 "$GEN_DIR/wallpaper-gen" 160 90 --only 10 >/dev/null 2>&1
+eq "mono-10 silk ribbon renders cleanly" "1" "$(find "$GEN_DIR" -maxdepth 1 -name 'mono-10.jpg' | wc -l)"
+timeout 60 "$GEN_DIR/wallpaper-gen" 160 90 --only 11 >/dev/null 2>&1
+eq "mono-11 singularity renders cleanly" "1" "$(find "$GEN_DIR" -maxdepth 1 -name 'mono-11.jpg' | wc -l)"
+timeout 60 "$GEN_DIR/wallpaper-gen" 160 90 --only 14 >/dev/null 2>&1
+eq "mono-14 bauhaus compass renders cleanly" "1" "$(find "$GEN_DIR" -maxdepth 1 -name 'mono-14.jpg' | wc -l)"
 
-timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only nope >/dev/null 2>&1
+timeout 60 "$GEN_DIR/wallpaper-gen" 160 90 --only nope >/dev/null 2>&1
 eq "an unknown --only fails loudly" "1" "$?"
 
 # ═══════════════════════ 14. focus & zen engine ══════════════════════════
@@ -700,25 +707,11 @@ DOC_OUT="$(timeout 10 "$C/doctor.sh" --plain)"
 contains "doctor verifies 7/7 monochrome toolkits" "7/7 toolkits themed" "$DOC_OUT"
 
 # Monochrome purity audit across Qt5/Qt6 & Neovim palettes (R == G == B for every #rrggbb)
-PURE_CHECK="$(python3 - "$REPO" <<'PY'
-import pathlib, re, sys
-repo = pathlib.Path(sys.argv[1])
-bad = []
-for rel in (".config/qt5ct/colors/Monochrome.conf",
-            ".config/qt6ct/colors/Monochrome.conf",
-            ".config/nvim/colors/monochrome.lua"):
-    txt = (repo / rel).read_text()
-    for m in re.findall(r"#([0-9a-fA-F]{6,8})\b", txt):
-        rgb = m[-6:].lower()
-        if not (rgb[0:2] == rgb[2:4] == rgb[4:6]):
-            bad.append(f"{rel}:#{m}")
-print("pure" if not bad else ",".join(bad))
-PY
-)"
+PURE_CHECK="$("$REPO/bin/mono-util" check-greyscale "$REPO")"
 eq "Qt5, Qt6 & Neovim palettes are 100% pure greyscale (R==G==B)" "pure" "$PURE_CHECK"
 
 # ═══════════════════════ 21. kinetic motion, shaders & live loops ════════
-printf '\n\033[1m21. motion.sh, shader.sh, pip-corner.sh & animate.py\033[0m\n'
+printf '\n\033[1m21. motion.sh, shader.sh, pip-corner.sh & animate.cpp (C++20)\033[0m\n'
 : > "$CALLS"
 contains "default motion profile is fluid" "fluid" "$(timeout 10 "$C/motion.sh" status)"
 timeout 10 "$C/motion.sh" cycle >/dev/null 2>&1
@@ -780,15 +773,11 @@ timeout 10 "$C/wallpaper.sh" live >/dev/null 2>&1
 contains "wallpaper.sh live transitions at 120fps on Bezier curve" "--transition-fps 120" "$(cat "$CALLS")"
 contains "wallpaper.sh live selects animated gif" "mono-live-01-orbital.gif" "$(cat "$CALLS")"
 
-cp "$REPO/wallpapers/animate.py" "$GEN_DIR/"
-timeout 60 python3 "$GEN_DIR/animate.py" 160 90 --frames 6 --fps 12 --only orbital >/dev/null 2>&1
-eq "animate.py renders seamless multi-frame greyscale GIF" "6" "$(python3 -c "
-from PIL import Image
-print(Image.open('$GEN_DIR/mono-live-01-orbital.gif').n_frames)" 2>/dev/null || echo 0)"
-timeout 60 python3 "$GEN_DIR/animate.py" 160 90 --frames 6 --fps 12 --only lissajous >/dev/null 2>&1
-eq "animate.py renders seamless lissajous oscilloscope GIF" "6" "$(python3 -c "
-from PIL import Image
-print(Image.open('$GEN_DIR/mono-live-03-lissajous.gif').n_frames)" 2>/dev/null || echo 0)"
+cp "$REPO/bin/wallpaper-anim" "$GEN_DIR/"
+timeout 60 "$GEN_DIR/wallpaper-anim" 160 90 --frames 6 --fps 12 --only orbital >/dev/null 2>&1
+eq "animate.cpp renders seamless multi-frame greyscale GIF" "6" "$("$REPO/bin/mono-util" gif-frames "$GEN_DIR/mono-live-01-orbital.gif" 2>/dev/null || echo 0)"
+timeout 60 "$GEN_DIR/wallpaper-anim" 160 90 --frames 6 --fps 12 --only lissajous >/dev/null 2>&1
+eq "animate.cpp renders seamless lissajous oscilloscope GIF" "6" "$("$REPO/bin/mono-util" gif-frames "$GEN_DIR/mono-live-03-lissajous.gif" 2>/dev/null || echo 0)"
 contains "doctor verifies 5 GLSL shaders & kinetic motion" "5 GLSL ES 3.00 shaders ready" "$(timeout 10 "$C/doctor.sh" --plain)"
 
 # ═══════════════════════ 22. Velocity, Turbo & Liquid Glass ═══════════════
