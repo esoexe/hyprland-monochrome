@@ -103,16 +103,19 @@ step "Checking your system"
 
 [ "$(id -u)" -eq 0 ] && die "Do not run this as root. Run it as your normal user (it asks for sudo when needed)."
 
-if [ "$DO_PACKAGES" = "1" ]; then
-    command -v pacman >/dev/null 2>&1 || die "pacman not found — this installer targets Arch-based distributions (use --no-packages to install the config files only)."
+PKG_MANAGER=""
+if command -v pacman >/dev/null 2>&1; then PKG_MANAGER="pacman"
+elif command -v apt-get >/dev/null 2>&1; then PKG_MANAGER="apt"
+elif command -v dnf >/dev/null 2>&1; then PKG_MANAGER="dnf"
+elif command -v zypper >/dev/null 2>&1; then PKG_MANAGER="zypper"
+fi
+
+if [ "$DO_PACKAGES" = "1" ] && [ -z "$PKG_MANAGER" ]; then
+    die "No supported package manager (pacman, apt-get, dnf, zypper) found — re-run with --no-packages to install the config files only."
 fi
 
 DISTRO="$(. /etc/os-release 2>/dev/null && printf '%s' "${PRETTY_NAME:-${ID:-unknown}}")"
-ok "Distribution: $DISTRO"
-
-if ! grep -qiE '^(ID_LIKE|ID)=.*(arch|endeavouros|cachyos|manjaro|garuda|artix|arcolinux|archcraft)' /etc/os-release 2>/dev/null; then
-    warn "This does not look like an Arch-based system — continuing anyway."
-fi
+ok "Distribution: $DISTRO (${PKG_MANAGER:-config-only})"
 
 [ -d "$REPO_DIR/.config/hypr" ] || die "Config files not found next to this script. Extract the whole repository first."
 
@@ -171,7 +174,7 @@ if [ "$DO_PACKAGES" = "1" ]; then
 
     if ! command -v sudo >/dev/null 2>&1; then
         warn "sudo not found — skipping the repository packages (install them by hand from packages.txt)."
-    else
+    elif [ "$PKG_MANAGER" = "pacman" ]; then
         mapfile -t PKGS < <(read_list "$REPO_DIR/packages.txt")
         available=(); missing=()
         for p in "${PKGS[@]}"; do
@@ -181,10 +184,37 @@ if [ "$DO_PACKAGES" = "1" ]; then
         [ "${#missing[@]}" -gt 0 ] && warn "Not available in your repositories (skipped): ${missing[*]}"
 
         if [ "${#available[@]}" -gt 0 ]; then
-            info "Installing ${#available[@]} packages…"
+            info "Installing ${#available[@]} packages via pacman…"
             run sudo pacman -S --needed --noconfirm "${available[@]}" || warn "pacman reported an error — check the output above."
             ok "Repository packages done"
         fi
+    elif [ "$PKG_MANAGER" = "apt" ]; then
+        info "Installing cross-distro packages via apt-get…"
+        APT_PKGS=(hyprland waybar rofi kitty thunar dunst wl-clipboard cliphist grim slurp wf-recorder
+                  jq fzf bat zathura imv mpv neovim zsh zsh-autosuggestions zsh-syntax-highlighting
+                  btop pavucontrol network-manager bluez brightnessctl playerctl xdg-utils flatpak
+                  file-roller unzip p7zip-full g++ make libnotify-bin fonts-noto-color-emoji xwayland)
+        avail_apt=()
+        for p in "${APT_PKGS[@]}"; do
+            apt-cache show "$p" >/dev/null 2>&1 && avail_apt+=("$p")
+        done
+        [ "${#avail_apt[@]}" -gt 0 ] && run sudo apt-get install -y "${avail_apt[@]}" || warn "Some apt packages were unavailable — install Hyprland >= 0.55 manually if needed."
+        ok "APT packages processed"
+    elif [ "$PKG_MANAGER" = "dnf" ]; then
+        info "Installing cross-distro packages via dnf…"
+        run sudo dnf install -y --skip-unavailable \
+            hyprland waybar rofi-wayland kitty thunar dunst wl-clipboard cliphist grim slurp wf-recorder \
+            jq fzf bat zathura zathura-pdf-mupdf imv mpv neovim zsh zsh-autosuggestions zsh-syntax-highlighting \
+            btop pavucontrol NetworkManager bluez brightnessctl playerctl xdg-utils flatpak file-roller \
+            unzip p7zip gcc-c++ make libnotify xorg-x11-server-Xwayland power-profiles-daemon || warn "dnf reported warnings — continuing."
+        ok "DNF packages processed"
+    elif [ "$PKG_MANAGER" = "zypper" ]; then
+        info "Installing cross-distro packages via zypper…"
+        run sudo zypper --non-interactive install --no-recommends \
+            hyprland waybar rofi-wayland kitty thunar dunst wl-clipboard cliphist grim slurp wf-recorder \
+            jq fzf bat zathura imv mpv neovim zsh btop pavucontrol brightnessctl playerctl xdg-utils \
+            flatpak file-roller unzip gcc-c++ make libnotify-tools xwayland || warn "zypper reported warnings — continuing."
+        ok "Zypper packages processed"
     fi
 
     if [ "$DO_AUR" = "1" ] && [ -n "$AUR_HELPER" ]; then
@@ -325,6 +355,10 @@ if [ "$DRY_RUN" = "0" ]; then
             sed -i "s|~/.config|$CONFIG_DIR|g" "$qtc" 2>/dev/null || true
         fi
     done
+    if [ -x "$CONFIG_DIR/hypr/scripts/browser-theme.sh" ]; then
+        "$CONFIG_DIR/hypr/scripts/browser-theme.sh" apply --quiet >/dev/null 2>&1 || true
+        ok "Applied OpenCode browser theme & Wayland browser flags"
+    fi
 fi
 
 # ── A leftover hyprlang config? ───────────────────────────────────────────

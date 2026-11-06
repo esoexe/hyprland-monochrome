@@ -9,6 +9,8 @@ running() {
     pgrep -x hyprpolkitagent          >/dev/null 2>&1 && return 0
     pgrep -f polkit-gnome-authentication-agent-1 >/dev/null 2>&1 && return 0
     pgrep -f polkit-kde-authentication-agent-1   >/dev/null 2>&1 && return 0
+    pgrep -x lxqt-policykit-agent     >/dev/null 2>&1 && return 0
+    pgrep -f polkit-mate-authentication-agent-1  >/dev/null 2>&1 && return 0
     return 1
 }
 
@@ -19,12 +21,18 @@ if have systemctl && systemctl --user start hyprpolkitagent.service 2>/dev/null;
     exit 0
 fi
 
-# 2) direct binary paths
+# 2) direct binary paths across Arch, Debian/Ubuntu, Fedora, openSUSE & Nix
 for agent in \
     hyprpolkitagent \
     /usr/lib/hyprpolkitagent/hyprpolkitagent \
+    /usr/libexec/hyprpolkitagent \
     /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 \
-    /usr/lib/polkit-kde-authentication-agent-1
+    /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
+    /usr/libexec/polkit-gnome-authentication-agent-1 \
+    /usr/lib/polkit-kde-authentication-agent-1 \
+    /usr/libexec/kf6/polkit-kde-authentication-agent-1 \
+    lxqt-policykit-agent \
+    /usr/lib/mate-polkit/polkit-mate-authentication-agent-1
 do
     if have "$agent" || [ -x "$agent" ]; then
         setsid "$agent" >/dev/null 2>&1 &

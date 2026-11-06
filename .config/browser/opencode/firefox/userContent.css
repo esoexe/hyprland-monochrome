@@ -1,0 +1,34 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   OpenCode Design System — Firefox / LibreWolf / Zen userContent.css
+   Styles internal pages (`about:blank`, `about:newtab`, `about:home`) and
+   renders crisp dark monochrome scrollbars matching OpenCode surfaces.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@-moz-document url("about:blank"), url("about:newtab"), url("about:home"), url("about:privatebrowsing") {
+  html, body {
+    background-color: #131010 !important;
+    color: #fdfcfc !important;
+    font-family: "Berkeley Mono", "IBM Plex Mono", "JetBrainsMono Nerd Font", monospace !important;
+  }
+
+  .search-wrapper input,
+  .fake-textbox {
+    background-color: #201d1d !important;
+    border: 1px solid #3d3838 !important;
+    border-radius: 4px !important;
+    color: #fdfcfc !important;
+    box-shadow: none !important;
+  }
+
+  .top-site-outer .tile {
+    background-color: #1b1818 !important;
+    border: 1px solid #3d3838 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+  }
+}
+
+:root {
+  scrollbar-color: #3d3838 #131010;
+  scrollbar-width: thin;
+}

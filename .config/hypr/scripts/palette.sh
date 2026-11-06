@@ -93,6 +93,11 @@ build_entries() {
 ▣  Drawer · Toggle Floating btop++ Monitor (Super + Shift + B)	drawer:btop
 ✎  Drawer · Toggle Scratch Markdown Notes (Super + ')	drawer:notes
 ◰  Drawer · Toggle Quick File Drawer	drawer:files
+󰀻  Open · Universal App / File / AppImage / Flatpak Opener (Super + Shift + O)	open:picker
+󰖟  Browser · Open OpenCode Startpage (Super + Alt + B)	browser:startpage
+󰏘  Browser · Apply OpenCode Theme to All Browser Profiles	browser:apply
+󰓅  Hardware · PC GPU, Chassis & Power Profile Menu	hw:menu
+⚡  Hardware · Cycle Power Profile (Performance / Balanced / Saver)	hw:power
 💾  Session · Save Current Workspace Snapshot ('work')	sess:save
 ↺  Session · Restore Workspace Snapshot ('work')	sess:restore
 🗂  Session · Open Workspace Session Manager	sess:menu
@@ -173,6 +178,11 @@ run_token() {
         drawer:btop)    "$SCRIPTS_DIR/scratchpad.sh" btop ;;
         drawer:notes)   "$SCRIPTS_DIR/scratchpad.sh" notes ;;
         drawer:files)   "$SCRIPTS_DIR/scratchpad.sh" files ;;
+        open:picker)    "$SCRIPTS_DIR/open-app.sh" picker ;;
+        browser:startpage) "$SCRIPTS_DIR/browser-theme.sh" open-startpage ;;
+        browser:apply)  "$SCRIPTS_DIR/browser-theme.sh" apply ;;
+        hw:menu)        "$SCRIPTS_DIR/hardware.sh" menu ;;
+        hw:power)       "$SCRIPTS_DIR/hardware.sh" power cycle ;;
         sess:save)      "$SCRIPTS_DIR/workspace-session.sh" save work ;;
         sess:restore)   "$SCRIPTS_DIR/workspace-session.sh" restore work ;;
         sess:menu)      "$SCRIPTS_DIR/workspace-session.sh" menu ;;
@@ -267,6 +277,11 @@ cmd_interactive() {
             printf '%s' "$ans" | wl-copy 2>/dev/null || true
         fi
         cmd_interactive "= ${choice#=}  →  ${ans}   (copied to clipboard)"
+        exit 0
+    fi
+
+    # Otherwise try opening as URL, file path, AppImage, Flatpak ID, or CLI command!
+    if [ -x "$SCRIPTS_DIR/open-app.sh" ] && "$SCRIPTS_DIR/open-app.sh" open "$choice" >/dev/null 2>&1; then
         exit 0
     fi
 

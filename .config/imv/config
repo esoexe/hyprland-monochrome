@@ -1,0 +1,20 @@
+[options]
+background = 0a0a0a
+overlay_font = JetBrainsMono Nerd Font:11
+overlay_text_color = fdfcfc
+overlay_background_color = 131010
+overlay_background_alpha = e8
+upscaling_method = linear
+loop_input = true
+
+[binds]
+q = quit
+<Left> = prev
+<Right> = next
+h = prev
+l = next
+k = zoom 1
+j = zoom -1
+f = fullscreen
+d = overlay
+r = rotate by 90

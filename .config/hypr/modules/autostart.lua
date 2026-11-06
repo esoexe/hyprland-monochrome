@@ -30,6 +30,10 @@ hl.on("hyprland.start", function ()
     -- ── Authentication agent (graphical sudo prompts) ─────────────────────
     hl.exec_cmd(scripts .. "polkit.sh")
 
+    -- ── Universal AppImage indexing & OpenCode browser sync ───────────────
+    hl.exec_cmd(scripts .. "open-app.sh sync-appimages")
+    hl.exec_cmd(scripts .. "browser-theme.sh apply --quiet")
+
     -- ── Optional extras (uncomment what you use) ──────────────────────────
     -- hl.exec_cmd("nm-applet --indicator")            -- tray for NetworkManager
     -- hl.exec_cmd("blueman-applet")                   -- tray for Bluetooth

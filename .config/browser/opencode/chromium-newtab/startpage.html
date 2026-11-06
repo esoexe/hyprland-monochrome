@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>opencode // newtab</title>
+<style>
+:root {
+  --canvas: #131010;
+  --surface: #1b1818;
+  --elevated: #201d1d;
+  --hover: #292525;
+  --border: #3d3838;
+  --border-dim: #282424;
+  --ink-muted: #7f7a7a;
+  --ink-secondary: #b8b2b2;
+  --ink-primary: #fdfcfc;
+  --action: #ffffff;
+  --mono: "Berkeley Mono", "IBM Plex Mono", "JetBrainsMono Nerd Font", "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; background: var(--canvas); color: var(--ink-primary); font-family: var(--mono); font-size: 14px; line-height: 1.6; }
+body { display: flex; flex-direction: column; justify-content: space-between; }
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-bottom: 1px solid var(--border); background: var(--surface); font-size: 12.5px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.brand-mark { display: inline-block; width: 10px; height: 14px; background: var(--action); border-radius: 2px; }
+.brand-sep { color: var(--ink-muted); }
+.brand-sub { color: var(--ink-secondary); }
+.pill { padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--elevated); font-size: 11.5px; font-weight: 600; }
+.shell { width: 100%; max-width: 980px; margin: 0 auto; padding: 48px 24px; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 32px; }
+.hero { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.hero-clock { font-size: 38px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+.hero-cursor { display: inline-block; width: 14px; height: 30px; background: var(--action); vertical-align: -3px; margin-left: 6px; animation: blink 1.1s steps(1) infinite; }
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.hero-date { font-size: 13px; color: var(--ink-muted); }
+.prompt-frame { border: 1px solid var(--border); border-radius: 4px; background: var(--elevated); }
+.prompt-frame:focus-within { border-color: var(--ink-primary); }
+.prompt-row { display: flex; align-items: center; padding: 14px 16px; gap: 12px; }
+.prompt-sigil { color: var(--action); font-weight: 700; font-size: 15px; }
+.prompt-input { flex: 1; background: transparent; border: 0; outline: none; color: var(--ink-primary); font-family: var(--mono); font-size: 15px; }
+.prompt-input::placeholder { color: var(--ink-muted); }
+.prompt-submit { background: var(--action); color: var(--canvas); border: 1px solid var(--action); border-radius: 4px; padding: 4px 14px; font-family: var(--mono); font-size: 12px; font-weight: 700; cursor: pointer; }
+.prompt-hints { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 8px 16px; border-top: 1px solid var(--border-dim); background: var(--surface); font-size: 11.5px; color: var(--ink-muted); }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--border); border-left: 1px solid var(--border); }
+.cell { display: flex; flex-direction: column; justify-content: space-between; gap: 10px; padding: 16px; background: var(--surface); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); text-decoration: none; color: var(--ink-primary); }
+.cell:hover { background: var(--hover); }
+.cell-top { display: flex; align-items: center; justify-content: space-between; }
+.cell-title { font-weight: 700; font-size: 13.5px; }
+.kbd { padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; background: var(--elevated); color: var(--ink-muted); font-size: 11px; font-weight: 600; }
+.cell-desc { font-size: 12px; color: var(--ink-muted); }
+.statusline { display: flex; align-items: center; justify-content: space-between; padding: 8px 24px; border-top: 1px solid var(--border); background: var(--surface); font-size: 12px; color: var(--ink-muted); }
+.mode-badge { padding: 1px 8px; border-radius: 3px; background: var(--action); color: var(--canvas); font-weight: 700; font-size: 11px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="brand-mark"></span><span>opencode</span><span class="brand-sep">//</span><span class="brand-sub">newtab</span></div>
+  <span class="pill" id="tz-pill">LOCAL</span>
+</header>
+<main class="shell">
+  <section class="hero">
+    <div class="hero-clock"><span id="clock-txt">00:00:00</span><span class="hero-cursor"></span></div>
+    <div class="hero-date" id="date-txt">SESSION READY</div>
+  </section>
+  <form class="prompt-frame" id="cmd-form" autocomplete="off">
+    <div class="prompt-row">
+      <span class="prompt-sigil">&gt;</span>
+      <input id="cmd-input" class="prompt-input" type="text" autofocus placeholder="Search web, enter URL, or /gh /aw /aur /yt /oc…">
+      <button class="prompt-submit" type="submit">RUN ↵</button>
+    </div>
+    <div class="prompt-hints">
+      <span>prefixes: /gh · /aw · /aur · /yt · /oc · :3000</span>
+      <span>[ / ] focus · [ 1-4 ] jump</span>
+    </div>
+  </form>
+  <nav class="grid">
+    <a class="cell" href="https://github.com" data-key="1"><div class="cell-top"><span class="cell-title">GitHub</span><span class="kbd">1</span></div><div class="cell-desc">github.com</div></a>
+    <a class="cell" href="https://opencode.ai/docs" data-key="2"><div class="cell-top"><span class="cell-title">OpenCode Docs</span><span class="kbd">2</span></div><div class="cell-desc">opencode.ai</div></a>
+    <a class="cell" href="https://wiki.archlinux.org" data-key="3"><div class="cell-top"><span class="cell-title">ArchWiki</span><span class="kbd">3</span></div><div class="cell-desc">wiki.archlinux.org</div></a>
+    <a class="cell" href="https://wiki.hypr.land" data-key="4"><div class="cell-top"><span class="cell-title">Hyprland Wiki</span><span class="kbd">4</span></div><div class="cell-desc">wiki.hypr.land</div></a>
+  </nav>
+</main>
+<footer class="statusline">
+  <div><span class="mode-badge" id="vim-mode">INSERT</span> &nbsp; opencode://newtab</div>
+  <div>hyprland-monochrome</div>
+</footer>
+<script src="newtab.js"></script>
+</body>
+</html>

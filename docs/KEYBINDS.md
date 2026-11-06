@@ -18,6 +18,7 @@ The **main modifier is `Super`**. Change it in one place:
 - [Screenshots, Recording & Zoom](#screenshots,-recording--zoom)
 - [Modal Submaps (Chords)](#modal-submaps-(chords))
 - [Media & Hardware Keys](#media--hardware-keys)
+- [Optional / Laptop](#optional--laptop)
 
 ## Applications
 
@@ -29,12 +30,14 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + Shift + T` | Dropdown terminal (quake style) |
 | `Super + Shift + B` | Floating btop++ telemetry drawer |
 | `Super + '` | Scratchpad Markdown notes (~/Documents/scratch.md) |
-| `Super + D` | App launcher |
+| `Super + D` | App launcher (Wayland, X11, Flatpak, AppImage, CLI) |
+| `Super + Shift + O` | Universal opener (any file, URL, AppImage, Flatpak, .exe) |
 | `Super + Shift + P` | Command palette & live math calculator |
 | `Super + ;` | Command palette (home-row alias) |
 | `Super + Shift + D` | Window switcher |
-| `Super + E` | File manager |
-| `Super + B` | Browser |
+| `Super + E` | File manager (auto-fallback across PCs) |
+| `Super + B` | Browser (auto-detects any installed browser) |
+| `Alt + B` | Open browser on OpenCode startpage |
 | `Super + W` | Wallpaper picker (120fps Bezier transition) |
 | `Alt + W` | Cycle animated live monochrome wallpaper |
 | `Super + I` | Settings menu (system, net, BT, monitors, sound) |
@@ -226,6 +229,13 @@ The **main modifier is `Super`**. Change it in one place:
 | `XF86AudioPlay` | Play / pause |
 | `XF86AudioPause` | Play / pause |
 | `XF86AudioStop` | Stop playback |
+
+## Optional / Laptop
+
+| Keys | Action |
+| --- | --- |
+| `switch:on:Lid Switch` | Lock session on laptop lid close |
+| `XF86PowerOff` | Cycle power profile (Performance / Balanced / Saver) |
 
 ## Mouse
 

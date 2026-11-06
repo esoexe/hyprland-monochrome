@@ -2,6 +2,20 @@
 
 Notable changes to this setup. Versions are the dates they landed.
 
+## 2026-11-06 — 5.2.0
+
+Universal PC, Any-App & OpenCode Browser Edition — automatic hardware/GPU/VM adaptation and multi-distro installation so the desktop boots cleanly on any PC, universal application & file compatibility across every Linux/Windows packaging format, and a complete OpenCode (`opencode.ai`) browser theme + startpage suite.
+
+- **Works on Any PC (`.config/hypr/modules/hardware.lua`, `.config/hypr/scripts/hardware.sh`, `install.sh`)**:
+  - Zero-subprocess `<0.2ms` Lua sysfs/procfs hardware probe auto-configuring **AMD**, **Intel** (`iHD` VA-API), **NVIDIA** (`LIBVA_DRIVER_NAME=nvidia`, `__GLX_VENDOR_LIBRARY_NAME=nvidia`, `GBM_BACKEND=nvidia-drm`, `nvidia_anti_flicker = true`, `cursor.no_hardware_cursors = 2`), **Hybrid Dual-GPU Optimus laptops** (`AQ_FORCE_LINEAR_BLIT=0`), and **Virtual Machines** (QEMU/KVM/VirtIO/VMware/VirtualBox software-renderer + `AQ_NO_MODIFIERS=1` + lightweight blur-off fallback)
+  - Crisp HiDPI XWayland scaling (`xwayland.force_zero_scaling = true`, `QT_AUTO_SCREEN_SCALE_FACTOR=1`), automatic laptop lid lock (`switch:on:Lid Switch`), power-profile switching (`performance` · `balanced` · `power-saver` via `powerprofilesctl` + compositor motion sync), and cross-distro `install.sh` support (`pacman`, `apt-get`, `dnf`, `zypper`)
+- **Opens Any App & Any File (`.config/hypr/scripts/open-app.sh`, `.config/uwsm/env`, `.config/xdg-desktop-portal/hyprland-portals.conf`, `.config/mimeapps.list`)**:
+  - Exposes Flatpak, Snap, Nix, and `~/.local/share` `.desktop` directories via `XDG_DATA_DIRS`; auto-indexes `~/Applications/*.AppImage` into Rofi `.desktop` launchers and retries AppImages with `--appimage-extract-and-run` automatically when `libfuse2` is absent
+  - Full runtime compatibility for Electron (`electron-flags.conf`), SDL2 (`SDL_VIDEODRIVER=wayland,x11`), Java Swing / JetBrains IDEs (`_JAVA_AWT_WM_NONEREPARENTING=1`), Windows `.exe`/`.msi` (Wine / Bottles / `umu-run`), multi-distro Polkit agents, smart browser/file-manager fallbacks (`Super + B`, `Super + E`), `Super + Shift + O` Universal Opener, and monochrome configs for `imv`, `zathura`, `mpv`, and `bat`
+- **Browser Theme in OpenCode Design (`.config/browser/opencode/`, `.config/opencode/`, `.config/hypr/scripts/browser-theme.sh`)**:
+  - Authentic OpenCode terminal-grid design tokens (`#131010` canvas, `#1b1818` surface, `#201d1d` elevated prompt, `1px solid #3d3838` structural dividers, `#fdfcfc` primary ink, `#ffffff` commitment action, `4px` utilitarian radius, 100% monospace chrome)
+  - Ships auto-applied Firefox / LibreWolf / Zen / Floorp `userChrome.css`, `userContent.css`, and non-destructive `user.js`, Manifest V3 Chromium / Brave / Chrome / Vivaldi / Edge theme & CSP-clean New-Tab extensions, an offline interactive `startpage.html` (`Super + Alt + B`), and a matching `~/.config/opencode/themes/monochrome.json`
+
 ## 2026-11-06 — 5.1.0
 
 100% Native C++20 Toolchain Edition — complete elimination of Python across the entire repository in favour of zero-dependency, multi-threaded `-std=c++20 -O3` binaries (`Makefile`, `include/*.hpp`, `wallpapers/*.cpp`, `tools/*.cpp`, `.config/hypr/src/mono-calc.cpp`).

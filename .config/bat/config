@@ -1,0 +1,3 @@
+# Monochrome ANSI syntax theme — inherits Kitty's 16-step pure greyscale ramp
+--theme="ansi"
+--style="numbers,changes,header"

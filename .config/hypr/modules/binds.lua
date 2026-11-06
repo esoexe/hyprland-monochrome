@@ -18,8 +18,6 @@ local term_cmd = terminal
 if terminal == "kitty" and u.terminal_single_instance ~= false then
     term_cmd = "kitty --single-instance"
 end
-local browser  = u.browser or "firefox"
-local files    = u.file_manager or "thunar"
 local scratch  = u.scratchpad_name or "scratchpad"
 
 -- Small helpers so the list below stays readable.
@@ -44,12 +42,14 @@ sh("SHIFT + RETURN", u.terminal_float or "kitty --class kitty-float", "Floating 
 sh("SHIFT + T",      S .. "scratchterm.sh",      "Dropdown terminal (quake style)")
 sh("SHIFT + B",      S .. "scratchpad.sh btop",  "Floating btop++ telemetry drawer")
 sh("APOSTROPHE",     S .. "scratchpad.sh notes", "Scratchpad Markdown notes (~/Documents/scratch.md)")
-sh("D",              S .. "menu.sh launcher", "App launcher")
-sh("SHIFT + P",      S .. "palette.sh",       "Command palette & live math calculator")
-sh("SEMICOLON",      S .. "palette.sh",       "Command palette (home-row alias)")
-sh("SHIFT + D",      S .. "menu.sh windows",  "Window switcher")
-sh("E",              files,                   "File manager")
-sh("B",              browser,                 "Browser")
+sh("D",              S .. "menu.sh launcher",          "App launcher (Wayland, X11, Flatpak, AppImage, CLI)")
+sh("SHIFT + O",      S .. "open-app.sh picker",        "Universal opener (any file, URL, AppImage, Flatpak, .exe)")
+sh("SHIFT + P",      S .. "palette.sh",                "Command palette & live math calculator")
+sh("SEMICOLON",      S .. "palette.sh",                "Command palette (home-row alias)")
+sh("SHIFT + D",      S .. "menu.sh windows",           "Window switcher")
+sh("E",              S .. "open-app.sh files",         "File manager (auto-fallback across PCs)")
+sh("B",              S .. "open-app.sh browser",       "Browser (auto-detects any installed browser)")
+sh("ALT + B",        S .. "browser-theme.sh open-startpage", "Open browser on OpenCode startpage")
 sh("W",              S .. "wallpaper.sh pick","Wallpaper picker (120fps Bezier transition)")
 sh("ALT + W",        S .. "wallpaper.sh live","Cycle animated live monochrome wallpaper")
 sh("I",              S .. "settings.sh",      "Settings menu (system, net, BT, monitors, sound)")
@@ -289,6 +289,6 @@ media("XF86AudioStop",  "playerctl stop",       "Stop playback")
 
 -- ═══════════════════════ OPTIONAL / LAPTOP ════════════════════════════════
 
--- Lock when the lid closes (logind must not suspend on lid close, or it
--- conflicts — see docs/TROUBLESHOOTING.md).
--- hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("loginctl lock-session"), { locked = true })
+-- Lock automatically when a laptop lid closes (harmless no-op on desktop PCs).
+hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("loginctl lock-session"), { locked = true, description = "Lock session on laptop lid close" })
+media("XF86PowerOff",          S .. "hardware.sh power cycle", "Cycle power profile (Performance / Balanced / Saver)")

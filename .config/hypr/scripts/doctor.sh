@@ -136,7 +136,21 @@ else
     record warn "Velocity engine" "perf.sh missing in $SCRIPTS_DIR"
 fi
 
-# 8. Pristine backup vault
+# 8. Universal PC hardware & OpenCode browser theme
+if [ -x "$SCRIPTS_DIR/hardware.sh" ] && [ -f "$HYPR_DIR/modules/hardware.lua" ]; then
+    hw_summary="$("$SCRIPTS_DIR/hardware.sh" status --json 2>/dev/null | jq -r '"\(.chassis) · \(.gpus) · profile=\(.power_profile)"' 2>/dev/null || echo 'ready')"
+    record ok "PC Hardware" "$hw_summary"
+else
+    record warn "PC Hardware" "hardware.lua / hardware.sh missing"
+fi
+
+if [ -f "$CONFIG_DIR/browser/opencode/startpage.html" ] && [ -f "$CONFIG_DIR/browser/opencode/firefox/userChrome.css" ]; then
+    record ok "OpenCode browser" "startpage + Firefox CSS + Chromium MV3 + OpenCode TUI ready"
+else
+    record warn "OpenCode browser" "missing ~/.config/browser/opencode assets"
+fi
+
+# 9. Pristine backup vault
 if [ -d "$HOME/.config-backups/pristine" ]; then
     record ok "Backup vault" "$HOME/.config-backups/pristine present"
 else

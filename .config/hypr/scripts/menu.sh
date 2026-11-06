@@ -22,9 +22,11 @@ MODS_JQ='
 
 case "${1:-launcher}" in
     launcher)
-        rofi_menu launcher -show drun -i \
+        [ -x "$SCRIPTS_DIR/open-app.sh" ] && "$SCRIPTS_DIR/open-app.sh" sync-appimages >/dev/null 2>&1 || true
+        rofi_menu launcher -show drun -modi "drun,run,filebrowser" -i \
             -display-columns 1 -display-column-separator "  " \
             -drun-display-format "{name}" \
+            -display-drun "apps:" -display-run "cmd:" -display-filebrowser "files:" \
             -p "apps:" ;;
     windows)
         rofi_menu launcher -show window -i -p "windows:" ;;

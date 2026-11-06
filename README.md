@@ -1,12 +1,13 @@
 # hyprland-monochrome
 
-A clean, monochrome Hyprland desktop for **Arch, EndeavourOS, CachyOS, Manjaro** (and any other
-Arch-based system). Simple, modern, quiet — and built so you can actually find things again
-six months from now.
+A clean, universal monochrome Hyprland desktop built to **run on any PC** (AMD, Intel, NVIDIA,
+hybrid Optimus laptops, and VMs across **Arch, EndeavourOS, CachyOS, Manjaro**, plus Debian/Ubuntu,
+Fedora, and openSUSE), **open any app or file**, and style your browser in the **OpenCode**
+terminal-grid design system.
 
 ```
 Hyprland (Lua config) · Waybar · Rofi · awww · hyprlock · hypridle · hyprsunset
-Kitty · Thunar · Zsh + Starship · dunst · cliphist · PipeWire · NetworkManager
+Kitty · Thunar · Zsh + Starship · dunst · cliphist · OpenCode Browser Theme · C++20 Tools
 ```
 
 ![hyprland-monochrome](docs/preview.png)
@@ -30,6 +31,9 @@ Kitty · Thunar · Zsh + Starship · dunst · cliphist · PipeWire · NetworkMan
 
 | | |
 | --- | --- |
+| **Works on Any PC (`hardware.lua` + `hardware.sh`)** | Zero-subprocess `/sys` & `/proc` startup probe (`<0.2ms`) that auto-tunes **AMD Radeon**, **Intel Arc/Iris**, **NVIDIA RTX/GTX** (`nvidia-drm`, `nvidia_anti_flicker`, `no_hardware_cursors = 2`), **Hybrid Dual-GPU Optimus laptops** (`AQ_FORCE_LINEAR_BLIT=0`), **VMs** (QEMU/KVM/VMware/VirtualBox software-renderer fallback), laptop lid/battery/power-profiles, crisp zero-blur HiDPI XWayland scaling, and multi-distro `install.sh` (`pacman`, `apt-get`, `dnf`, `zypper`) |
+| **Opens Any App & File (`open-app.sh`)** | Native Wayland, X11/XWayland, Electron (`electron-flags.conf`), Qt5/6, GTK3/4, SDL2 (`wayland,x11`), Java/JetBrains (`_JAVA_AWT_WM_NONEREPARENTING=1`), **Flatpak**, **Snap**, **Nix**, auto-indexed **`.AppImage`** (with FUSE-less `--appimage-extract-and-run` fallback), **Windows `.exe`/`.msi`** (Wine/Bottles/umu), smart browser/file-manager fallbacks, `Super + Shift + O` Universal Opener, and monochrome viewers (`imv`, `zathura`, `mpv`, `file-roller`, `bat`) |
+| **OpenCode Browser Theme (`browser-theme.sh`)** | Full **OpenCode (`opencode.ai`)** terminal-brutalist browser suite (`#131010` canvas, `#201d1d` elevated prompt, `1px solid #3d3838` structural borders, `4px` corners, 100% monospace chrome): auto-applied **Firefox / LibreWolf / Zen / Floorp** `userChrome.css` + `userContent.css` + `user.js`, **Chromium / Brave / Chrome / Vivaldi / Edge** Manifest V3 theme & New-Tab extensions, offline **`startpage.html`** (`Super + Alt + B`), and matching `~/.config/opencode/` TUI theme |
 | **Velocity & Zero-Fork Engine (`perf.sh`)** | **0-subprocess pure-Bash core** (`mono_var` & Waybar `/proc` `sysgraph.sh` run in ~1 ms with 0 external forks), `<3ms` `kitty --single-instance` shared GPU glyph cache, bytecode-compiled Zsh + cached Starship (`<15ms`), **`Super + F12` Turbo / Game Mode** (0ms latency, `direct_scanout`, tearing, VRR, Waybar `⚡ TURBO` pill), and live `perf.sh bench` |
 | **Squircle & Liquid Glass (`appearance.lua`)** | **Continuous G2 Apple-style squircles (`rounding_power = 4.0`)**, magnetic floating window edge snapping (`general.snap`), `animate_manual_resizes` spring glides, `async_commit` 0-frame cursor, `new_render_scheduling` triple-buffering, and live **Hyprland 0.56 Optical Glass** (`kawase` · fast 1-pass `xray` · monochrome `acrylic` Liquid Glass) |
 | **Kinetic Physics (`animations.lua`)** | **3 native damped physical springs** (`silkSpring`, `drawerSpring`, `snappySpring`) + **29 choreographed animation leaves** across windows, `slidefade` workspace parallax, `slidefadevert` scratchpad drawers, and `popin`/`slide` layers — switchable live via `Super + M` (`fluid` · `snappy` · `cinematic` + orbiting liquid-silver border · `minimal`) |
@@ -189,6 +193,8 @@ you what to change:
 | Bar colours | `waybar/style.css` | `.modules-left`, `#workspaces button.active` |
 | Menus (all of them) | `rofi/theme.rasi` | the palette block at the top |
 | Terminal | `kitty/theme.conf` | 16-colour greyscale ramp |
+| Browser (OpenCode design) | `browser/opencode/` | `startpage.html`, `firefox/userChrome.css`, `chromium-theme/` |
+| OpenCode CLI / TUI | `opencode/themes/monochrome.json` | matches browser & desktop surfaces |
 | Prompt | `starship.toml` | `[palettes.mono]` |
 | Notifications | `dunst/dunstrc` | `[global]` colours |
 | btop / fastfetch | `btop/themes/mono.theme`, `fastfetch/config.jsonc` | — |

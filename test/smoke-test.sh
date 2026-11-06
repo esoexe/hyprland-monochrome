@@ -195,6 +195,8 @@ cp "$REPO/.config/qt6ct/colors/Monochrome.conf" "$XDG_CONFIG_HOME/qt6ct/colors/"
 cp "$REPO/.config/nvim/colors/monochrome.lua" "$XDG_CONFIG_HOME/nvim/colors/"
 cp "$REPO/.config/kitty/theme.conf" "$XDG_CONFIG_HOME/kitty/"
 cp "$REPO/.config/waybar/style.css" "$XDG_CONFIG_HOME/waybar/"
+cp -r "$REPO/.config/browser" "$XDG_CONFIG_HOME/"
+cp -r "$REPO/.config/opencode" "$XDG_CONFIG_HOME/"
 chmod +x "$C"/*.sh "$XDG_CONFIG_HOME"/waybar/scripts/*.sh
 : > "$XDG_CONFIG_HOME/rofi/theme.rasi"
 
@@ -846,6 +848,79 @@ if [ -n "$LUA_BIN" ]; then
     contains "appearance.lua configures 6 1:1 trackpad gestures" "gestures=6" "$GPU_STATS"
     contains "appearance.lua enables direct_scanout=2 & async_commit" "scanout=2 async=true" "$GPU_STATS"
     contains "appearance.lua enables G2 squircle=4.0 & magnetic snap" "squircle=4.0 snap=true" "$GPU_STATS"
+fi
+
+# ═══════════════════════ 23. Any PC, Any App & OpenCode Browser ══════════
+printf '\n\033[1m23. Universal PC hardware, universal app opener & OpenCode browser\033[0m\n'
+
+HW_JSON="$(timeout 10 "$C/hardware.sh" status --json)"
+eq "hardware.sh status --json emits valid JSON" "ok" "$(printf '%s' "$HW_JSON" | jq -r 'if (.chassis | length) > 0 and (.gpus | length) > 0 then "ok" else "bad" end')"
+timeout 10 "$C/hardware.sh" power performance >/dev/null 2>&1
+contains "hardware.sh power sets performance profile" '"power_profile":"performance"' "$(timeout 10 "$C/hardware.sh" status --json)"
+timeout 10 "$C/hardware.sh" power balanced >/dev/null 2>&1
+timeout 10 "$C/hardware.sh" write-override >/dev/null 2>&1
+[ -f "$XDG_CONFIG_HOME/hypr/modules/hardware-user.lua" ] && green "hardware.sh write-override creates hardware-user.lua" || red "hardware-user.lua missing"
+
+mkdir -p "$HOME/Applications"
+printf '#!/usr/bin/env bash\nexit 0\n' > "$HOME/Applications/DemoStudio.AppImage"
+timeout 10 "$C/open-app.sh" sync-appimages >/dev/null 2>&1
+if [ -f "$HOME/.local/share/applications/appimage-demostudio.desktop" ] && [ -x "$HOME/Applications/DemoStudio.AppImage" ]; then
+    green "open-app.sh indexes ~/Applications/*.AppImage into .desktop entries"
+else
+    red "open-app.sh failed to index DemoStudio.AppImage"
+fi
+
+stub chromium 'exit 0'
+stub zathura 'exit 0'
+: > "$CALLS"
+timeout 10 "$C/open-app.sh" browser "https://opencode.ai" >/dev/null 2>&1
+sleep 0.15
+contains "open-app.sh browser auto-falls back to installed chromium" "chromium https://opencode.ai" "$(cat "$CALLS")"
+
+: > "$HOME/sample.pdf"
+: > "$CALLS"
+timeout 10 "$C/open-app.sh" open "$HOME/sample.pdf" >/dev/null 2>&1
+sleep 0.15
+contains "open-app.sh routes PDF files to monochrome zathura" "zathura $HOME/sample.pdf" "$(cat "$CALLS")"
+
+FF_PROF="$HOME/.mozilla/firefox/abcd1234.default-release"
+mkdir -p "$FF_PROF"
+printf 'user_pref("custom.keep.me", true);\n' > "$FF_PROF/user.js"
+timeout 10 "$C/browser-theme.sh" apply --quiet >/dev/null 2>&1
+[ -f "$FF_PROF/chrome/userChrome.css" ] && green "browser-theme.sh installs OpenCode userChrome.css" || red "userChrome.css missing"
+[ -f "$FF_PROF/chrome/userContent.css" ] && green "browser-theme.sh installs OpenCode userContent.css" || red "userContent.css missing"
+contains "browser-theme.sh preserves existing user.js prefs" 'custom.keep.me' "$(cat "$FF_PROF/user.js")"
+contains "browser-theme.sh enables legacy stylesheets & OpenCode homepage" 'toolkit.legacyUserProfileCustomizations.stylesheets' "$(cat "$FF_PROF/user.js")"
+contains "browser-theme.sh status reports all 4 OpenCode targets ready" 'OpenCode TUI' "$(timeout 10 "$C/browser-theme.sh" status)"
+contains "doctor verifies PC Hardware & OpenCode browser" 'OpenCode browser' "$(timeout 10 "$C/doctor.sh" --plain)"
+
+if [ -n "$LUA_BIN" ]; then
+    COMPAT_STATS="$("$LUA_BIN" -e '
+        package.path = os.getenv("XDG_CONFIG_HOME") .. "/hypr/?.lua;" .. package.path
+        local xw_zero, nv_af, java_fix, flatpak_dir = false, false, false, false
+        local function mock()
+            return setmetatable({}, {
+                __call = function() return mock() end,
+                __index = function() return mock() end,
+            })
+        end
+        hl = setmetatable({
+            env = function(k, v)
+                if k == "_JAVA_AWT_WM_NONEREPARENTING" and v == "1" then java_fix = true end
+                if k == "XDG_DATA_DIRS" and tostring(v):find("flatpak", 1, true) then flatpak_dir = true end
+            end,
+            config = function(t)
+                if t.xwayland and t.xwayland.force_zero_scaling then xw_zero = true end
+                if t.opengl and t.opengl.nvidia_anti_flicker then nv_af = true end
+            end,
+            define_submap = function(_n, a, b) local fn = type(a) == "function" and a or b; if fn then fn() end end,
+        }, { __index = function() return mock() end })
+        dofile(os.getenv("XDG_CONFIG_HOME") .. "/hypr/hyprland.lua")
+        print(string.format("xw_zero=%s nv_af=%s java=%s flatpak=%s",
+            tostring(xw_zero), tostring(nv_af), tostring(java_fix), tostring(flatpak_dir)))
+    ' 2>&1)"
+    eq "hardware.lua + hyprland.lua enable XWayland zero-scale, Nvidia anti-flicker, Java & Flatpak" \
+       "xw_zero=true nv_af=true java=true flatpak=true" "$COMPAT_STATS"
 fi
 
 # ═══════════════════════ result ══════════════════════════════════════════

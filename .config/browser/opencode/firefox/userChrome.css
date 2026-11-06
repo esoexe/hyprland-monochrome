@@ -1,0 +1,138 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   OpenCode Design System — Firefox / LibreWolf / Zen / Floorp userChrome.css
+   Installed automatically by `~/.config/hypr/scripts/browser-theme.sh apply`
+
+   Tokens:
+     canvas:           #131010   surface:          #1b1818
+     elevated:         #201d1d   border:           #3d3838
+     ink-muted:        #7f7a7a   ink-secondary:    #b8b2b2
+     ink-primary:      #fdfcfc   action:           #ffffff
+   Geometry: 100% monospace · utilitarian 4px max radius · 1px structural rules
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --oc-canvas: #131010;
+  --oc-surface: #1b1818;
+  --oc-elevated: #201d1d;
+  --oc-hover: #292525;
+  --oc-border: #3d3838;
+  --oc-ink-muted: #7f7a7a;
+  --oc-ink-secondary: #b8b2b2;
+  --oc-ink-primary: #fdfcfc;
+  --oc-action: #ffffff;
+  --oc-mono: "Berkeley Mono", "IBM Plex Mono", "JetBrainsMono Nerd Font", "JetBrains Mono", monospace;
+
+  /* Firefox global CSS custom property overrides */
+  --toolbar-bgcolor: var(--oc-surface) !important;
+  --toolbar-color: var(--oc-ink-primary) !important;
+  --lwt-accent-color: var(--oc-canvas) !important;
+  --lwt-text-color: var(--oc-ink-primary) !important;
+  --tab-selected-bgcolor: var(--oc-elevated) !important;
+  --tab-selected-textcolor: var(--oc-ink-primary) !important;
+  --tab-border-radius: 4px !important;
+  --toolbarbutton-border-radius: 4px !important;
+  --urlbar-box-bgcolor: var(--oc-canvas) !important;
+  --urlbar-box-focus-bgcolor: var(--oc-canvas) !important;
+  --urlbar-box-text-color: var(--oc-ink-primary) !important;
+  --arrowpanel-background: var(--oc-surface) !important;
+  --arrowpanel-color: var(--oc-ink-primary) !important;
+  --arrowpanel-border-color: var(--oc-border) !important;
+  --arrowpanel-border-radius: 4px !important;
+  --sidebar-background-color: var(--oc-canvas) !important;
+  --sidebar-text-color: var(--oc-ink-primary) !important;
+  --sidebar-border-color: var(--oc-border) !important;
+  --focus-outline-color: var(--oc-action) !important;
+}
+
+/* 100% Monospace chrome ("everything is code") */
+#navigator-toolbox,
+#TabsToolbar,
+#nav-bar,
+#PersonalToolbar,
+#urlbar,
+#urlbar-input,
+.tab-label,
+#sidebar-box,
+findbar,
+menupopup,
+panel {
+  font-family: var(--oc-mono) !important;
+}
+
+#navigator-toolbox {
+  background-color: var(--oc-canvas) !important;
+  border-bottom: 1px solid var(--oc-border) !important;
+}
+
+#TabsToolbar {
+  background-color: var(--oc-canvas) !important;
+  padding: 2px 4px 0 !important;
+}
+
+/* Utilitarian 4px OpenCode tabs with crisp 2px bottom commitment line */
+.tabbrowser-tab .tab-background {
+  border-radius: 4px 4px 0 0 !important;
+  margin-block: 2px 0 !important;
+  border: 1px solid transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.tabbrowser-tab:hover:not([selected="true"]) .tab-background {
+  background-color: var(--oc-surface) !important;
+  border-color: #282424 !important;
+}
+
+.tabbrowser-tab[selected="true"] .tab-background {
+  background-color: var(--oc-elevated) !important;
+  border-color: var(--oc-border) !important;
+  border-bottom: 2px solid var(--oc-action) !important;
+}
+
+.tabbrowser-tab:not([selected="true"]) .tab-label {
+  color: var(--oc-ink-muted) !important;
+}
+
+.tabbrowser-tab[selected="true"] .tab-label {
+  color: var(--oc-ink-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* Navigation bar & OpenCode URL prompt */
+#nav-bar {
+  background-color: var(--oc-surface) !important;
+  border-top: 1px solid #282424 !important;
+  box-shadow: none !important;
+  padding: 3px 6px !important;
+}
+
+#urlbar-background {
+  background-color: var(--oc-canvas) !important;
+  border: 1px solid var(--oc-border) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+#urlbar[focused="true"] > #urlbar-background {
+  border-color: var(--oc-ink-primary) !important;
+  outline: none !important;
+}
+
+#urlbar-input {
+  color: var(--oc-ink-primary) !important;
+  font-size: 12.5px !important;
+}
+
+#PersonalToolbar {
+  background-color: var(--oc-surface) !important;
+  border-top: 1px solid #282424 !important;
+  color: var(--oc-ink-secondary) !important;
+}
+
+/* Hide Firefox marketing / Pocket / Firefox View clutter */
+#firefox-view-button,
+#save-to-pocket-button,
+.titlebar-spacer[type="pre-tabs"] {
+  display: none !important;
+}

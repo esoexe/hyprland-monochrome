@@ -22,8 +22,11 @@ export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=50000
 export SAVEHIST=50000
 
-# Make GTK/Qt and Electron apps feel native on Wayland by default
+# Make GTK/Qt, Electron, Java, Flatpak, Snap, Nix & AppImages work everywhere
+export PATH="$HOME/.local/bin:$HOME/Applications:$PATH"
+export XDG_DATA_DIRS="$HOME/.local/share:$HOME/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/var/lib/snapd/desktop:$HOME/.nix-profile/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-wayland;xcb}"
+export _JAVA_AWT_WM_NONEREPARENTING=1
 
 # ── History ───────────────────────────────────────────────────────────────
 setopt HIST_IGNORE_ALL_DUPS      # no repeated entries
@@ -79,38 +82,62 @@ bindkey '^[[H'   beginning-of-line
 bindkey '^[[F'   end-of-line
 bindkey '^ '     autosuggest-accept               # Ctrl+Space accepts a suggestion
 
-# ── Plugins ───────────────────────────────────────────────────────────────
-# zsh-autosuggestions: grey ghost text from your history (→ accepts the rest)
-if [[ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#4a4a4a'
-    ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
+# ── Plugins (Arch, Debian/Ubuntu, Fedora, openSUSE & Nix paths) ──────────
+for _zp in \
+    /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
+    /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+    "$HOME/.nix-profile/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+do
+    if [[ -f "$_zp" ]]; then
+        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#4a4a4a'
+        ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+        source "$_zp"
+        break
+    fi
+done
+unset _zp
 
 # fzf: Ctrl+R history search, Ctrl+T files, Alt+C cd
-if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
-    export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --prompt='  ' \
+for _zf in \
+    /usr/share/fzf/key-bindings.zsh \
+    /usr/share/doc/fzf/examples/key-bindings.zsh \
+    /usr/share/fzf/shell/key-bindings.zsh
+do
+    if [[ -f "$_zf" ]]; then
+        export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --prompt='  ' \
 --color=bg+:#1a1a1a,bg:#0d0d0d,spinner:#ffffff,hl:#ffffff,fg:#e6e6e6 \
 --color=header:#8a8a8a,info:#8a8a8a,pointer:#ffffff,marker:#ffffff,fg+:#ffffff \
 --color=prompt:#8a8a8a,hl+:#ffffff,border:#2a2a2a"
-    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git 2>/dev/null || find . -type f -not -path "*/\.git/*"'
-    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-    source /usr/share/fzf/key-bindings.zsh
-    [[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
-fi
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git 2>/dev/null || find . -type f -not -path "*/\.git/*"'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        source "$_zf"
+        [[ -f /usr/share/fzf/completion.zsh ]] && source /usr/share/fzf/completion.zsh
+        [[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
+        break
+    fi
+done
+unset _zf
 
 # zsh-syntax-highlighting must be loaded last
-if [[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-    typeset -A ZSH_HIGHLIGHT_STYLES
-    ZSH_HIGHLIGHT_STYLES[command]='fg=#ffffff,bold'
-    ZSH_HIGHLIGHT_STYLES[builtin]='fg=#e6e6e6,bold'
-    ZSH_HIGHLIGHT_STYLES[alias]='fg=#c8c8c8'
-    ZSH_HIGHLIGHT_STYLES[path]='fg=#bdbdbd'
-    ZSH_HIGHLIGHT_STYLES[globbing]='fg=#9a9a9a'
-    ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ffffff,underline'
-    ZSH_HIGHLIGHT_STYLES[comment]='fg=#5a5a5a'
-    source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
+for _zh in \
+    /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+    /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+    "$HOME/.nix-profile/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+do
+    if [[ -f "$_zh" ]]; then
+        typeset -A ZSH_HIGHLIGHT_STYLES
+        ZSH_HIGHLIGHT_STYLES[command]='fg=#ffffff,bold'
+        ZSH_HIGHLIGHT_STYLES[builtin]='fg=#e6e6e6,bold'
+        ZSH_HIGHLIGHT_STYLES[alias]='fg=#c8c8c8'
+        ZSH_HIGHLIGHT_STYLES[path]='fg=#bdbdbd'
+        ZSH_HIGHLIGHT_STYLES[globbing]='fg=#9a9a9a'
+        ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ffffff,underline'
+        ZSH_HIGHLIGHT_STYLES[comment]='fg=#5a5a5a'
+        source "$_zh"
+        break
+    fi
+done
+unset _zh
 
 # ── Prompt (Starship — cached & zcompiled for <15ms shell cold-start) ─────
 if command -v starship >/dev/null 2>&1; then
@@ -177,11 +204,13 @@ alias keys='~/.config/hypr/scripts/menu.sh keybinds'
 alias lock='hyprlock'
 alias shot='~/.config/hypr/scripts/screenshot.sh region'
 
-# Media
+# Media & universal opener
 alias play='playerctl play-pause'
 alias next='playerctl next'
 alias prev='playerctl previous'
 alias vol='~/.config/hypr/scripts/volume.sh status'
+alias open='~/.config/hypr/scripts/open-app.sh open'
+alias hw='~/.config/hypr/scripts/hardware.sh status'
 
 # Pacman & friends — the everyday Arch commands, spelled short
 alias pac='sudo pacman'

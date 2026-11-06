@@ -47,10 +47,12 @@ hl.window_rule({
 
 hl.window_rule({ name = "thunar-opacity",  match = { class = "^(thunar|Thunar)$" },
                  opacity = "0.96 override 0.92 override" })
-hl.window_rule({ name = "browser-opacity", match = { class = "^(firefox|brave-browser|chromium|google-chrome|zen|librewolf)$" },
+hl.window_rule({ name = "browser-opacity", match = { class = "^(firefox|brave-browser|chromium|google-chrome|zen|zen-alpha|librewolf|floorp|vivaldi-stable|qutebrowser)$" },
                  opacity = "0.98 override 0.94 override" })
-hl.window_rule({ name = "editor-opacity",  match = { class = "^(code|code-oss|VSCodium|codium|zed)$" },
+hl.window_rule({ name = "editor-opacity",  match = { class = "^(code|code-oss|VSCodium|codium|zed|jetbrains-.*)$" },
                  opacity = "0.97 override 0.94 override" })
+hl.window_rule({ name = "reader-opacity",  match = { class = "^(org\\.pwmt\\.zathura|zathura)$" },
+                 opacity = "0.98 override 0.94 override" })
 
 -- The bar, menus and notifications get frosted glass + choreographed layer motion.
 hl.layer_rule({ name = "rofi-blur",         match = { namespace = "^(rofi)$" },          blur = true, blur_popups = true, dim_around = true, ignore_alpha = 0.30, animation = "popin 92%" })
@@ -81,10 +83,13 @@ end
 
 -- "Open File" / "Save File" dialogs and authentication prompts.
 hl.window_rule({ name = "float-file-dialogs",
-                 match = { title = "^(Open File|Open Folder|Save File|Choose File|Save As)(.*)$" },
+                 match = { title = "^(Open File|Open Folder|Save File|Choose File|Save As|File Upload)(.*)$" },
                  float = true, center = true })
 hl.window_rule({ name = "float-auth",
-                 match = { class = "^(polkit-gnome-authentication-agent-1|hyprpolkitagent)$" },
+                 match = { class = "^(polkit-gnome-authentication-agent-1|hyprpolkitagent|lxqt-policykit-agent|polkit-mate-authentication-agent-1)$" },
+                 float = true, center = true })
+hl.window_rule({ name = "float-wine-steam",
+                 match = { class = "^(winecfg\\.exe|explorer\\.exe|bottles)$" },
                  float = true, center = true })
 
 -- Picture-in-picture video: floating, pinned, top-right.

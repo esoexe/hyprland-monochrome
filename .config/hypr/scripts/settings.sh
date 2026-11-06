@@ -517,6 +517,9 @@ capture_menu() {
 while :; do
     key="$(choose settings "settings:" \
         "palette$TAB⌘  Command palette & math calculator" \
+        "openany$TAB󰀻  Open anything (file, URL, AppImage, Flatpak, .exe)" \
+        "browser$TAB󰖟  Browser · OpenCode theme & startpage" \
+        "hardware$TAB󰓅  PC hardware, GPU & power profiles" \
         "velocity$TAB⚡  Velocity, Turbo / Game mode, Liquid Glass & benchmark" \
         "motion$TAB∿  Motion physics & liquid-silver border (Fluid / Snappy / Cinematic)" \
         "shaders$TAB◐  GLSL ES 3.00 screen shaders (Noir / 35mm / CRT / E-Ink / OLED)" \
@@ -537,6 +540,9 @@ while :; do
 
     case "$key" in
         palette)    "$SCRIPTS_DIR/palette.sh"; exit 0 ;;
+        openany)    "$SCRIPTS_DIR/open-app.sh" picker; exit 0 ;;
+        browser)    "$SCRIPTS_DIR/browser-theme.sh" menu ;;
+        hardware)   "$SCRIPTS_DIR/hardware.sh" menu ;;
         velocity)   "$SCRIPTS_DIR/perf.sh" menu ;;
         motion)     "$SCRIPTS_DIR/motion.sh" menu ;;
         shaders)    "$SCRIPTS_DIR/shader.sh" menu ;;

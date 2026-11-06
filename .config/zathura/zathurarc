@@ -1,0 +1,38 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  Zathura — Monochrome / OpenCode PDF & EPUB Reader Configuration
+#  Toggle original document colors anytime with `Ctrl + R`.
+# ═══════════════════════════════════════════════════════════════════════════
+
+set selection-clipboard "clipboard"
+set font "JetBrainsMono Nerd Font 10"
+set adjust-open "best-fit"
+set pages-per-row 1
+set scroll-page-aware "true"
+set scroll-step 50
+set statusbar-h-padding 12
+set statusbar-v-padding 6
+set window-title-basename "true"
+
+set default-bg              "#0a0a0a"
+set default-fg              "#fdfcfc"
+set statusbar-bg            "#131010"
+set statusbar-fg            "#b8b2b2"
+set inputbar-bg             "#1b1818"
+set inputbar-fg             "#fdfcfc"
+set notification-bg         "#1b1818"
+set notification-fg         "#fdfcfc"
+set notification-error-bg   "#201d1d"
+set notification-error-fg   "#ffffff"
+set notification-warning-bg "#201d1d"
+set notification-warning-fg "#d6d6d6"
+set highlight-color         "#3d3838"
+set highlight-active-color  "#7f7a7a"
+set completion-bg           "#131010"
+set completion-fg           "#b8b2b2"
+set completion-highlight-bg "#292525"
+set completion-highlight-fg "#ffffff"
+
+set recolor                 "true"
+set recolor-keephue         "false"
+set recolor-lightcolor      "#0e0e0e"
+set recolor-darkcolor       "#f2eded"

@@ -35,9 +35,13 @@ void replace_all(std::string& s, const std::string& from, const std::string& to)
 }
 
 int cmd_check_configs(const fs::path& repo) {
-    const std::array<const char*, 4> jsonc_files = {
+    const std::array<const char*, 8> jsonc_files = {
         ".config/waybar/config.jsonc",
         ".config/fastfetch/config.jsonc",
+        ".config/browser/opencode/chromium-theme/manifest.json",
+        ".config/browser/opencode/chromium-newtab/manifest.json",
+        ".config/opencode/tui.json",
+        ".config/opencode/themes/monochrome.json",
         "windows/windows-terminal-scheme.json",
         "windows/windows-terminal-settings.json",
     };

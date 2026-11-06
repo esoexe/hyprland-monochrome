@@ -50,11 +50,21 @@ bluez-obex               # bluetooth file transfer support
 # ─────────────────────────────── Applications ─────────────────────────────
 kitty                    # terminal
 thunar                   # file manager
+thunar-archive-plugin    # extract / create archives right-click in Thunar
+file-roller              # archive manager (.zip, .tar.zst, .7z, …)
+unzip
+7zip
 tumbler                  # thumbnails in Thunar
 ffmpegthumbnailer        # video thumbnails
 gvfs
 gvfs-mtp                 # mount phones / USB storage
-mpv                      # video player
+imv                      # Wayland-native monochrome image viewer
+zathura                  # monochrome PDF / EPUB reader
+zathura-pdf-mupdf        # ultra-fast MuPDF backend for Zathura
+mpv                      # GPU-accelerated video & audio player
+flatpak                  # universal sandboxed Linux apps (Flathub)
+fuse2                    # run .AppImage binaries directly
+power-profiles-daemon    # laptop/desktop performance · balanced · power-saver profiles
 
 # ──────────────────────────────── Shell / CLI ─────────────────────────────
 zsh
