@@ -35,6 +35,7 @@
         "bluetooth",
         "pulseaudio",
         "battery",
+        "custom/focus",
         "custom/recording",
         "tray",
         "clock",
@@ -45,8 +46,9 @@
     // ── Left ──────────────────────────────────────────────────────────────
     "custom/launcher": {
         "format": "",
-        "tooltip": false,
-        "on-click": "~/.config/hypr/scripts/menu.sh launcher"
+        "tooltip-format": "Left-click: App Launcher · Right-click: Command Palette (Super + K)",
+        "on-click": "~/.config/hypr/scripts/menu.sh launcher",
+        "on-click-right": "~/.config/hypr/scripts/palette.sh"
     },
 
     "hyprland/workspaces": {
@@ -132,6 +134,21 @@
         "format": "  {temperatureC}°C",
         "format-critical": "  {temperatureC}°C",
         "tooltip-format": "CPU {temperatureC}°C"
+    },
+
+    // Deep-work / Pomodoro & Zen indicator: hidden while idle, inverted
+    // monochrome pill while active. Left-click pauses/resumes, right-click stops,
+    // middle-click opens the Focus menu.
+    "custom/focus": {
+        "exec": "~/.config/hypr/scripts/focus.sh status --waybar",
+        "interval": 1,
+        "signal": 9,
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "~/.config/hypr/scripts/focus.sh pause",
+        "on-click-right": "~/.config/hypr/scripts/focus.sh stop",
+        "on-click-middle": "~/.config/hypr/scripts/focus.sh menu"
     },
 
     // Appears only while recording (the script prints {} when idle).

@@ -1,0 +1,30 @@
+@import "theme.rasi"
+
+/* ── Command Palette (Super + K) — Raycast/Linear monochrome omnibar ───── */
+
+window {
+    width: 740px;
+    padding: 14px;
+}
+
+inputbar {
+    padding: 11px 16px;
+}
+
+entry {
+    placeholder: "search windows, actions, configs — or type '= (1920*1080)/1e6'…";
+}
+
+listview {
+    lines: 12;
+    spacing: 3px;
+}
+
+element {
+    children: [ element-text ];
+    padding: 8px 14px;
+}
+
+element-text {
+    font: "JetBrainsMono Nerd Font 10.5";
+}

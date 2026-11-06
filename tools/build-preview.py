@@ -23,13 +23,16 @@ so the preview cannot drift away from the configuration.
 
 from __future__ import annotations
 
+import base64
 import html
 import importlib.util
+import io
 import json
 import re
 import sys
 from datetime import date
 from pathlib import Path
+from PIL import Image
 
 REPO = Path(__file__).resolve().parent.parent
 CONFIG = REPO / ".config"
@@ -168,7 +171,7 @@ def project_tree() -> list[tuple[int, str]]:
 MODULE_SAMPLE = {
     "custom/launcher": ("󰣇", ""),
     "hyprland/workspaces": ("", ""),
-    "hyprland/submap": ("", ""),
+    "hyprland/submap": ("RESIZE", ""),
     "hyprland/window": ("", "~/projects/monochrome — kitty"),
     "mpris": ("󰎈", "Midnight City — M83"),
     "cpu": ("", "12%"),
@@ -179,11 +182,57 @@ MODULE_SAMPLE = {
     "bluetooth": ("󰂯", ""),
     "pulseaudio": ("󰕾", "65%"),
     "battery": ("󰁹", "88%"),
+    "custom/focus": ("◎", "24:58"),
+    "custom/recording": ("●", "00:42"),
     "tray": ("", ""),
     "clock": ("", "21:42"),
-    "custom/settings": ("", ""),
+    "custom/settings": ("⚙", ""),
     "custom/power": ("⏻", ""),
 }
+
+WALL_META = {
+    "mono-01": ("Noir Vignette", "Radial obsidian falloff · film grain"),
+    "mono-02": ("Architectural Grid", "Sub-pixel drafting lines · vignette"),
+    "mono-03": ("Concentric Arcs", "Off-axis Interference rings"),
+    "mono-04": ("Topographic Contours", "Procedural elevation isolines"),
+    "mono-05": ("Diagonal Strata", "45° brushed graphite bands"),
+    "mono-06": ("Horizon Mist", "16K-ready atmospheric horizon"),
+    "mono-07": ("Solar Eclipse", "4K/16K off-axis corona & rim light"),
+    "mono-08": ("Alpine Ridgeline", "7-layer silhouette · silver mist"),
+    "mono-09": ("Brutalist Monoliths", "Side-lit architectural slabs"),
+    "mono-10": ("Caustic Silk Ribbon", "76-strand harmonic silver wave"),
+}
+
+
+def wallpaper_cards() -> tuple[str, str]:
+    """Return (hero_data_uri, cards_html) built deterministically from wallpapers/mono-*.jpg."""
+    wall_dir = REPO / "wallpapers"
+    items = []
+    hero_uri = ""
+    for stem in sorted(WALL_META.keys()):
+        src = wall_dir / f"{stem}.jpg"
+        if not src.exists():
+            continue
+        with Image.open(src) as im:
+            thumb = im.convert("L").resize((400, 225), Image.Resampling.LANCZOS)
+            buf = io.BytesIO()
+            thumb.save(buf, format="JPEG", quality=82)
+            uri = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode("ascii")
+        if stem == "mono-07" or not hero_uri:
+            hero_uri = uri
+        title, desc = WALL_META[stem]
+        badge = "16K · 132.7 MP" if (wall_dir / f"{stem}-16k.jpg").exists() else (
+                "4K · UHD" if (wall_dir / f"{stem}-4k.jpg").exists() else "1080p · scalable")
+        active = " active" if stem == "mono-07" else ""
+        items.append(
+            f'<button type="button" class="wcard{active}" data-uri="{uri}" '
+            f'data-title="{html.escape(stem)} — {html.escape(title)}" '
+            f'data-desc="{html.escape(desc)} ({html.escape(badge)})">'
+            f'<img src="{uri}" alt="{html.escape(stem)}">'
+            f'<div class="wmeta"><b>{html.escape(stem)} · {html.escape(title)}</b>'
+            f'<span>{html.escape(badge)}</span></div></button>'
+        )
+    return hero_uri, "".join(items)
 
 
 def bar_html(config: dict) -> str:
@@ -272,6 +321,31 @@ code{font-family:var(--mono); background:var(--surface-2); border:1px solid var(
 .mod b{color:#fff; font-weight:500; margin-left:5px}
 .ws{color:#6f6f6f; padding:2px 7px; border-radius:7px; font-size:12.5px}
 .ws.active{background:#e6e6e6; color:#0a0a0a; font-weight:600}
+.mod.custom-focus,.mod.hyprland-submap{background:#e6e6e6; color:#0a0a0a; border-radius:7px;
+       padding:1px 8px; margin:0 3px; font-weight:600; font-size:11.5px}
+.mod.custom-focus b,.mod.hyprland-submap b{color:#0a0a0a; font-weight:700}
+.wstage{border:1px solid var(--line-strong); border-radius:14px; overflow:hidden; margin-top:16px;
+        background:#050505; position:relative}
+.wstage img{display:block; width:100%; aspect-ratio:16/9; object-fit:cover}
+.whud{position:absolute; left:14px; bottom:14px; right:14px; display:flex; justify-content:space-between;
+      align-items:center; gap:12px; background:rgba(10,10,10,.82); border:1px solid var(--line-strong);
+      border-radius:10px; padding:9px 14px; font-size:12px}
+.whud b{color:#fff}
+.whud span{color:var(--dim)}
+.wgrid{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin-top:12px}
+.wcard{appearance:none; background:var(--surface); border:1px solid var(--line); border-radius:10px;
+       padding:0; overflow:hidden; text-align:left; cursor:pointer; color:var(--text); font:inherit;
+       transition:border-color .15s ease, transform .15s ease}
+.wcard:hover{border-color:var(--line-strong); transform:translateY(-1px)}
+.wcard.active{border-color:#fff; box-shadow:0 0 0 1px #fff}
+.wcard img{display:block; width:100%; aspect-ratio:16/9; object-fit:cover}
+.wmeta{padding:6px 8px; font-size:10.5px}
+.wmeta b{display:block; color:#fff; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.wmeta span{color:var(--faint)}
+.kbsearch{width:100%; background:var(--surface-2); border:1px solid var(--line-strong); border-radius:10px;
+          padding:10px 14px; color:#fff; font-family:var(--mono); font-size:13px; margin:14px 0 6px; outline:none}
+.kbsearch:focus{border-color:#fff}
+@media (max-width:760px){ .wgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
 .dot{display:inline-block; width:9px; height:9px; border-radius:2px; background:#3a3a3a; margin:0 3px}
 table{width:100%; border-collapse:collapse; margin:10px 0 0; font-size:13px}
 th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
@@ -325,6 +399,7 @@ def build() -> str:
     desktop_svg = (REPO / "docs/preview.svg").read_text()
     desktop_svg = re.sub(r"<\?xml.*?\?>", "", desktop_svg).strip()
     desktop_svg = desktop_svg.replace('width="1600" height="900"', 'preserveAspectRatio="xMidYMid meet"')
+    hero_wall_uri, wall_cards_html = wallpaper_cards()
 
     total_binds = sum(len(rows) for _, rows in sections)
     total_pkgs = sum(len(entries) for _, entries in pkgs)
@@ -398,26 +473,39 @@ def build() -> str:
     <span class="badge">MIT</span>
   </div>
 
-  <h2><span class="num">01</span>Desktop layout</h2>
+  <h2><span class="num">01</span>Desktop layout &amp; Wallpaper Studio</h2>
   <p class="lead">Tiled windows with {gaps_in}px inner and {gaps_out}px outer gaps, {rounding}px rounding,
-  a focused-window border that goes white-to-grey, and a frosted top bar split into three floating groups.
-  Rofi slides in over the top for the launcher, menus and pickers.</p>
+  a focused-window border that goes white-to-grey, monochrome GTK3/GTK4 overrides, and a frosted top bar
+  with live Pomodoro/Zen and modal submap pills. Rofi slides in over the top for the Command Palette,
+  launcher and visual pickers.</p>
   <div class="figure">{desktop_svg}</div>
-  <p class="caption">A mockup of the layout, not a screenshot — the shapes are drawn to the real
-  gap, rounding and bar geometry from <code>modules/appearance.lua</code>, but the window contents
-  are illustrative. It is saved as <code>docs/preview.svg</code> next to this page.</p>
+  <p class="caption">Vector layout drawn to the real gap, rounding and bar geometry from
+  <code>modules/appearance.lua</code> (<code>docs/preview.svg</code>).</p>
+
+  <h3>Procedural Wallpaper Studio — 10 Monochrome Designs (1080p → 16K)</h3>
+  <div class="wstage">
+    <img id="wall-stage-img" src="{hero_wall_uri}" alt="Selected monochrome wallpaper">
+    <div class="whud">
+      <b id="wall-stage-title">mono-07 — Solar Eclipse</b>
+      <span id="wall-stage-desc">4K/16K off-axis corona &amp; rim light · click any design below</span>
+    </div>
+  </div>
+  <div class="wgrid" id="wall-grid">{wall_cards_html}</div>
 
   <h2><span class="num">02</span>The bar</h2>
   <p class="lead">Waybar as configured: three pill groups, workspace numbers that invert when active,
-  now-playing in the centre that hides itself when nothing plays.</p>
+  live inverted pills for active modal chords (<code>RESIZE</code> / <code>CAPTURE</code>) and Deep-Work
+  focus timers (<code>◎ 24:58</code>), plus center now-playing that hides itself when idle.</p>
   {bar_html(waybar_config)}
 
   <h2><span class="num">03</span>Keybinds</h2>
   <p class="lead">The main modifier is <kbd>{main_label}</kbd> (one line in
   <code>modules/user.lua</code> changes it). Every bind carries a description, so
-  <kbd>{main_label} + /</kbd> and <code>hyprctl binds</code> show the same wording as this page.
-  These tables are parsed straight out of <code>modules/binds.lua</code>.</p>
-  {"".join(bind_tables)}
+  <kbd>{main_label} + /</kbd> (interactive launcher) and <code>hyprctl binds</code> show the same wording
+  as this page. Filter all {total_binds} binds live below:</p>
+  <input id="kb-filter" class="kbsearch" type="search"
+         placeholder="Filter {total_binds} keybinds (try: palette, zen, resize, capture, ocr, layout, record)…">
+  <div id="kb-container">{"".join(bind_tables)}</div>
 
   <h2><span class="num">04</span>Palette</h2>
   <p class="lead">Greyscale everywhere. Each surface has its own one-line palette so you can shift
@@ -469,6 +557,12 @@ def build() -> str:
     gpu-screen-recorder or wf-recorder, whichever you have.</p></div>
     <div class="card"><h4>System settings</h4><p><kbd>{main_label} + I</kbd><br>
       Info, Network, Bluetooth, Monitors, Sound, night shift, and every config file.</p></div>
+    <div class="card"><h4>Command Palette</h4><p><kbd>{main_label} + Shift + P</kbd> or <kbd>{main_label} + ;</kbd><br>
+      Jump to open windows, trigger focus/layout actions, or type <code>= 1920*1080</code> for live math.</p></div>
+    <div class="card"><h4>Deep Work &amp; Zen</h4><p><kbd>{main_label} + Z</kbd> · <kbd>{main_label} + Shift + Z</kbd><br>
+      One-key distraction-free Zen framing + Waybar Pomodoro countdowns &amp; DND.</p></div>
+    <div class="card"><h4>Modal Chords</h4><p><kbd>{main_label} + R</kbd> · <kbd>{main_label} + C</kbd><br>
+      <code>RESIZE</code> mode (h/j/k/l + 1-3/0 gap presets) and single-chord <code>CAPTURE</code> + OCR.</p></div>
     <div class="card"><h4>Undo everything</h4><p><code>./uninstall.sh</code><br>
       Removes the config and restores your originals from <code>~/.config-backups/pristine</code>.</p></div>
   </div>
@@ -476,7 +570,7 @@ def build() -> str:
   <pre><span class="c"># the short version</span>
 git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
 <span class="k">./install.sh</span>            <span class="c"># then log out and back in</span>
-<span class="k">./test/run-all.sh</span>        <span class="c"># shellcheck + lua + json + 63 smoke checks</span></pre>
+<span class="k">./test/run-all.sh</span>        <span class="c"># shellcheck + lua + json + 120+ smoke checks</span></pre>
 
   <footer>
     Generated from this repository's config on {date.today().isoformat()} by
@@ -486,6 +580,40 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
   </footer>
 
 </div>
+<script>
+(function(){{
+  var grid = document.getElementById('wall-grid');
+  if (grid) {{
+    grid.addEventListener('click', function(ev) {{
+      var btn = ev.target.closest('.wcard');
+      if (!btn) return;
+      document.querySelectorAll('.wcard').forEach(function(b){{ b.classList.remove('active'); }});
+      btn.classList.add('active');
+      document.getElementById('wall-stage-img').src = btn.getAttribute('data-uri');
+      document.getElementById('wall-stage-title').textContent = btn.getAttribute('data-title');
+      document.getElementById('wall-stage-desc').textContent = btn.getAttribute('data-desc');
+    }});
+  }}
+  var input = document.getElementById('kb-filter');
+  var box = document.getElementById('kb-container');
+  if (input && box) {{
+    input.addEventListener('input', function() {{
+      var q = input.value.trim().toLowerCase();
+      box.querySelectorAll('table').forEach(function(tbl) {{
+        var shown = 0;
+        tbl.querySelectorAll('tbody tr').forEach(function(tr) {{
+          var ok = !q || tr.textContent.toLowerCase().indexOf(q) !== -1;
+          tr.style.display = ok ? '' : 'none';
+          if (ok) shown++;
+        }});
+        var h3 = tbl.previousElementSibling;
+        tbl.style.display = shown ? '' : 'none';
+        if (h3 && h3.tagName === 'H3') h3.style.display = shown ? '' : 'none';
+      }});
+    }});
+  }}
+}})();
+</script>
 </body>
 </html>
 """

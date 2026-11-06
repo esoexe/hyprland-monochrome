@@ -21,6 +21,9 @@ rofi                     # app launcher, clipboard, settings, power, wallpaper p
 awww                     # wallpaper daemon (former swww)
 grim                     # screenshots
 slurp                    # region selection for screenshots
+satty                    # screenshot annotation (Super + C -> E)
+tesseract                # screen-region OCR (Super + C -> O)
+tesseract-data-eng       # English OCR model for tesseract
 wf-recorder              # screen recording (works everywhere)
 gpu-screen-recorder      # screen recording with instant replay + pause (preferred)
 hyprpicker               # colour picker

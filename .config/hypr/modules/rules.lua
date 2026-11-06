@@ -53,6 +53,7 @@ local float_classes = {
     "file-roller", "org.gnome.FileRoller", "engrampa",
     "hyprland-share-picker", "xdg-desktop-portal-gtk",
     "nitrogen", "feh", "nwg-look", "qt5ct", "qt6ct",
+    "satty", "com.gabm.satty", "swappy",
 }
 
 for _, class in ipairs(float_classes) do

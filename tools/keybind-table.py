@@ -37,6 +37,8 @@ KEY_LABELS = {
     "ESCAPE": "Escape",
     "GRAVE": "`",
     "SLASH": "/",
+    "BACKSLASH": "\\",
+    "SEMICOLON": ";",
     "EQUAL": "=",
     "MINUS": "-",
     "PRINT": "Print",
@@ -122,16 +124,26 @@ def parse(text: str):
     text = re.sub(r"local function (?:sh|act|media|hold)\(.*?\nend\n", "", text, flags=re.S)
 
     header_re = re.compile(r"^--\s*[═=\-]{3,}\s*(.+?)\s*[═=\-]{0,}\s*$")
+    submap_open_re = re.compile(r'^\s*hl\.define_submap\(\s*"([^"]+)"')
+    submap_close_re = re.compile(r"^\s*end\s*\)\s*$")
 
     section_of: dict[int, str] = {}
+    submap_of: dict[int, str | None] = {}
     current_title = None
+    current_submap: str | None = None
     for index, line in enumerate(text.splitlines(), 1):
         header = header_re.match(line)
         if header:
             title = header.group(1).strip()
             if title and not title.startswith("modules/binds"):
                 current_title = title
+        sm = submap_open_re.match(line)
+        if sm:
+            current_submap = sm.group(1)
+        elif current_submap and submap_close_re.match(line):
+            current_submap = None
         section_of[index] = current_title or "Other"
+        submap_of[index] = current_submap
 
     found: list[tuple[str, str, str]] = []
     for lineno, stmt in statements(text):
@@ -154,6 +166,9 @@ def parse(text: str):
         # skip anything that is clearly not a key description
         if " " in desc and desc.replace(" ", "").islower() and desc.count(" ") > 4:
             continue
+        sm_name = submap_of.get(lineno)
+        if sm_name:
+            keys = f"[{sm_name}] {keys}"
         found.append((section_of.get(lineno, "Other"), keys, desc))
 
     sections: list[tuple[str, list[tuple[str, str]]]] = []
@@ -185,6 +200,9 @@ def code(text: str) -> str:
 def key_label(keys: str, main_mod: str) -> str:
     """The human label for one bind, e.g. 'Super + Shift + T'."""
     label = MOD_LABELS.get(main_mod.upper(), main_mod)
+    if keys.startswith("["):
+        tag, _, rest = keys.partition("] ")
+        return f"{tag}] {prettify_keys(rest, main_mod)}"
     if keys in ("1..0", "SHIFT + 1..0", "ALT + 1..0"):
         return f"{label} + {prettify_keys(keys, main_mod)}"
     if keys.startswith("XF86") or keys.startswith("switch:"):

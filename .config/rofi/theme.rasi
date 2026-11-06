@@ -56,17 +56,17 @@ configuration {
 
 window {
     location: center;
-    width: 560px;
+    width: 580px;
     background-color: @surface;
     border: 1px solid;
     border-color: @hairline-strong;
-    border-radius: 14px;
-    padding: 10px;
+    border-radius: 16px;
+    padding: 12px;
 }
 
 mainbox {
     orientation: vertical;
-    children: [ inputbar, listview ];
+    children: [ inputbar, message, listview ];
     spacing: 8px;
     background-color: transparent;
 }
@@ -76,10 +76,10 @@ inputbar {
     children: [ prompt, entry ];
     background-color: @surface-2;
     border: 1px solid;
-    border-color: @hairline;
-    border-radius: 10px;
-    padding: 8px 12px;
-    spacing: 10px;
+    border-color: @hairline-strong;
+    border-radius: 11px;
+    padding: 10px 14px;
+    spacing: 12px;
 }
 
 prompt {
@@ -163,14 +163,18 @@ scrollbar {
 }
 
 message {
-    background-color: transparent;
+    background-color: @surface-2;
+    border: 1px solid;
+    border-color: @hairline;
+    border-radius: 9px;
     text-color: @text-dim;
-    padding: 4px 8px;
+    padding: 6px 12px;
 }
 
 textbox {
     background-color: transparent;
     text-color: @text-dim;
+    font: "JetBrainsMono Nerd Font 10";
     horizontal-align: 0.0;
 }
 

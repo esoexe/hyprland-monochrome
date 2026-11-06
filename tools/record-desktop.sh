@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════════════════
 #  tools/record-desktop.sh — record a live 1920x1080 Wayland session of this
-#  monochrome desktop while using its menus, wallpapers, recorder, and tests.
+#  monochrome desktop showcasing 2.0 visuals, Command Palette, Focus/Zen,
+#  RESIZE modal submap, pure-monochrome GTK3 Thunar, 10 wallpapers, live
+#  Tesseract OCR, inner screen recording, and the 122-check test suite.
 #
 #      bash tools/record-desktop.sh [output.mp4]
-#
-#  Why Sway headless here? Hyprland's Aquamarine backend requires a /dev/dri
-#  GPU render node, which headless CI/containers lack. wlroots's headless +
-#  pixman backend needs no GPU at all, so we boot a real 1920x1080 Wayland
-#  session and run the repository's actual Waybar, Rofi (.rasi themes), Dunst,
-#  Thunar (dark GTK3), Zsh + Starship + fastfetch + btop, wallpapers, grim
-#  screenshots, inner wf-recorder via record.sh, and the full test suite.
 # ═══════════════════════════════════════════════════════════════════════════
 
 set -uo pipefail
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="${1:-$REPO/docs/desktop-demo.mp4}"
 
-for req in sway swaybg waybar rofi foot thunar dunst wf-recorder grim xdotool ffmpeg zsh starship fastfetch btop; do
+for req in sway swaybg waybar rofi foot thunar dunst wf-recorder grim tesseract xdotool ffmpeg zsh starship fastfetch btop; do
     command -v "$req" >/dev/null 2>&1 || {
         printf 'missing required tool: %s\n' "$req" >&2
         exit 1
@@ -53,14 +48,18 @@ printf '==> Installing hyprland-monochrome into isolated HOME (%s)…\n' "$DEMO_
     bash install.sh --yes --no-packages --no-zsh
 ) >"$WORK/install.log" 2>&1
 
-# Export all 82 real keybinds from docs/KEYBINDS.md (generated from binds.lua)
-# into `hyprctl binds -j` format so `menu.sh keybinds` shows the real table.
+# Export all 117 real keybinds (including [RESIZE] & [CAPTURE] submaps) from
+# docs/KEYBINDS.md into `hyprctl binds -j` format for `menu.sh keybinds`.
 python3 - "$REPO/docs/KEYBINDS.md" "$WORK/binds.json" <<'PY'
 import json, pathlib, re, sys
 md = pathlib.Path(sys.argv[1]).read_text()
 out = []
 for m in re.finditer(r'^\|\s*`([^`]+)`\s*\|\s*([^|]+?)\s*\|', md, flags=re.M):
     combo, desc = m.group(1).strip(), m.group(2).strip()
+    submap = ""
+    if combo.startswith("["):
+        tag, _, combo = combo.partition("] ")
+        submap = tag.lstrip("[")
     parts = [p.strip() for p in combo.split('+')]
     mask = 0
     key = parts[-1] if parts else ""
@@ -70,15 +69,27 @@ for m in re.finditer(r'^\|\s*`([^`]+)`\s*\|\s*([^|]+?)\s*\|', md, flags=re.M):
         elif u == "CTRL": mask |= 4
         elif u == "ALT": mask |= 8
         elif u == "SHIFT": mask |= 1
-    out.append({"key": key, "keycode": 0, "modmask": mask, "description": desc})
+    out.append({"key": key, "keycode": 0, "modmask": mask, "submap": submap, "description": desc})
 pathlib.Path(sys.argv[2]).write_text(json.dumps(out))
 PY
 
-# Compatibility bridges for compositor-specific IPC inside the headless session
+# Bridge Hyprland IPC calls (clients, binds, activewindow, batch gap keywords)
+# to live Sway IPC so palette.sh, focus.sh, layout.sh and screenshot.sh act on
+# real live Wayland windows and gaps.
 cat > "$DEMO_BIN/hyprctl" <<EOF
 #!/usr/bin/env bash
 case "\${1:-}" in
     binds) cat "$WORK/binds.json" ;;
+    clients)
+        swaymsg -t get_tree 2>/dev/null | jq -c '
+            [ .. | objects
+              | select(.type? == "workspace") as \$ws
+              | (\$ws.nodes[]?, \$ws.floating_nodes[]?)
+              | recurse(.nodes[]?, .floating_nodes[]?)
+              | select(.pid? != null and (.name // "") != "")
+              | {address: ("0x" + (.id | tostring)), mapped: true,
+                 title: .name, class: (.app_id // .window_properties.class // "app"),
+                 workspace: {name: (\$ws.name // "1")}} ]' ;;
     monitors)
         printf '[{"id":0,"name":"HEADLESS-1","width":1920,"height":1080,"refreshRate":60.0,"x":0,"y":0,"scale":1.0,"transform":0,"focused":true}]\n' ;;
     activewindow)
@@ -87,7 +98,20 @@ case "\${1:-}" in
             {class: (.app_id // .window_properties.class // "foot"),
              title: (.name // ""), monitor: 0,
              at: [.rect.x, .rect.y], size: [.rect.width, .rect.height]}' | head -1 ;;
-    version) printf 'Hyprland 0.55.2 (headless Wayland harness)\n' ;;
+    --batch)
+        batch="\${2:-}"
+        gi="\$(printf '%s' "\$batch" | sed -n 's/.*gaps_in \([0-9]*\).*/\1/p')"
+        go="\$(printf '%s' "\$batch" | sed -n 's/.*gaps_out \([0-9]*\).*/\1/p')"
+        [ -n "\$gi" ] && swaymsg "gaps inner all set \$gi" >/dev/null 2>&1 || true
+        [ -n "\$go" ] && swaymsg "gaps outer all set \$go" >/dev/null 2>&1 || true
+        printf 'ok\n' ;;
+    dispatch)
+        if [ "\${2:-}" = "focuswindow" ]; then
+            wid="\${3#address:0x}"
+            swaymsg "[con_id=\$wid] focus" >/dev/null 2>&1 || true
+        fi
+        printf 'ok\n' ;;
+    version) printf '{"tag":"v0.55.2"}\n' ;;
     configerrors) printf '\n' ;;
     *) printf '{}\n' ;;
 esac
@@ -102,12 +126,18 @@ cat > "$DEMO_BIN/awww" <<EOF
 #!/usr/bin/env bash
 if [ "\${1:-}" = "img" ] && [ -f "\${2:-}" ]; then
     img="\$2"
+    case "\$img" in
+        *16k*|*4k*)
+            scaled="$WORK/bg-\$(basename "\$img")"
+            [ -f "\$scaled" ] || magick "\$img" -resize 1920x1080 -quality 92 "\$scaled" 2>/dev/null || cp "\$img" "\$scaled"
+            img="\$scaled" ;;
+    esac
     old_pid="\$(cat "$WORK/swaybg.pid" 2>/dev/null || true)"
     swaybg -i "\$img" -m fill >/dev/null 2>&1 </dev/null &
     new_pid=\$!
     printf '%s' "\$new_pid" > "$WORK/swaybg.pid"
     printf '%s\n' "\$new_pid" >> "$WORK/pids"
-    case "\$img" in *16k*) sleep 1.4 ;; *) sleep 0.35 ;; esac
+    sleep 0.35
     [ -n "\$old_pid" ] && kill "\$old_pid" 2>/dev/null || true
     exit 0
 fi
@@ -140,7 +170,7 @@ esac
 EOF
 chmod +x "$DEMO_BIN/hyprctl" "$DEMO_BIN/awww" "$DEMO_BIN/awww-daemon" "$DEMO_BIN/wpctl"
 
-# Adapt the throw-away copy of Waybar's config to Sway workspace/window IPC
+# Adapt the throw-away copy of Waybar's config to Sway workspace/mode/window IPC
 python3 - "$DEMO_HOME/.config/waybar/config.jsonc" "$DEMO_HOME/.config/waybar/style.css" <<'PY'
 import pathlib, sys
 cfg = pathlib.Path(sys.argv[1])
@@ -154,21 +184,23 @@ for mod in ('"temperature",\n', '"bluetooth",\n', '"battery",\n', '"custom/updat
 cfg.write_text(s)
 
 css = pathlib.Path(sys.argv[2])
-css.write_text(css.read_text().replace(
-    '#workspaces button.active {',
-    '#workspaces button.active,\n#workspaces button.focused {'
-))
+text = css.read_text()
+text = text.replace('#workspaces button.active {', '#workspaces button.active,\n#workspaces button.focused {')
+text = text.replace('#submap {', '#submap,\n#mode {')
+css.write_text(text)
 PY
 
-# Clean, curated .desktop entries so the Rofi app launcher lists desktop apps
+# Clean, curated .desktop entries for Rofi drun
 mkdir -p "$DEMO_HOME/.local/share/applications"
 for spec in \
+    "palette|Command Palette (Super + Shift + P)|~/.config/hypr/scripts/palette.sh" \
+    "focus|Deep-Work Focus & Zen (Super + Z)|~/.config/hypr/scripts/focus.sh menu" \
     "kitty|Kitty Terminal|kitty" \
     "thunar|Thunar File Manager|thunar" \
     "btop|btop++ System Monitor|foot -e btop" \
-    "wallpapers|Wallpaper Picker (Super + W)|~/.config/hypr/scripts/wallpaper.sh" \
+    "wallpapers|Wallpaper Studio (Super + W)|~/.config/hypr/scripts/wallpaper.sh" \
     "recorder|Screen Recorder (Super + Alt + Print)|~/.config/hypr/scripts/record.sh toggle" \
-    "keybinds|Keybind Cheat Sheet (Super + /)|~/.config/hypr/scripts/menu.sh keybinds" \
+    "keybinds|Interactive Keybinds (Super + /)|~/.config/hypr/scripts/menu.sh keybinds" \
     "settings|Monochrome Settings (Super + I)|~/.config/hypr/scripts/settings.sh"
 do
     IFS='|' read -r id name exec_cmd <<<"$spec"
@@ -182,7 +214,7 @@ Categories=Utility;
 EOF
 done
 
-# Pre-warm wallpaper thumbnails so opening the Rofi 3x2 grid on camera is instant
+# Pre-warm wallpaper thumbnails so opening the Rofi 3x2 gallery on camera is instant
 mkdir -p "$DEMO_HOME/.cache/hyprland-monochrome/wallpaper-thumbs"
 for img in "$DEMO_HOME/Pictures/Wallpapers"/*.jpg; do
     [ -f "$img" ] || continue
@@ -202,7 +234,10 @@ smart_gaps off
 client.focused          #e6e6e6 #0d0d0d #e6e6e6 #ffffff   #e6e6e6
 client.focused_inactive #2a2a2a #0a0a0a #8a8a8a #2a2a2a   #2a2a2a
 client.unfocused        #2a2a2a #0a0a0a #6f6f6f #2a2a2a   #2a2a2a
-for_window [app_id="thunar"] floating enable, resize set 1020 620, move position 840 220
+for_window [app_id="thunar"] floating enable, resize set 1000 610, move position 860 220
+mode "RESIZE" {
+    bindsym Escape mode "default"
+}
 EOF
 
 cat > "$WORK/foot.ini" <<'EOF'
@@ -233,46 +268,38 @@ EOF
 cat > "$WORK/scene3.sh" <<'EOF'
 #!/usr/bin/env bash
 B=$'\033[1m'; D=$'\033[2m'; G=$'\033[32m'; R=$'\033[0m'
-show_cmd() { printf '\n%smono%s %s$%s %s%s%s\n' "$D" "$R" "$G" "$R" "$B" "$1" "$R"; sleep 0.4; }
+show_cmd() { printf '\n%smono%s %s$%s %s%s%s\n' "$D" "$R" "$G" "$R" "$B" "$1" "$R"; sleep 0.35; }
 
-printf '%s▎ Live desktop actions & screen-recording test%s\n' "$B" "$R"
-sleep 0.9
+printf '%s▎ Studio Wallpapers, Pure-Monochrome GTK3, Live OCR, Zen & Recorder%s\n' "$B" "$R"
+sleep 0.6
 
-show_cmd 'python3 -c "from PIL import Image; ... open(\"~/Pictures/Wallpapers/mono-06-16k.jpg\")"'
-python3 -c '
-import os; from PIL import Image; Image.MAX_IMAGE_PIXELS = None
-im = Image.open(os.path.expanduser("~/Pictures/Wallpapers/mono-06-16k.jpg"))
-print(f"mono-06-16k.jpg -> {im.size[0]}x{im.size[1]} ({im.size[0]*im.size[1]/1e6:.1f} MP native render)")
-'
-# Wait while Wallpaper Picker 3x2 grid opens and cycles wallpapers
+show_cmd 'ls -1 ~/Pictures/Wallpapers/   # 10 procedural designs up to 16K'
+ls -1 "$HOME/Pictures/Wallpapers/"
+# Wait while 3x2 Wallpaper Studio switches across Silk Ribbon & Solar Eclipse
 while [ ! -f "$WORK/wall.done" ]; do sleep 0.2; done
 sleep 0.4
 
-show_cmd '~/.config/hypr/scripts/volume.sh up'
-~/.config/hypr/scripts/volume.sh up
-sleep 0.55
-show_cmd '~/.config/hypr/scripts/volume.sh up'
-~/.config/hypr/scripts/volume.sh up
-sleep 0.7
+show_cmd 'MONO_SLURP_GEOM="20,60 780x360" ~/.config/hypr/scripts/screenshot.sh ocr'
+MONO_SLURP_GEOM="20,60 780x360" ~/.config/hypr/scripts/screenshot.sh ocr | head -4
+sleep 1.1
 
-show_cmd '~/.config/hypr/scripts/screenshot.sh full && ls -lh ~/Pictures/Screenshots/'
-~/.config/hypr/scripts/screenshot.sh full
-ls -lh "$HOME/Pictures/Screenshots/" | tail -1
-sleep 0.9
+show_cmd '~/.config/hypr/scripts/focus.sh zen   # hides bar & frames workspace (28px)'
+~/.config/hypr/scripts/focus.sh zen
+sleep 1.8
+show_cmd '~/.config/hypr/scripts/focus.sh zen   # restores bar, gaps & Pomodoro pill'
+~/.config/hypr/scripts/focus.sh zen
+sleep 1.2
 
-show_cmd '~/.config/hypr/scripts/record.sh start screen   # watch Waybar top-right ● timer!'
+show_cmd '~/.config/hypr/scripts/record.sh start screen   # watch ● timer beside ◎ Focus!'
 ~/.config/hypr/scripts/record.sh start screen
-sleep 1.3
+sleep 1.5
 show_cmd '~/.config/hypr/scripts/record.sh status'
 ~/.config/hypr/scripts/record.sh status | sed "s|$HOME|~|g"
-sleep 2.0
-show_cmd '~/.config/hypr/scripts/record.sh stop'
+sleep 1.6
+show_cmd '~/.config/hypr/scripts/record.sh stop && ffprobe ~/Videos/Recordings/rec-*.mp4'
 ~/.config/hypr/scripts/record.sh stop
-sleep 0.6
-show_cmd 'ffprobe ~/Videos/Recordings/rec-*.mp4'
-ls -lh "$HOME/Videos/Recordings/" | tail -1
 ffprobe -v error -show_entries stream=codec_name,width,height,nb_frames:format=duration "$HOME"/Videos/Recordings/rec-*.mp4
-sleep 2.4
+sleep 2.0
 touch "$WORK/s3.done"
 exec sleep 60
 EOF
@@ -282,23 +309,25 @@ cat > "$WORK/scene4.sh" <<'EOF'
 B=$'\033[1m'; D=$'\033[2m'; G=$'\033[32m'; C=$'\033[36m'; R=$'\033[0m'
 printf '%s▎ 1/2 · Installer, backups, --link & non-Arch sandbox (test/install-sandbox.sh)%s\n' "$B$C" "$R"
 printf '%smono%s %s$%s %sbash test/install-sandbox.sh%s\n\n' "$D" "$R" "$G" "$R" "$B" "$R"
-sleep 0.4
+sleep 0.35
 bash test/install-sandbox.sh | sed "s|/tmp/tmp\.[^/ ]*|/tmp/sandbox|g"
-sleep 1.8
+sleep 1.5
 
-printf '\n%s▎ 2/2 · Full repository verification suite — 9 checks / 100 script checks (test/run-all.sh)%s\n' "$B$C" "$R"
+printf '\n%s▎ 2/2 · Full repository verification — 9 suites / 122 smoke checks (test/run-all.sh)%s\n' "$B$C" "$R"
 printf '%smono%s %s$%s %sbash test/run-all.sh%s\n' "$D" "$R" "$G" "$R" "$B" "$R"
-sleep 0.4
+sleep 0.35
 bash test/run-all.sh
 touch "$WORK/s4.done"
 exec sleep 60
 EOF
 chmod +x "$WORK/scene3.sh" "$WORK/scene4.sh"
 
-RAW_MP4="$WORK/raw.mp4"
+RAW_MKV="$WORK/raw.mkv"
 
-printf '==> Booting headless 1920x1080 Wayland session and recording walkthrough…\n'
+printf '==> Booting headless 1920x1080 Wayland session and recording 2.0 walkthrough…\n'
 
+# Note: GTK_THEME is intentionally NOT set so GTK3 reads ~/.config/gtk-3.0/settings.ini
+# AND layers our monochrome ~/.config/gtk-3.0/gtk.css override cleanly on top!
 HOME="$DEMO_HOME" \
 XDG_CONFIG_HOME="$DEMO_HOME/.config" \
 XDG_CACHE_HOME="$DEMO_HOME/.cache" \
@@ -306,14 +335,13 @@ XDG_DATA_HOME="$DEMO_HOME/.local/share" \
 XDG_DATA_DIRS="$DEMO_HOME/.local/share:/usr/share" \
 XDG_RUNTIME_DIR="$RT" \
 GIO_USE_VFS=local \
-GTK_THEME=Adwaita:dark \
 PATH="$DEMO_BIN:$PATH" \
 WLR_BACKENDS=headless \
 WLR_RENDERER=pixman \
 WLR_HEADLESS_OUTPUTS=1 \
 REPO="$REPO" \
 WORK="$WORK" \
-RAW_MP4="$RAW_MP4" \
+RAW_MKV="$RAW_MKV" \
 dbus-run-session -- bash -c '
     set -u
     export WORK
@@ -325,16 +353,16 @@ dbus-run-session -- bash -c '
     export SWAYSOCK
     export DISPLAY=:0
 
-    # Wallpaper (start on the 16K layered waves) + Waybar + Dunst
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-06-16k.jpg" >/dev/null 2>&1
+    # Start on the new 4K Solar Eclipse design (mono-07-4k.jpg) + Waybar + Dunst
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-07-4k.jpg" >/dev/null 2>&1
     waybar >"$WORK/waybar.log" 2>&1 </dev/null &
     printf "%s\n" "$!" >> "$WORK/pids"
     dunst -config ~/.config/dunst/dunstrc >"$WORK/dunst.log" 2>&1 </dev/null &
     printf "%s\n" "$!" >> "$WORK/pids"
     sleep 1.2
 
-    # Start outer full-session recorder (30 fps constant frame rate)
-    wf-recorder -y -D -r 30 -f "$RAW_MP4" >"$WORK/outer-rec.log" 2>&1 </dev/null &
+    # Start outer full-session recorder into Matroska (stream-safe, never loses moov)
+    wf-recorder -y -D -r 30 -f "$RAW_MKV" >"$WORK/outer-rec.log" 2>&1 </dev/null &
     OUTER_PID=$!
     sleep 0.6
 
@@ -345,115 +373,121 @@ dbus-run-session -- bash -c '
         done
     }
 
-    # ── Scene 1: Workspace 1 — Zsh + Starship + fastfetch + btop ──────────
-    notify-send -a mono "hyprland-monochrome" "1 · Shell (Zsh + Starship + fastfetch) & btop"
+    # ── Scene 1: Workspace 1 — Zsh + Starship + fastfetch + btop + Pomodoro ──
+    ~/.config/hypr/scripts/focus.sh start 25 "Deep Work" >/dev/null 2>&1
     foot -c "$WORK/foot.ini" -D "$REPO" -e zsh >/dev/null 2>&1 </dev/null &
     W1_T1=$!; printf "%s\n" "$W1_T1" >> "$WORK/pids"
-    sleep 1.8
+    sleep 1.7
 
     foot -c "$WORK/foot.ini" -e btop >/dev/null 2>&1 </dev/null &
     W1_T2=$!; printf "%s\n" "$W1_T2" >> "$WORK/pids"
-    sleep 2.6
+    sleep 2.2
 
-    # ── Scene 2: Rofi menus — Launcher, Keybind Cheat Sheet, Settings ─────
-    notify-send -a mono "Rofi Menus" "2 · App launcher, live keybinds & settings"
-    ~/.config/hypr/scripts/menu.sh launcher >/dev/null 2>&1 </dev/null &
+    # ── Scene 2: Command Palette (Super+Shift+P), Live Math, Keybinds & RESIZE ──
+    ~/.config/hypr/scripts/palette.sh >/dev/null 2>&1 </dev/null &
     RF=$!
-    wait_rofi; sleep 0.7
+    wait_rofi; sleep 0.9
     xdotool key Down; sleep 0.35
     xdotool key Down; sleep 0.35
-    xdotool type --delay 85 "wall"
-    sleep 1.1
+    xdotool type --delay 65 "= (15360*8640)/1e6"
+    sleep 0.9
+    xdotool key Return
+    sleep 0.4
+    wait_rofi; sleep 1.6
     xdotool key Escape
     wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
     sleep 0.5
 
-    # Searchable keybind cheat sheet (82 live binds from modules/binds.lua)
+    # Interactive Keybind Cheat Sheet (117 binds incl. [RESIZE] & [CAPTURE])
     ~/.config/hypr/scripts/menu.sh keybinds >/dev/null 2>&1 </dev/null &
     RF=$!
-    wait_rofi; sleep 0.8
-    xdotool key Down; sleep 0.3
-    xdotool key Down; sleep 0.3
-    xdotool type --delay 90 "record"
-    sleep 1.5
-    xdotool key Down; sleep 0.5
+    wait_rofi; sleep 0.7
+    xdotool type --delay 80 "capture"
+    sleep 1.4
     xdotool key Escape
     wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
-    sleep 0.5
-
-    # Settings menu (Super + I)
-    ~/.config/hypr/scripts/settings.sh >/dev/null 2>&1 </dev/null &
-    RF=$!
-    wait_rofi; sleep 0.8
-    xdotool key Down; sleep 0.35
-    xdotool key Down; sleep 0.35
-    xdotool key Down; sleep 0.55
-    xdotool key Escape
-    wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
-    sleep 0.6
-
-    # ── Scene 3: Workspace 2 — Thunar, Wallpaper Grid, Screenshots & REC ──
-    swaymsg "workspace number 2" >/dev/null
     sleep 0.4
-    notify-send -a mono "Workspace 2" "3 · Wallpapers (incl. 16K), Thunar, OSD & record.sh"
 
-    # Left terminal showing interactive commands as they execute
+    # Activate modal RESIZE submap -> Waybar shows inverted [RESIZE] pill while resizing!
+    swaymsg "mode RESIZE" >/dev/null
+    sleep 0.5
+    swaymsg "resize grow width 90 px" >/dev/null; sleep 0.65
+    swaymsg "resize shrink width 90 px" >/dev/null; sleep 0.65
+    swaymsg "mode default" >/dev/null
+    sleep 0.4
+
+    # ── Scene 3: Workspace 2 — Monochrome GTK3 Thunar, 10 Wallpapers, OCR & Zen ──
+    swaymsg "workspace number 2" >/dev/null
+    sleep 0.35
+    notify-send -a mono "Workspace 2" "Studio Wallpapers · Monochrome GTK · OCR · Zen Mode"
+
     MONO_NO_BANNER=1 foot -c "$WORK/foot.ini" -D "$REPO" -e "$WORK/scene3.sh" >/dev/null 2>&1 </dev/null &
     W2_T1=$!; printf "%s\n" "$W2_T1" >> "$WORK/pids"
     sleep 1.0
 
-    thunar "$HOME/Pictures/Wallpapers" >/dev/null 2>&1 </dev/null &
+    DBUS_SYSTEM_BUS_ADDRESS=unix:path=/dev/null thunar "$HOME/Pictures/Wallpapers" >/dev/null 2>&1 </dev/null &
     W2_TH=$!; printf "%s\n" "$W2_TH" >> "$WORK/pids"
-    sleep 1.6
+    for _ in $(seq 1 30); do
+        swaymsg -t get_tree 2>/dev/null | grep -qi thunar && break
+        sleep 0.2
+    done
+    # Wait briefly for Thunar tumbler thumbnails to finish rendering cleanly
+    sleep 3.2
 
-    # Open the 3x2 Wallpaper Picker thumbnail grid, pick mono-03.jpg, then restore 16K!
+    # Open the 3x2 Wallpaper Studio, pan across mono-07..mono-10, and apply mono-10!
     ~/.config/hypr/scripts/wallpaper.sh pick >/dev/null 2>&1 </dev/null &
     RF=$!
-    wait_rofi; sleep 1.1
-    xdotool key Right; sleep 0.65
-    xdotool key Right; sleep 0.65
+    wait_rofi; sleep 0.9
+    xdotool key Right; sleep 0.45
+    xdotool key Right; sleep 0.45
+    xdotool key Right; sleep 0.55
+    xdotool key Right; sleep 0.55
     xdotool key Down;  sleep 0.65
-    xdotool key Up;    sleep 0.55
     xdotool key Return
     wait "$RF" 2>/dev/null || true
-    sleep 1.4
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-06-16k.jpg" >/dev/null 2>&1
+    sleep 1.2
+
+    # Close Thunar window so Silk Ribbon & Zen Mode framing shine unobstructed!
+    swaymsg "[app_id=thunar] kill" >/dev/null 2>&1 || kill "$W2_TH" 2>/dev/null || true
+    sleep 0.8
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-10.jpg" >/dev/null 2>&1
+    sleep 0.8
     touch "$WORK/wall.done"
 
-    # Let the left terminal finish volume OSD + grim screenshot + inner record.sh test
     while [ ! -f "$WORK/s3.done" ]; do sleep 0.2; done
 
-    # ── Scene 4: Workspace 3 — Full Automated Test Suite Live ─────────────
+    # ── Scene 4: Workspace 3 — Full Automated 122-Check Verification Live ────
     swaymsg "workspace number 3" >/dev/null
-    sleep 0.4
-    notify-send -a mono "Workspace 3 · Verification" "4 · Running install-sandbox.sh & run-all.sh live"
+    sleep 0.35
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-08.jpg" >/dev/null 2>&1
+    notify-send -a mono "Workspace 3 · Verification" "Running install-sandbox.sh & 122-check run-all.sh"
 
     MONO_NO_BANNER=1 foot -c "$WORK/foot.ini" -D "$REPO" -e "$WORK/scene4.sh" >/dev/null 2>&1 </dev/null &
     W3_T1=$!; printf "%s\n" "$W3_T1" >> "$WORK/pids"
 
     while [ ! -f "$WORK/s4.done" ]; do sleep 0.25; done
-    sleep 2.2
+    sleep 2.0
 
-    # Brief finale: Power Menu (Super + Escape) over the passing test results
-    ~/.config/hypr/scripts/powermenu.sh >/dev/null 2>&1 </dev/null &
+    # Finale: Settings Menu (Super + I) showing new Command Palette, Focus & Layout entries
+    ~/.config/hypr/scripts/settings.sh >/dev/null 2>&1 </dev/null &
     RF=$!
-    wait_rofi; sleep 0.8
+    wait_rofi; sleep 0.9
     xdotool key Down; sleep 0.4
     xdotool key Down; sleep 0.8
     xdotool key Escape
     wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
-    sleep 2.0
+    sleep 1.6
 
-    # Stop outer wf-recorder cleanly via SIGINT
+    # Stop outer wf-recorder cleanly via SIGINT and wait for full encoder flush
     kill -INT "$OUTER_PID" 2>/dev/null || true
-    for _ in $(seq 1 40); do kill -0 "$OUTER_PID" 2>/dev/null || break; sleep 0.1; done
+    for _ in $(seq 1 120); do kill -0 "$OUTER_PID" 2>/dev/null || break; sleep 0.1; done
 
-    kill "$W1_T1" "$W1_T2" "$W2_T1" "$W2_TH" "$W3_T1" "$SWAY_PID" 2>/dev/null || true
+    kill "$W1_T1" "$W1_T2" "$W2_T1" "$W3_T1" "$SWAY_PID" 2>/dev/null || true
 '
 
 printf '==> Optimizing MP4 for universal browser playback (%s)…\n' "$OUT"
 mkdir -p "$(dirname "$OUT")"
-ffmpeg -y -loglevel error -i "$RAW_MP4" \
+ffmpeg -y -loglevel error -i "$RAW_MKV" \
     -c:v libx264 -preset medium -crf 22 -pix_fmt yuv420p -movflags +faststart \
     "$OUT"
 

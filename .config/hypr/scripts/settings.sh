@@ -487,6 +487,8 @@ capture_menu() {
     key="$(choose settings "capture · ${rec%% (*}:" \
         "shoot$TAB  Screenshot: select an area" \
         "full$TAB  Screenshot: whole screen" \
+        "ocr$TAB⌕  OCR: extract text from screen region" \
+        "edit$TAB✎  Screenshot: select & annotate" \
         "toggle$TAB  Start / stop recording" \
         "region$TAB  Record a selected area" \
         "replay$TAB  Save the last minute (instant replay)" \
@@ -498,6 +500,8 @@ capture_menu() {
     case "${key%%"$TAB"*}" in
         shoot)  "$SCRIPTS_DIR/screenshot.sh" region ;;
         full)   "$SCRIPTS_DIR/screenshot.sh" full ;;
+        ocr)    "$SCRIPTS_DIR/screenshot.sh" ocr ;;
+        edit)   "$SCRIPTS_DIR/screenshot.sh" edit ;;
         toggle) "$SCRIPTS_DIR/record.sh" toggle ;;
         region) "$SCRIPTS_DIR/record.sh" start region ;;
         replay) "$SCRIPTS_DIR/record.sh" replay ;;
@@ -512,17 +516,23 @@ capture_menu() {
 
 while :; do
     key="$(choose settings "settings:" \
+        "palette$TAB⌘  Command palette & math calculator" \
+        "focus$TAB◎  Deep-work focus & Zen mode" \
+        "layout$TAB⊞  Tiling layouts & gap presets" \
         "system$TAB󰍹  System information" \
         "network$TAB󰖩  Network" \
         "bluetooth$TAB󰂯  Bluetooth" \
         "monitors$TAB󰍹  Monitors" \
         "sound$TAB󰕾  Sound" \
         "nightshift$TAB󰖔  Night shift (blue light filter)" \
-        "capture$TAB󰄄  Screenshots & recording" \
+        "capture$TAB󰄄  Screenshots, OCR & recording" \
         "wallpaper$TAB󰸉  Wallpaper…" \
         "hyprland$TAB󰒓  Hyprland / config files")" || exit 0
 
     case "$key" in
+        palette)    "$SCRIPTS_DIR/palette.sh"; exit 0 ;;
+        focus)      "$SCRIPTS_DIR/focus.sh" menu ;;
+        layout)     "$SCRIPTS_DIR/layout.sh" menu ;;
         system)     system_info ;;
         network)    network_menu ;;
         bluetooth)  bluetooth_menu ;;

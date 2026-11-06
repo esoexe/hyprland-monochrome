@@ -2,6 +2,24 @@
 
 Notable changes to this setup. Versions are the dates they landed.
 
+## 2026-11-06 — 2.0.0
+
+Major visual-craft and productivity architecture upgrade.
+
+**Visual Craft & Monochrome Purity**
+- **4 new studio-grade procedural wallpapers** in `wallpapers/generate.py` (`mono-07` Solar Eclipse + 4K master, `mono-08` Alpine Ridgeline, `mono-09` Brutalist Monoliths, `mono-10` Caustic Silk Ribbon), bringing the collection to 10 resolution-independent monochrome designs (up to 16K)
+- **GTK3 & GTK4 monochrome CSS overrides** (`.config/gtk-3.0/gtk.css`, `.config/gtk-4.0/gtk.css`): replaces Adwaita-dark's blue (`#3584e4`) accents and warm grey panels with pure obsidian (`#0c0c0c`) and inverted silver (`#e6e6e6` / `#0a0a0a`) selections across Thunar and file dialogs
+- **Monochrome Hyprland groupbar** in `modules/appearance.lua`: replaces Hyprland's default yellow/orange tab bars with obsidian/silver pill gradients + `scrolling` column width tuning
+- **Refined Waybar & Rofi UI**: elevated frosted-glass contrast, live inverted silver Waybar pills for active Pomodoro timers (`custom/focus`) and modal chords (`hyprland/submap`), new 740px `palette.rasi`, and enabled contextual `-mesg` status/hint banners across all Rofi modals
+
+**Advanced Productivity Architecture**
+- **Command Palette (`scripts/palette.sh`, `Super + Shift + P` / `Super + ;`)**: unified omnibar combining cross-workspace open-window jumping, Focus/Zen controls, layout & gap presets, capture/OCR, config quick-edit, and a safe Python-AST live math/hex/scientific calculator (`= ...`)
+- **Deep-Work Focus & Zen Engine (`scripts/focus.sh`, `Super + Z` / `Super + Shift + Z`)**: zero-polling epoch Pomodoro sprints (`start`, `pause`, `stop`, Waybar JSON `RTMIN+9` signal) + one-key **Zen Mode** (saves/restores Waybar, expands outer framing to 28px, dims background windows, pauses Dunst notifications)
+- **Dynamic Layout & Gap-Preset Switcher (`scripts/layout.sh`, `Super + \` / `Super + Shift + \`)**: live switching across `dwindle`, `master`, and `scrolling` layouts plus `default`, `compact`, `airy`, and `zero` monocle gap presets
+- **Modal Chord Submaps (`modules/binds.lua`)**: `Super + R` enters `RESIZE` mode (`h/j/k/l`, `1/2/3/0` gap presets, `Esc`) and `Super + C` enters single-chord `CAPTURE` mode (`s/f/w/o/e/r/p/m`)
+- **Screen-Region OCR & Annotation (`scripts/screenshot.sh ocr` / `edit`)**: extracts text on screen via `slurp` + `grim` + `tesseract` straight to `wl-copy`, plus `satty`/`swappy` annotation hook; `menu.sh keybinds` (`Super + /`) now executes selected shortcuts directly on `Enter`
+- **Interactive Preview & Verification**: `docs/preview.html` now embeds an interactive 10-wallpaper studio switcher and live 117-keybind filter; `test/smoke-test.sh` expanded from 100 to **122 automated checks**
+
 ## 2026-09-23 — 1.0.0
 
 First release.

@@ -30,14 +30,16 @@ Kitty · Thunar · Zsh + Starship · dunst · cliphist · PipeWire · NetworkMan
 
 | | |
 | --- | --- |
-| **Hyprland** | Tiling with sensible gaps, blur, soft animations, `Super`-based keybinds, vim-style focus, scratchpad, dropdown terminal, per-app window rules |
-| **Waybar** | Floating pill groups, workspaces, now-playing, CPU/RAM/temp, updates, network, Bluetooth, volume (scroll to change), battery, tray, clock with calendar |
-| **Rofi** | App launcher, window switcher, clipboard history, wallpaper grid, settings menu, power menu, searchable keybind cheat sheet — all on one monochrome theme |
-| **Settings menu** | `Super + I`: system info, Network, Bluetooth, Monitors (resolution, scale, rotation, position, on/off — saved to a real config file), Sound (sinks, per-app volume), night shift, and shortcuts to every config file |
-| **Wallpapers** | `Super + W`: thumbnail grid, random/next/prev, solid colours, remembers your choice across reboots. Six generated monochrome designs, drawn from maths — `wallpapers/generate.py` renders any resolution natively (4K, 8K, 16K), and a 16K `mono-06` ships ready |
-| **Lock & logout** | hyprlock (blurred screenshot, monochrome, no colour leaks) + a Rofi power menu with confirmations. Optional wlogout grid if you prefer it |
-| **Screenshots** | `Super + Print` area, `Super + Shift + Print` whole screen, `Super + Ctrl + Print` window — saved to `~/Pictures/Screenshots`, copied to the clipboard, previewed in a notification |
-| **Recording** | `Super + Alt + Print` starts/stops a screen recording (`Super + Alt + Shift + Print` for an area), `Super + Alt + S` saves the last minute, `Super + Alt + P` pauses. Uses gpu-screen-recorder if installed, falls back to wf-recorder; a dot appears in the bar while recording |
+| **Hyprland** | Lua 0.55+ tiling (`dwindle`, `master`, `scrolling`), modal chords (`RESIZE` & `CAPTURE`), monochrome window-group tab bars, vim-style focus, scratchpad, dropdown terminal, per-app window rules |
+| **Command Palette** | `Super + Shift + P` (or `Super + ;`): Raycast/Linear-style omnibar for jumping to open windows across workspaces, triggering focus/layout/capture actions, quick-editing configs, and evaluating live math/hex expressions (`= (15360*8640)/1e6`) |
+| **Focus & Zen** | `Super + Z` enters distraction-free **Zen Mode** (hides Waybar, frames the active window with 28px obsidian margins, mutes Dunst); `Super + Shift + Z` runs Pomodoro / Deep-Work sprints with a live inverted Waybar pill (`◎ 24:58`) |
+| **Layouts & Gaps** | `Super + \` cycles `Dwindle` → `Master` → `Scrolling` on the fly; `Super + Shift + \` switches gap presets (`Default`, `Compact`, `Airy` gallery, `Zero` monocle) |
+| **Waybar** | Frosted glass pill groups, active-inverted workspaces, live `RESIZE`/`CAPTURE` submap pill, `custom/focus` Pomodoro pill, `custom/recording` dot + timer, MPRIS now-playing, CPU/RAM/temp, updates, network, Bluetooth, volume, battery, tray, calendar |
+| **Rofi & GTK** | Unified 16px monochrome Rofi suite with contextual hint bars + custom GTK3/GTK4 `gtk.css` overrides eliminating Adwaita's blue highlights in Thunar and dialogs |
+| **Settings menu** | `Super + I`: Command Palette, Focus/Zen, Layouts/Gaps, System Info, Network, Bluetooth, Monitors (writes `monitors-user.lua`), Sound, Night Shift, Capture/OCR, and config shortcuts |
+| **Wallpapers** | `Super + W`: 3×2 visual gallery, random/next/prev, solid colours, login restore. **10 procedural monochrome designs** (`mono-01`..`mono-10`: Solar Eclipse, Caustic Silk Ribbon, Alpine Ridgeline, Brutalist Monoliths, Horizon Mist…), scalable to any resolution incl. bundled 4K `mono-07` & 16K `mono-06` |
+| **Capture & OCR** | `Super + C` opens the single-chord `CAPTURE` mode (`s` region, `f` full, `w` window, `o` **Tesseract OCR → clipboard**, `e` **Satty/Swappy annotate**, `r` record, `p` 60s instant replay) — plus `Print` keybinds |
+| **Recording** | `Super + Alt + Print` starts/stops screen recording (`gpu-screen-recorder` with 60s replay buffer, automatic `wf-recorder` fallback); live `●` timer in Waybar |
 | **Idle & light** | hypridle (dim → lock → screen off → suspend) and hyprsunset (automatic blue-light filter, `Super + Shift + N` to toggle) |
 | **Shell** | Zsh with Starship (monochrome prompt), autosuggestions, syntax highlighting, fzf history, `eza`/`bat`, useful aliases and functions |
 | **Spotify** | Optional Spicetify theme: greyscale UI, album art is the only colour left in the app |
@@ -105,19 +107,19 @@ built from your live config.
 
 | Keybind | Action | | Keybind | Action |
 | --- | --- | --- | --- | --- |
-| `Super + T` / `Super + Enter` | Terminal | | `Super + F` | Fullscreen |
-| `Super + D` | App launcher | | `Super + Shift + F` | Maximize |
-| `Super + E` | File manager | | `Super + Space` | Floating (centred) |
-| `Super + B` | Browser | | `Super + G` | Group windows (tabs) |
-| `Super + I` | Settings menu | | `Super + 1..0` | Switch workspace |
-| `Super + W` | Wallpaper picker | | `Super + Shift + 1..0` | Move window to workspace |
-| `Super + V` | Clipboard history | | `Super + S` | Scratchpad |
-| `Super + O` | Cycle window opacity | | `Super + Shift + T` | Dropdown terminal |
-| `Super + /` | Keybind cheat sheet | | `Super + Tab` | Lock screen |
-| `Super + Shift + W` | Toggle the top bar | | `Super + Escape` | Logout menu |
-| `Super + Shift + R` | Reload the config | | `Super + Q` | Close window |
-| `Super + Print` | Screenshot (area) | | `Super + Shift + E` | Quit the session |
-| `Super + Alt + Print` | Record screen (again = stop) | | `Super + Alt + S` | Save the last minute |
+| `Super + T` / `Super + Enter` | Terminal | | `Super + Shift + P` / `Super + ;` | **Command palette & math** |
+| `Super + D` | App launcher | | `Super + Z` / `Super + Shift + Z` | **Zen mode / Pomodoro focus** |
+| `Super + E` | File manager (monochrome GTK) | | `Super + R` | **`RESIZE` chord** (`h/j/k/l`, `1-3/0` gaps) |
+| `Super + B` | Browser | | `Super + C` | **`CAPTURE` chord** (`s/f/w/o/e/r/p/m`) |
+| `Super + I` | Settings menu | | `Super + \` / `Super + Shift + \` | **Cycle layout / gap presets** |
+| `Super + W` | Wallpaper studio (10 designs) | | `Super + F` / `Super + Shift + F` | Fullscreen / Maximize |
+| `Super + V` | Clipboard history | | `Super + Space` | Floating (centred) |
+| `Super + O` | Cycle window opacity | | `Super + G` / `Super + Alt + G` | Group windows / next tab |
+| `Super + /` | Interactive shortcut launcher | | `Super + 1..0` | Switch workspace |
+| `Super + Shift + W` | Toggle the top bar | | `Super + Shift + 1..0` | Move window to workspace |
+| `Super + Shift + R` | Reload the config | | `Super + S` / `Super + Shift + T` | Scratchpad / Dropdown term |
+| `Super + Print` | Screenshot (area) | | `Super + Ctrl + Shift + Print` | **OCR region to clipboard** |
+| `Super + Alt + Print` | Record screen (again = stop) | | `Super + Tab` / `Super + Escape` | Lock screen / Logout menu |
 
 Focus with `Super + H/J/K/L` (or the arrow keys), move windows with `Super + Shift + H/J/K/L`,
 resize with `Super + Ctrl + H/J/K/L`, drag with `Super + left mouse`, resize with

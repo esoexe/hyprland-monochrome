@@ -16,6 +16,7 @@ The **main modifier is `Super`**. Change it in one place:
 - [Workspaces](#workspaces)
 - [Bar / Session / System](#bar--session--system)
 - [Screenshots, Recording & Zoom](#screenshots,-recording--zoom)
+- [Modal Submaps (Chords)](#modal-submaps-(chords))
 - [Media & Hardware Keys](#media--hardware-keys)
 
 ## Applications
@@ -27,6 +28,8 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + Shift + Enter` | Floating terminal |
 | `Super + Shift + T` | Dropdown terminal (quake style) |
 | `Super + D` | App launcher |
+| `Super + Shift + P` | Command palette & live math calculator |
+| `Super + ;` | Command palette (home-row alias) |
 | `Super + Shift + D` | Window switcher |
 | `Super + E` | File manager |
 | `Super + B` | Browser |
@@ -52,7 +55,11 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + P` | Pseudo-tile (dwindle) |
 | `Super + Y` | Toggle split direction (dwindle) |
 | `Super + O` | Cycle window opacity |
+| `Super + \` | Cycle tiling layout (Dwindle / Master / Scrolling) |
+| `Super + Shift + \` | Tiling layout & gap-preset picker |
 | `Super + G` | Group / ungroup window (tabs) |
+| `Alt + G` | Next tab in window group |
+| `Super + Shift + G` | Lock / unlock window group |
 | `Alt + Tab` | Next window |
 | `Alt + Shift + Tab` | Previous window |
 
@@ -96,6 +103,8 @@ The **main modifier is `Super`**. Change it in one place:
 | Keys | Action |
 | --- | --- |
 | `Super + Shift + W` | Toggle the top bar |
+| `Super + Z` | Zen mode (hide bar, frame workspace, mute notifications) |
+| `Super + Shift + Z` | Deep-work focus & Pomodoro timer |
 | `Super + Shift + R` | Reload Hyprland config |
 | `Super + Escape` | Logout menu (lock, suspend, reboot, shutdown) |
 | `` Super + ` `` | Logout menu |
@@ -112,12 +121,44 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + Print` | Screenshot: select an area |
 | `Super + Shift + Print` | Screenshot: whole screen |
 | `Ctrl + Print` | Screenshot: active window |
+| `Ctrl + Shift + Print` | OCR: extract text from screen region |
+| `Ctrl + Alt + Print` | Screenshot: select & annotate |
 | `Alt + Print` | Record the screen (again = stop) |
 | `Alt + Shift + Print` | Record a selected area |
 | `Alt + S` | Save the last minute (instant replay) |
 | `Alt + P` | Pause / resume recording |
 | `Super + -` | Zoom out |
 | `Super + =` | Zoom in |
+
+## Modal Submaps (Chords)
+
+| Keys | Action |
+| --- | --- |
+| `Super + R` | Enter RESIZE mode (h/j/k/l, 1-3/0 gaps, Esc) |
+| `[RESIZE] H` | Resize narrower |
+| `[RESIZE] L` | Resize wider |
+| `[RESIZE] K` | Resize shorter |
+| `[RESIZE] J` | Resize taller |
+| `[RESIZE] Left` | Resize narrower |
+| `[RESIZE] Right` | Resize wider |
+| `[RESIZE] Up` | Resize shorter |
+| `[RESIZE] Down` | Resize taller |
+| `[RESIZE] 1` | Gap preset: Default |
+| `[RESIZE] 2` | Gap preset: Compact |
+| `[RESIZE] 3` | Gap preset: Airy gallery |
+| `[RESIZE] 0` | Gap preset: Zero monocle |
+| `[RESIZE] Enter` | Exit RESIZE mode |
+| `[RESIZE] Escape` | Exit RESIZE mode |
+| `Super + C` | Enter CAPTURE chord (s/f/w/o/e/r/p/m) |
+| `[CAPTURE] S` | Region screenshot |
+| `[CAPTURE] F` | Full-screen screenshot |
+| `[CAPTURE] W` | Active-window screenshot |
+| `[CAPTURE] O` | OCR region to clipboard |
+| `[CAPTURE] E` | Region screenshot & annotate |
+| `[CAPTURE] R` | Start / stop screen recording |
+| `[CAPTURE] P` | Save 60s instant replay |
+| `[CAPTURE] M` | Open screen recording menu |
+| `[CAPTURE] Escape` | Cancel capture chord |
 
 ## Media & Hardware Keys
 

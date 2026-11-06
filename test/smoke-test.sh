@@ -537,8 +537,69 @@ eq "…and leaves the other designs alone" "0" "$others"
 timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 3 >/dev/null 2>&1
 eq "a bare number selects a design" "1" "$(ls "$GEN_DIR"/mono-03.jpg 2>/dev/null | wc -l)"
 
+# verify new procedural designs (mono-07 solar eclipse & mono-10 silk ribbon)
+timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 7 >/dev/null 2>&1
+eq "mono-07 eclipse renders cleanly" "1" "$(ls "$GEN_DIR"/mono-07.jpg 2>/dev/null | wc -l)"
+timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only 10 >/dev/null 2>&1
+eq "mono-10 silk ribbon renders cleanly" "1" "$(ls "$GEN_DIR"/mono-10.jpg 2>/dev/null | wc -l)"
+
 timeout 60 python3 "$GEN_DIR/generate.py" 160 90 --only nope >/dev/null 2>&1
 eq "an unknown --only fails loudly" "1" "$?"
+
+# ═══════════════════════ 14. focus & zen engine ══════════════════════════
+printf '\n\033[1m14. focus.sh\033[0m\n'
+: > "$CALLS"
+contains "idle focus status is off" '"class":"off"' "$(timeout 10 "$C/focus.sh" status --waybar)"
+timeout 10 "$C/focus.sh" start 25 "Sprint" >/dev/null 2>&1
+contains "active timer emits Waybar 'on' pill" '"class":"on"' "$(timeout 10 "$C/focus.sh" status --waybar | tr -d '\n')"
+contains "active timer shows label in tooltip" 'Sprint'       "$(timeout 10 "$C/focus.sh" status --waybar)"
+timeout 10 "$C/focus.sh" pause >/dev/null 2>&1
+contains "pause transitions pill to 'paused'"  '"class":"paused"' "$(timeout 10 "$C/focus.sh" status --waybar | tr -d '\n')"
+timeout 10 "$C/focus.sh" stop >/dev/null 2>&1
+eq "stop returns status to off" "off" "$(timeout 10 "$C/focus.sh" status)"
+
+timeout 10 "$C/focus.sh" zen >/dev/null 2>&1
+eq "zen toggle enters zen state" "zen" "$(timeout 10 "$C/focus.sh" status)"
+contains "zen sets generous outer framing" "gaps_out 28" "$(cat "$CALLS")"
+timeout 10 "$C/focus.sh" zen >/dev/null 2>&1
+eq "second zen toggle restores workspace" "off" "$(timeout 10 "$C/focus.sh" status)"
+
+# ═══════════════════════ 15. layout & gap presets ════════════════════════
+printf '\n\033[1m15. layout.sh\033[0m\n'
+: > "$CALLS"
+timeout 10 "$C/layout.sh" set dwindle >/dev/null 2>&1
+timeout 10 "$C/layout.sh" cycle >/dev/null 2>&1
+contains "cycle advances dwindle -> master" "master" "$(timeout 10 "$C/layout.sh" status)"
+timeout 10 "$C/layout.sh" cycle >/dev/null 2>&1
+contains "cycle advances master -> scrolling" "scrolling" "$(timeout 10 "$C/layout.sh" status)"
+timeout 10 "$C/layout.sh" gaps airy >/dev/null 2>&1
+contains "airy preset applies 10/22px gaps" "gaps_out 22" "$(cat "$CALLS")"
+contains "status reports active gap preset" "(airy)" "$(timeout 10 "$C/layout.sh" status)"
+timeout 10 "$C/layout.sh" gaps default >/dev/null 2>&1
+
+# ═══════════════════════ 16. command palette & math ══════════════════════
+printf '\n\033[1m16. palette.sh\033[0m\n'
+eq "calc evaluates pixel count" "2073600" "$(timeout 10 "$C/palette.sh" calc '= 1920 * 1080')"
+eq "calc evaluates hex()"       "0xff"    "$(timeout 10 "$C/palette.sh" calc 'hex(255)')"
+eq "calc evaluates math.sqrt"   "16"      "$(timeout 10 "$C/palette.sh" calc 'sqrt(256)')"
+timeout 10 "$C/palette.sh" calc "__import__('os').system('id')" >/dev/null 2>&1
+eq "calc rejects unsafe code injection" "1" "$?"
+contains "palette list includes Focus actions" "Deep Work" "$(timeout 10 "$C/palette.sh" list)"
+contains "palette list includes OCR action"    "OCR Screen Region" "$(timeout 10 "$C/palette.sh" list)"
+
+# ═══════════════════════ 17. screenshot OCR ══════════════════════════════
+printf '\n\033[1m17. screenshot.sh ocr\033[0m\n'
+cat > "$BIN/tesseract" <<'EOF'
+#!/usr/bin/env bash
+printf 'MONOCHROME OCR TEST 2026\n'
+EOF
+chmod +x "$BIN/tesseract"
+: > "$CALLS"
+OCR_SAMPLE="$WORK/ocr-sample.png"
+printf 'png' > "$OCR_SAMPLE"
+OCR_OUT="$(timeout 10 "$C/screenshot.sh" ocr-file "$OCR_SAMPLE")"
+eq "ocr-file extracts and prints text" "MONOCHROME OCR TEST 2026" "$OCR_OUT"
+contains "ocr notifies with extracted preview" "OCR copied to clipboard" "$(cat "$CALLS")"
 
 # ═══════════════════════ result ══════════════════════════════════════════
 printf '\n\033[2m%s\033[0m\n' "$M_RULE"

@@ -116,6 +116,32 @@ hl.config({
     },
     scrolling = {
         fullscreen_on_one_column = true,
+        column_width             = 0.62,
+    },
+
+    -- Window tab groups (Super + G) — monochrome obsidian/silver pills instead
+    -- of Hyprland's default yellow/orange groupbar colours.
+    group = {
+        col = {
+            border_active          = { colors = { "rgba(ffffffe6)", "rgba(9a9a9a99)" }, angle = 45 },
+            border_inactive        = "rgba(3a3a3a99)",
+            border_locked_active   = "rgba(ffffffff)",
+            border_locked_inactive = "rgba(55555599)",
+        },
+        groupbar = {
+            font_family      = u.font or "JetBrainsMono Nerd Font",
+            font_size        = 10,
+            height           = 20,
+            indicator_height = 2,
+            gradients        = true,
+            text_color       = "rgba(e6e6e6ff)",
+            col = {
+                active          = "rgba(383838e6)",
+                inactive        = "rgba(141414cc)",
+                locked_active   = "rgba(525252e6)",
+                locked_inactive = "rgba(1e1e1ecc)",
+            },
+        },
     },
 })
 

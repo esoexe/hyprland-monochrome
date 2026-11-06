@@ -39,6 +39,8 @@ sh("T",              terminal,                "Terminal")
 sh("SHIFT + RETURN", u.terminal_float or "kitty --class kitty-float", "Floating terminal")
 sh("SHIFT + T",      S .. "scratchterm.sh",   "Dropdown terminal (quake style)")
 sh("D",              S .. "menu.sh launcher", "App launcher")
+sh("SHIFT + P",      S .. "palette.sh",       "Command palette & live math calculator")
+sh("SEMICOLON",      S .. "palette.sh",       "Command palette (home-row alias)")
 sh("SHIFT + D",      S .. "menu.sh windows",  "Window switcher")
 sh("E",              files,                   "File manager")
 sh("B",              browser,                 "Browser")
@@ -63,7 +65,11 @@ act("SHIFT + SPACE",   hl.dsp.window.pin({ action = "toggle" }),                
 act("P",               hl.dsp.window.pseudo(),                                    "Pseudo-tile (dwindle)")
 act("Y",               hl.dsp.layout("togglesplit"),                              "Toggle split direction (dwindle)")
 sh("O",                S .. "opacity.sh",                                         "Cycle window opacity")
+sh("BACKSLASH",        S .. "layout.sh cycle",                                    "Cycle tiling layout (Dwindle / Master / Scrolling)")
+sh("SHIFT + BACKSLASH", S .. "layout.sh menu",                                    "Tiling layout & gap-preset picker")
 act("G",               hl.dsp.group.toggle(),                                     "Group / ungroup window (tabs)")
+sh("ALT + G",          "hyprctl dispatch changegroupactive f",                    "Next tab in window group")
+sh("SHIFT + G",        "hyprctl dispatch lockactivegroup toggle",                 "Lock / unlock window group")
 
 -- Cycle windows like alt-tab (works for floating and grouped windows)
 hl.bind("ALT + TAB",       hl.dsp.window.cycle_next(),                { description = "Next window" })
@@ -124,6 +130,8 @@ act("SHIFT + S",   hl.dsp.window.move({ workspace = "special:" .. scratch }),   
 -- ═══════════════════════ BAR / SESSION / SYSTEM ═══════════════════════════
 
 sh("SHIFT + W", S .. "waybar-toggle.sh",  "Toggle the top bar")
+sh("Z",         S .. "focus.sh zen",       "Zen mode (hide bar, frame workspace, mute notifications)")
+sh("SHIFT + Z", S .. "focus.sh menu",      "Deep-work focus & Pomodoro timer")
 sh("SHIFT + R", "hyprctl reload",          "Reload Hyprland config")
 sh("ESCAPE",    S .. "powermenu.sh",       "Logout menu (lock, suspend, reboot, shutdown)")
 sh("GRAVE",     S .. "powermenu.sh",       "Logout menu")
@@ -141,12 +149,52 @@ sh("SHIFT + M", "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle", "Mute / unmute m
 sh("PRINT",         S .. "screenshot.sh region", "Screenshot: select an area")
 sh("SHIFT + PRINT", S .. "screenshot.sh full",   "Screenshot: whole screen")
 sh("CTRL + PRINT",  S .. "screenshot.sh window", "Screenshot: active window")
+sh("CTRL + SHIFT + PRINT", S .. "screenshot.sh ocr",  "OCR: extract text from screen region")
+sh("CTRL + ALT + PRINT",   S .. "screenshot.sh edit", "Screenshot: select & annotate")
 sh("ALT + PRINT",         S .. "record.sh toggle screen", "Record the screen (again = stop)")
 sh("ALT + SHIFT + PRINT", S .. "record.sh toggle region", "Record a selected area")
 sh("ALT + S",             S .. "record.sh replay",        "Save the last minute (instant replay)")
 sh("ALT + P",             S .. "record.sh pause",         "Pause / resume recording")
 sh("MINUS",         S .. "zoom.sh out",          "Zoom out")
 sh("EQUAL",         S .. "zoom.sh in",           "Zoom in")
+
+
+-- ═══════════════════════ MODAL SUBMAPS (CHORDS) ══════════════════════════
+-- Waybar lights up an inverted white pill ([RESIZE] or [CAPTURE]) while a
+-- modal submap is active. Escape always returns to normal mode.
+
+act("R", hl.dsp.submap("RESIZE"), "Enter RESIZE mode (h/j/k/l, 1-3/0 gaps, Esc)")
+
+hl.define_submap("RESIZE", function()
+    hl.bind("H",      hl.dsp.window.resize({ x = -40, y = 0 }), { repeating = true, description = "Resize narrower" })
+    hl.bind("L",      hl.dsp.window.resize({ x = 40,  y = 0 }), { repeating = true, description = "Resize wider" })
+    hl.bind("K",      hl.dsp.window.resize({ x = 0, y = -40 }), { repeating = true, description = "Resize shorter" })
+    hl.bind("J",      hl.dsp.window.resize({ x = 0, y = 40 }),  { repeating = true, description = "Resize taller" })
+    hl.bind("LEFT",   hl.dsp.window.resize({ x = -40, y = 0 }), { repeating = true, description = "Resize narrower" })
+    hl.bind("RIGHT",  hl.dsp.window.resize({ x = 40,  y = 0 }), { repeating = true, description = "Resize wider" })
+    hl.bind("UP",     hl.dsp.window.resize({ x = 0, y = -40 }), { repeating = true, description = "Resize shorter" })
+    hl.bind("DOWN",   hl.dsp.window.resize({ x = 0, y = 40 }),  { repeating = true, description = "Resize taller" })
+    hl.bind("1",      hl.dsp.exec_cmd(S .. "layout.sh gaps default"), { description = "Gap preset: Default" })
+    hl.bind("2",      hl.dsp.exec_cmd(S .. "layout.sh gaps compact"), { description = "Gap preset: Compact" })
+    hl.bind("3",      hl.dsp.exec_cmd(S .. "layout.sh gaps airy"),    { description = "Gap preset: Airy gallery" })
+    hl.bind("0",      hl.dsp.exec_cmd(S .. "layout.sh gaps zero"),    { description = "Gap preset: Zero monocle" })
+    hl.bind("RETURN", hl.dsp.submap("reset"), { description = "Exit RESIZE mode" })
+    hl.bind("ESCAPE", hl.dsp.submap("reset"), { description = "Exit RESIZE mode" })
+end)
+
+act("C", hl.dsp.submap("CAPTURE"), "Enter CAPTURE chord (s/f/w/o/e/r/p/m)")
+
+hl.define_submap("CAPTURE", "reset", function()
+    hl.bind("S",      hl.dsp.exec_cmd(S .. "screenshot.sh region"),     { description = "Region screenshot" })
+    hl.bind("F",      hl.dsp.exec_cmd(S .. "screenshot.sh full"),       { description = "Full-screen screenshot" })
+    hl.bind("W",      hl.dsp.exec_cmd(S .. "screenshot.sh window"),     { description = "Active-window screenshot" })
+    hl.bind("O",      hl.dsp.exec_cmd(S .. "screenshot.sh ocr"),        { description = "OCR region to clipboard" })
+    hl.bind("E",      hl.dsp.exec_cmd(S .. "screenshot.sh edit"),       { description = "Region screenshot & annotate" })
+    hl.bind("R",      hl.dsp.exec_cmd(S .. "record.sh toggle screen"),  { description = "Start / stop screen recording" })
+    hl.bind("P",      hl.dsp.exec_cmd(S .. "record.sh replay"),         { description = "Save 60s instant replay" })
+    hl.bind("M",      hl.dsp.exec_cmd(S .. "record.sh menu"),           { description = "Open screen recording menu" })
+    hl.bind("ESCAPE", hl.dsp.submap("reset"),                           { description = "Cancel capture chord" })
+end)
 
 
 -- ═══════════════════════ MEDIA & HARDWARE KEYS ════════════════════════════
