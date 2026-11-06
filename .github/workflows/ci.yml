@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: C++20 Toolchain · ShellCheck · Lua 5.4 · 192 Smoke Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install verification dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq g++ make jq shellcheck lua5.4
+
+      - name: Compile C++20 tools (-Wall -Wextra -Werror)
+        run: make -j"$(nproc)"
+
+      - name: Run full verification suite (10 suites · 192 smoke checks)
+        env:
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
+        run: bash test/run-all.sh
+
+      - name: Run isolated installer & uninstaller sandbox suite
+        env:
+          LANG: C.UTF-8
+          LC_ALL: C.UTF-8
+        run: bash test/install-sandbox.sh

@@ -15,7 +15,7 @@ Nothing from the AUR is required. The four optional extras are listed in
 ## Quick install
 
 ```bash
-git clone https://github.com/<your-user>/hyprland-monochrome.git
+git clone https://github.com/esoexe/hyprland-monochrome.git
 cd hyprland-monochrome
 ./install.sh
 ```

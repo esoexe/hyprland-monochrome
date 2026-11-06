@@ -956,7 +956,7 @@ std::string build_page(const fs::path& repo) {
       << "      Removes the config and restores your originals from <code>~/.config-backups/pristine</code>.</p></div>\n"
       << "  </div>\n\n"
       << "  <pre><span class=\"c\"># the short version</span>\n"
-      << "git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome\n"
+      << "git clone https://github.com/esoexe/hyprland-monochrome.git &amp;&amp; cd hyprland-monochrome\n"
       << "<span class=\"k\">./install.sh</span>            <span class=\"c\"># then log out and back in</span>\n"
       << "<span class=\"k\">make test</span>               <span class=\"c\"># C++20 + shellcheck + lua + json + 178+ smoke checks</span></pre>\n\n"
       << "  <footer>\n"

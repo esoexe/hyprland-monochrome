@@ -1,5 +1,9 @@
 # hyprland-monochrome
 
+[![CI](https://github.com/esoexe/hyprland-monochrome/actions/workflows/ci.yml/badge.svg)](https://github.com/esoexe/hyprland-monochrome/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/esoexe/hyprland-monochrome?color=1b1818&labelColor=0d0d0d)](https://github.com/esoexe/hyprland-monochrome/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-e6e6e6?labelColor=0d0d0d)](LICENSE)
+
 A clean, universal monochrome Hyprland desktop built to **run on any PC** (AMD, Intel, NVIDIA,
 hybrid Optimus laptops, and VMs across **Arch, EndeavourOS, CachyOS, Manjaro**, plus Debian/Ubuntu,
 Fedora, and openSUSE), **open any app or file**, and style your browser in the **OpenCode**
@@ -57,7 +61,7 @@ Kitty · Thunar · Zsh + Starship · dunst · cliphist · OpenCode Browser Theme
 ## Install
 
 ```bash
-git clone https://github.com/<your-user>/hyprland-monochrome.git
+git clone https://github.com/esoexe/hyprland-monochrome.git
 cd hyprland-monochrome
 ./install.sh
 ```
