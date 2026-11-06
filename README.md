@@ -30,15 +30,15 @@ Kitty · Thunar · Zsh + Starship · dunst · cliphist · PipeWire · NetworkMan
 
 | | |
 | --- | --- |
-| **Hyprland & Reactive Lua** | Lua 0.55+/0.56 tiling (`dwindle`, `master`, `scrolling`), modal chords (`RESIZE`, `CAPTURE`, `SCRATCH`), monochrome group tab bars, and **in-compositor `hl.on` reactive hooks (`smart.lua`)** — auto-mutes notifications during screen-sharing, recovers hot-plugged monitors, and alerts on urgent background windows (`Super + U`) |
-| **Command Palette** | `Super + Shift + P` (or `Super + ;`): Raycast/Linear-style omnibar for jumping to open windows across workspaces, toggling named drawers, saving/restoring workspace sessions, running the System Doctor, and evaluating live math/hex expressions (`= (15360*8640)/1e6`) |
-| **Named Drawers & Sessions** | `Super + Shift + T` (dropdown terminal), `Super + Shift + B` (floating `btop++` monitor), `Super + '` (instant `~/Documents/scratch.md` in Neovim), plus `Super + Ctrl + S` (`SCRATCH` chord) and **Workspace Session Snapshots** (`workspace-session.sh save` / `restore`) |
-| **Focus & Zen** | `Super + Z` enters distraction-free **Zen Mode** (hides Waybar, frames the active window with 28px obsidian margins, mutes Dunst); `Super + Shift + Z` runs Pomodoro / Deep-Work sprints with a live inverted Waybar pill (`◎ 24:58`) |
-| **Layouts & Gaps** | `Super + \` cycles `Dwindle` → `Master` → `Scrolling` on the fly; `Super + Shift + \` switches gap presets (`Default`, `Compact`, `Airy` gallery, `Zero` monocle) |
-| **Waybar** | Frosted glass pill groups, active-inverted workspaces, **live Unicode CPU micro-sparkline (`▁▂▄▆▃▂ 14%`)**, `RESIZE`/`CAPTURE`/`SCRATCH` submap pill, `custom/focus` Pomodoro pill, `custom/recording` dot + timer, MPRIS now-playing, RAM/temp, updates, network, Bluetooth, volume, battery, tray, calendar |
-| **Full-Stack Monochrome** | **7/7 toolkits themed strictly greyscale (`R == G == B`)**: GTK3/GTK4 (`gtk.css`), **Qt5 & Qt6 (`qt5ct`/`qt6ct` 21-slot Fusion palette)**, **zero-plugin typographic Neovim (`monochrome.lua`)**, Kitty, Rofi, Waybar, Dunst progress-bar OSDs (`volume.sh` + `brightness.sh`), and a redesigned Swiss-watch `hyprlock` with live MPRIS now-playing |
-| **Settings & Doctor** | `Super + I`: Command Palette, Focus/Zen, Named Drawers, Workspace Sessions, Layouts/Gaps, **System & Monochrome Theme Doctor (`doctor.sh`)**, System Info, Network, Bluetooth, Monitors, Sound, Night Shift, Capture/OCR |
-| **Wallpapers** | `Super + W`: 3×2 visual gallery, random/next/prev, solid colours, login restore. **14 procedural monochrome designs** (`mono-01`..`mono-14`: **Gravitational Singularity**, **Liquid Mercury**, **Rain & Bokeh Noir**, **Bauhaus Compass**, Solar Eclipse, Caustic Silk Ribbon…), scalable to any resolution incl. 4K `mono-07`/`mono-11` & 16K `mono-06` |
+| **Kinetic Physics (`animations.lua`)** | **3 native Apple-style damped physical springs** (`silkSpring`, `drawerSpring`, `snappySpring`) + **29 choreographed animation leaves** across windows, `slidefade` workspace parallax, `slidefadevert` scratchpad drawers, and `popin`/`slide` layers — switchable live via `Super + M` (`fluid` · `snappy` · `cinematic` + orbiting liquid-silver border · `minimal`) |
+| **GLSL Screen Shaders (`shader.sh`)** | **4 real-time GLSL ES 3.00 GPU post-processing shaders** (`Super + ,` or `Super + M → S`): **Noir** (hardware Rec.709 Leica greyscale across all apps/videos), **35mm Film** (silver-halide grain + vignette), **P4 Studio CRT** (white-phosphor scanlines), and **Matte E-Ink** |
+| **Hyprland & Reactive Lua** | Lua 0.55+/0.56 tiling (`dwindle`, `master`, `scrolling`), modal chords (`RESIZE`, `CAPTURE`, `SCRATCH`, `FX`), monochrome group tab bars, **PiP 4-corner spring snap (`Super + .`)**, and **in-compositor `hl.on` hooks (`smart.lua`)** (screenshare DND, hotplug recovery, urgent alerts `Super + U`, optional solo-window gallery framing) |
+| **Command Palette** | `Super + Shift + P` (or `Super + ;`): Raycast/Linear-style omnibar for jumping to open windows, switching motion physics & GLSL shaders, toggling named drawers, saving/restoring workspace sessions, running the System Doctor, and live math (`= (15360*8640)/1e6`) |
+| **Named Drawers & Sessions** | `Super + Shift + T` (dropdown terminal), `Super + Shift + B` (floating `btop++` monitor), `Super + '` (instant `~/Documents/scratch.md` in Neovim with yank-flash & smoothscroll), plus `Super + Ctrl + S` (`SCRATCH` chord) and **Workspace Session Snapshots** |
+| **Focus & Zen** | `Super + Z` enters distraction-free **Zen Mode** (slides Waybar away, frames the active window with 28px obsidian margins, mutes Dunst); `Super + Shift + Z` runs Pomodoro sprints with a live inverted Waybar pill (`◎ 24:58`) |
+| **Waybar & Kitty Trail** | Dynamic-Island cubic-Bézier morphing workspace pills, **live Unicode CPU micro-sparkline (`▁▂▄▆▃▂ 14%`)**, breathing recording dot, and **Kitty GPU Neovide-style smooth cursor trail** (`cursor_trail = 1`) |
+| **Full-Stack Monochrome** | **7/7 toolkits themed strictly greyscale (`R == G == B`)**: GTK3/GTK4 (`gtk.css`), **Qt5 & Qt6 (`qt5ct`/`qt6ct` 21-slot Fusion palette)**, **zero-plugin typographic Neovim (`monochrome.lua`)**, Kitty, Rofi (`dim_around` + `popin`), Waybar, Dunst OSDs, and Swiss-watch `hyprlock` |
+| **Wallpapers & Live Loops** | `Super + W` (120fps `awww` cubic-Bézier `grow`/`wave`/`outer`/`wipe` transitions) & `Super + Alt + W` (**animated live loops**): **14 static procedural designs** (`mono-01`..`mono-14` up to 16K) + **2 seamless animated live GIFs** (`mono-live-01-orbital.gif` & `mono-live-02-pulse.gif` via `wallpapers/animate.py`) |
 | **Capture & OCR** | `Super + C` opens the single-chord `CAPTURE` mode (`s` region, `f` full, `w` window, `o` **Tesseract OCR → clipboard**, `e` **Satty/Swappy annotate**, `r` record, `p` 60s instant replay) — plus `Print` keybinds |
 | **Recording** | `Super + Alt + Print` starts/stops screen recording (`gpu-screen-recorder` with 60s replay buffer, automatic `wf-recorder` fallback); live `●` timer in Waybar |
 | **Idle & light** | hypridle (dim → lock → screen off → suspend) and hyprsunset (automatic blue-light filter, `Super + Shift + N` to toggle) |
@@ -113,7 +113,8 @@ built from your live config.
 | `Super + E` | File manager (monochrome GTK) | | `Super + R` | **`RESIZE` chord** (`h/j/k/l`, `1-3/0` gaps) |
 | `Super + B` | Browser | | `Super + C` | **`CAPTURE` chord** (`s/f/w/o/e/r/p/m`) |
 | `Super + I` | Settings menu | | `Super + \` / `Super + Shift + \` | **Cycle layout / gap presets** |
-| `Super + W` | Wallpaper studio (14 designs) | | `Super + F` / `Super + Shift + F` | Fullscreen / Maximize |
+| `Super + W` / `Super + Alt + W` | Wallpaper studio / **Live loop** | | `Super + M` | **`FX` chord** (Motion physics & GLSL shaders) |
+| `Super + ,` / `Super + .` | **Cycle GLSL shader / PiP corner spring** | | `Super + F` / `Super + Shift + F` | Fullscreen / Maximize |
 | `Super + Shift + B` | **Floating `btop++` drawer** | | `Super + '` | **Scratch Markdown notes (`nvim`)** |
 | `Super + Ctrl + S` | **`SCRATCH` & Session chord** | | `Super + U` | **Jump to urgent window** |
 | `Super + V` | Clipboard history | | `Super + Space` | Floating (centred) |
@@ -139,14 +140,16 @@ resize with `Super + Ctrl + H/J/K/L`, drag with `Super + left mouse`, resize wit
 ├── hypridle.conf             idle: dim → lock → screen off → suspend
 ├── hyprsunset.conf           blue-light filter profiles by time of day
 ├── modules/                  ← everything you normally edit
-│   ├── user.lua              your programs, gaps, keyboard, paths, toggles
+│   ├── user.lua              your programs, gaps, motion profile, keyboard, toggles
 │   ├── monitors.lua          monitor layout (+ monitors-user.lua from the settings menu)
-│   ├── appearance.lua        borders, blur, animations, input devices
+│   ├── appearance.lua        borders, blur, rounding, groupbar, input devices
+│   ├── animations.lua        3 damped spring curves + 29-leaf motion choreography
 │   ├── autostart.lua         what starts with the session
-│   ├── binds.lua             every keybind + RESIZE / CAPTURE / SCRATCH chords
-│   ├── rules.lua             window + layer + named drawer rules
+│   ├── binds.lua             every keybind + RESIZE / CAPTURE / SCRATCH / FX chords
+│   ├── rules.lua             window + choreographed layer rules
 │   └── smart.lua             reactive hl.on() event hooks (screenshare DND, hotplug)
-└── scripts/                  bash that powers the menus, drawers, sessions & doctor
+├── shaders/                  GLSL ES 3.00 screen shaders (noir, 35mm, P4 CRT, E-Ink)
+└── scripts/                  bash that powers motion, shaders, drawers, sessions & doctor
 ```
 
 Everything else is where you would expect it: `~/.config/waybar`, `~/.config/rofi`,

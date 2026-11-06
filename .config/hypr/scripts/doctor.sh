@@ -110,16 +110,23 @@ else
     record warn "Monochrome stack" "$theme_ok/$theme_total toolkit theme files present in $CONFIG_DIR"
 fi
 
-# 7. Wallpapers
+# 7. Wallpapers + GLSL shaders
 WDIR="$(mono_var wallpaper_dir "$HOME/Pictures/Wallpapers")"
 wcount=0
 if [ -d "$WDIR" ]; then
-    wcount="$(find "$WDIR" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.webp' \) | wc -l | tr -d ' ')"
+    wcount="$(find "$WDIR" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' \) | wc -l | tr -d ' ')"
 fi
 if [ "$wcount" -gt 0 ]; then
-    record ok "Wallpaper studio" "$wcount monochrome wallpaper(s) in ${WDIR/#$HOME/\~}"
+    record ok "Wallpaper studio" "$wcount monochrome wallpaper(s) (static + live loops) in ${WDIR/#$HOME/\~}"
 else
     record warn "Wallpaper studio" "no wallpapers found in ${WDIR/#$HOME/\~}"
+fi
+
+scount="$(find "$HYPR_DIR/shaders" -maxdepth 1 -type f -name '*.frag' 2>/dev/null | wc -l | tr -d ' ')"
+if [ "${scount:-0}" -ge 4 ]; then
+    record ok "Kinetic & shaders" "motion=$($SCRIPTS_DIR/motion.sh status 2>/dev/null | awk '{print $1}') · $scount GLSL ES 3.00 shaders ready"
+else
+    record warn "Kinetic & shaders" "${scount:-0}/4 GLSL shaders in $HYPR_DIR/shaders"
 fi
 
 # 8. Pristine backup vault

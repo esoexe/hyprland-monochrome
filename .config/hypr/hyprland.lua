@@ -10,8 +10,11 @@
 --    modules/user.lua       ← start here: programs, gaps, keyboard, paths
 --    modules/monitors.lua   ← monitor layout
 --    modules/appearance.lua ← borders, blur, animations, input
+--    modules/monitors.lua   ← monitor setup (optional)
+--    modules/appearance.lua ← gaps, borders, blur, rounding, input
+--    modules/animations.lua ← damped spring & cubic-Bezier choreography
 --    modules/autostart.lua  ← what launches with the session
---    modules/binds.lua      ← every keybind
+--    modules/binds.lua      ← every keybind + RESIZE / CAPTURE / SCRATCH / FX
 --    modules/rules.lua      ← window + layer rules
 --    modules/smart.lua      ← reactive Lua event hooks (screenshare DND, hotplug)
 --
@@ -21,6 +24,7 @@
 require("modules/user")        -- must come first, other modules read `user`
 require("modules/monitors")
 require("modules/appearance")
+require("modules/animations")
 require("modules/autostart")
 require("modules/binds")
 require("modules/rules")

@@ -2,6 +2,21 @@
 
 Notable changes to this setup. Versions are the dates they landed.
 
+## 2026-11-06 — 4.0.0
+
+Kinetic & Shader Edition — damped physical spring choreography, 29-leaf Hyprland animation tree, 4 real-time GLSL ES 3.00 screen shaders, 120 FPS Bézier wallpaper transitions, seamless looping animated monochrome wallpapers, Kitty GPU cursor trails, and a 60 FPS live-canvas desktop simulator.
+
+**Smooth Choreography & Kinetic Motion**
+- **Dedicated Physics-Driven Animation Engine (`modules/animations.lua` + `scripts/motion.sh`, `Super + M`)**: 3 native Hyprland physical springs (`silkSpring`, `drawerSpring`, `snappySpring`) + 6 cubic-Bézier curves driving **29 animation leaves** (`windowsIn/Out/Move`, `slidefade` workspace parallax, `slidefadevert` scratchpad drawers, `fadeSwitch/Shadow/Dim/Popups/Dpms`, `zoomFactor`, `monitorAdded`, and optional orbiting liquid-silver `borderangle` loop); instant live switching across **`fluid`**, **`snappy`** (140ms), **`cinematic`** (26% parallax + liquid border shimmer), and **`minimal`** (zero-motion battery mode)
+- **Choreographed Wayland Layer Rules (`modules/rules.lua`)**: Rofi opens with `popin 92%` + `dim_around = true` + `blur_popups`, Waybar glides via `slide top`, Dunst OSDs glide in via `slide right`, `wlogout` fades, and `selection` (`slurp`) uses `no_anim = true` for zero-lag region capture
+- **120 FPS Choreographed `awww` Transitions & Live Animated Wallpapers (`scripts/wallpaper.sh` + `wallpapers/animate.py`)**: `wallpaper.sh` upgrades transitions to 120 FPS on `0.16,1.0,0.3,1.0` cubic-Bézier curves cycling `grow`, `wave`, `outer`, and `wipe`; new pure-Pillow `wallpapers/animate.py` generates two seamless 32-frame 24fps looping monochrome GIFs (`mono-live-01-orbital.gif` Bauhaus Celestial Orrery & `mono-live-02-pulse.gif` Breathing Relativistic Singularity, toggled with `Super + Alt + W`)
+- **Micro-Interactions Across Kitty, Neovim & Waybar**: GPU-accelerated Neovide-style smooth cursor trail in `kitty.conf` (`cursor_trail = 1`, `cursor_trail_decay 0.09 0.32`), `smoothscroll` + 160ms monochrome yank-flash in `nvim/init.lua`, Dynamic-Island `cubic-bezier(0.16, 1, 0.3, 1)` expanding workspace pills + `@keyframes monoPulse` recording breath in `waybar/style.css`, and **PiP 4-Corner Spring Snap (`scripts/pip-corner.sh`, `Super + .`)**
+
+**Advanced GPU Shaders & Interactive Simulator**
+- **Real-Time GLSL ES 3.00 Screen-Shader Studio (`.config/hypr/shaders/*.frag` + `scripts/shader.sh`, `Super + ,` / `FX → S`)**: `noir.frag` (hardware Rec.709 Leica monochrome filter across the entire OS), `cinema-grain.frag` (35mm silver-halide grain + vignette), `crt-studio.frag` (Braun/P4 white-phosphor scanlines + barrel curvature), and `paper-eink.frag` (low-glare matte reading contrast)
+- **Smart Single-Window Gallery Framing (`modules/smart.lua`)**: optional `smart_single_window` hook expanding outer margins automatically when a workspace holds a solo tiled window
+- **60 FPS Live-Canvas Desktop Simulator (`docs/preview.html`)**: real-time 60 FPS HTML5 Canvas Bauhaus Orrery live background, circular iris-wipe wallpaper transitions, spring-eased workspace parallax (`1`/`2`/`3`), orbiting `cinematic` border shimmer, and live GPU shader filter previews; `test/smoke-test.sh` expanded to **161 automated checks**
+
 ## 2026-11-06 — 3.0.0
 
 Studio Edition — full-stack 7-toolkit monochrome cohesion, 4 optical/relativistic procedural wallpapers, in-compositor reactive Lua hooks, named scratchpad drawers, workspace session snapshots, and an interactive offline desktop simulator.

@@ -39,11 +39,12 @@ hl.window_rule({ name = "browser-opacity", match = { class = "^(firefox|brave-br
 hl.window_rule({ name = "editor-opacity",  match = { class = "^(code|code-oss|VSCodium|codium|zed)$" },
                  opacity = "0.97 override 0.94 override" })
 
--- The bar, menus and notifications get the frosted-glass treatment.
-hl.layer_rule({ name = "rofi-blur",    match = { namespace = "^(rofi)$" },             blur = true, ignore_alpha = 0.3 })
-hl.layer_rule({ name = "waybar-blur",  match = { namespace = "^(waybar)$" },           blur = true, ignore_alpha = 0.3 })
-hl.layer_rule({ name = "notify-blur",  match = { namespace = "^(notifications)$" },    blur = true, ignore_alpha = 0.3 })
-hl.layer_rule({ name = "wlogout-blur", match = { namespace = "^(logout_dialog)$" },    blur = true, ignore_alpha = 0.2 })
+-- The bar, menus and notifications get frosted glass + choreographed layer motion.
+hl.layer_rule({ name = "rofi-blur",         match = { namespace = "^(rofi)$" },          blur = true, blur_popups = true, dim_around = true, ignore_alpha = 0.30, animation = "popin 92%" })
+hl.layer_rule({ name = "waybar-blur",       match = { namespace = "^(waybar)$" },        blur = true, ignore_alpha = 0.30, animation = "slide top" })
+hl.layer_rule({ name = "notify-blur",       match = { namespace = "^(notifications)$" }, blur = true, ignore_alpha = 0.30, animation = "slide right" })
+hl.layer_rule({ name = "wlogout-blur",      match = { namespace = "^(logout_dialog)$" }, blur = true, ignore_alpha = 0.20, animation = "fade" })
+hl.layer_rule({ name = "selection-no-anim", match = { namespace = "^(selection)$" },     no_anim = true })
 
 -- ── Floating utility windows ──────────────────────────────────────────────
 

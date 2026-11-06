@@ -100,15 +100,51 @@ case "\${1:-}" in
              at: [.rect.x, .rect.y], size: [.rect.width, .rect.height]}' | head -1 ;;
     --batch)
         batch="\${2:-}"
+        if printf '%s' "\$batch" | grep -q 'togglefloating'; then
+             dims="\$(printf '%s' "\$batch" | sed -n 's/.*resizeactive exact \([0-9]*\) \([0-9]*\).*/\1 \2/p')"
+            swaymsg "floating enable" >/dev/null 2>&1 || true
+            if [ -n "\$dims" ]; then
+                swaymsg "resize set \${dims% *} px \${dims#* } px" >/dev/null 2>&1 || true
+            fi
+        fi
         gi="\$(printf '%s' "\$batch" | sed -n 's/.*gaps_in \([0-9]*\).*/\1/p')"
         go="\$(printf '%s' "\$batch" | sed -n 's/.*gaps_out \([0-9]*\).*/\1/p')"
-        [ -n "\$gi" ] && swaymsg "gaps inner all set \$gi" >/dev/null 2>&1 || true
-        [ -n "\$go" ] && swaymsg "gaps outer all set \$go" >/dev/null 2>&1 || true
+        if [ -n "\$go" ]; then
+            old_go="\$(cat "$WORK/cur_go" 2>/dev/null || echo 10)"
+            old_gi="\$(cat "$WORK/cur_gi" 2>/dev/null || echo 5)"
+            new_gi="\${gi:-\$old_gi}"
+            for step in 1 2 3 4 5 6 7 8 9 10 11 12; do
+                cur_o="\$(awk -v a="\$old_go" -v b="\$go" -v s="\$step" 'BEGIN { t=s/12.0; e=1-(1-t)*(1-t)*(1-t); printf "%d", a+(b-a)*e+0.5 }')"
+                cur_i="\$(awk -v a="\$old_gi" -v b="\$new_gi" -v s="\$step" 'BEGIN { t=s/12.0; e=1-(1-t)*(1-t)*(1-t); printf "%d", a+(b-a)*e+0.5 }')"
+                swaymsg "gaps inner all set \$cur_i; gaps outer all set \$cur_o" >/dev/null 2>&1 || true
+                sleep 0.025
+            done
+            printf '%s\n' "\$go" > "$WORK/cur_go"
+            printf '%s\n' "\$new_gi" > "$WORK/cur_gi"
+        elif [ -n "\$gi" ]; then
+            swaymsg "gaps inner all set \$gi" >/dev/null 2>&1 || true
+        fi
         printf 'ok\n' ;;
     dispatch)
         if [ "\${2:-}" = "focuswindow" ]; then
             wid="\${3#address:0x}"
             swaymsg "[con_id=\$wid] focus" >/dev/null 2>&1 || true
+        elif [ "\${2:-}" = "movewindowpixel" ]; then
+            spec="\${3:-}"
+            tx="\$(printf '%s' "\$spec" | awk '{print \$2}')"
+            ty="\$(printf '%s' "\$spec" | awk '{sub(/,.*/, "", \$3); print \$3}')"
+            read -r sx sy < <(swaymsg -t get_tree 2>/dev/null | jq -r 'recurse(.nodes[]?, .floating_nodes[]?) | select(.focused == true) | "\(.rect.x) \(.rect.y)"' | head -1)
+            sx="\${sx:-600}"; sy="\${sy:-240}"
+            for step in $(seq 1 16); do
+                read -r cx cy < <(awk -v x0="\$sx" -v y0="\$sy" -v x1="\$tx" -v y1="\$ty" -v s="\$step" 'BEGIN {
+                    t = s / 16.0;
+                    e = 1.0 - exp(-5.2 * t) * cos(3.6 * t);
+                    if (s == 16) e = 1.0;
+                    printf "%d %d\n", x0 + (x1 - x0) * e + 0.5, y0 + (y1 - y0) * e + 0.5
+                }')
+                swaymsg "move position \$cx px \$cy px" >/dev/null 2>&1 || true
+                sleep 0.024
+            done
         fi
         printf 'ok\n' ;;
     version) printf '{"tag":"v0.55.2"}\n' ;;
@@ -124,9 +160,17 @@ EOF
 
 cat > "$DEMO_BIN/awww" <<EOF
 #!/usr/bin/env bash
-if [ "\${1:-}" = "img" ] && [ -f "\${2:-}" ]; then
-    img="\$2"
+if [ "\${1:-}" = "img" ]; then
+    img=""
+    for arg in "\${@:2}"; do
+        if [ -f "\$arg" ]; then img="\$arg"; break; fi
+    done
+    [ -n "\$img" ] || exit 0
     case "\$img" in
+        *.gif)
+            scaled="$WORK/bg-\$(basename "\$img" .gif).png"
+            [ -f "\$scaled" ] || magick "\${img}[0]" -resize 1920x1080 "\$scaled" 2>/dev/null || cp "\$img" "\$scaled"
+            img="\$scaled" ;;
         *16k*|*4k*)
             scaled="$WORK/bg-\$(basename "\$img")"
             [ -f "\$scaled" ] || magick "\$img" -resize 1920x1080 -quality 92 "\$scaled" 2>/dev/null || cp "\$img" "\$scaled"
@@ -318,7 +362,7 @@ sleep 0.35
 bash test/install-sandbox.sh | sed "s|/tmp/tmp\.[^/ ]*|/tmp/sandbox|g"
 sleep 1.5
 
-printf '\n%s▎ 2/2 · Full repository verification — 9 suites / 143 smoke checks (test/run-all.sh)%s\n' "$B$C" "$R"
+printf '\n%s▎ 2/2 · Full repository verification — 9 suites / 161 smoke checks (test/run-all.sh)%s\n' "$B$C" "$R"
 printf '%smono%s %s$%s %sbash test/run-all.sh%s\n' "$D" "$R" "$G" "$R" "$B" "$R"
 sleep 0.35
 bash test/run-all.sh
@@ -329,7 +373,7 @@ chmod +x "$WORK/scene3.sh" "$WORK/scene4.sh"
 
 RAW_MKV="$WORK/raw.mkv"
 
-printf '==> Booting headless 1920x1080 Wayland session and recording 3.0 walkthrough…\n'
+printf '==> Booting headless 1920x1080 Wayland session and recording 4.0 Kinetic walkthrough…\n'
 
 # Note: GTK_THEME is intentionally NOT set so GTK3 reads ~/.config/gtk-3.0/settings.ini
 # AND layers our monochrome ~/.config/gtk-3.0/gtk.css override cleanly on top!
@@ -411,22 +455,42 @@ dbus-run-session -- bash -c '
     wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
     sleep 0.5
 
-    # Interactive Keybind Cheat Sheet (117 binds incl. [RESIZE] & [CAPTURE])
-    ~/.config/hypr/scripts/menu.sh keybinds >/dev/null 2>&1 </dev/null &
+    # Motion Physics Menu (Super + M -> M) & GLSL Shader Studio (Super + M -> S)
+    ~/.config/hypr/scripts/motion.sh menu >/dev/null 2>&1 </dev/null &
     RF=$!
-    wait_rofi; sleep 0.7
-    xdotool type --delay 80 "capture"
-    sleep 1.4
+    wait_rofi; sleep 0.85
+    xdotool key Down; sleep 0.4
+    xdotool key Down; sleep 0.65
     xdotool key Escape
     wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
-    sleep 0.4
+    sleep 0.35
 
-    # Activate modal RESIZE submap -> Waybar shows inverted [RESIZE] pill while resizing!
+    ~/.config/hypr/scripts/shader.sh menu >/dev/null 2>&1 </dev/null &
+    RF=$!
+    wait_rofi; sleep 0.85
+    xdotool key Down; sleep 0.4
+    xdotool key Down; sleep 0.65
+    xdotool key Escape
+    wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
+    sleep 0.35
+
+    # Smooth 30fps modal RESIZE glide -> Waybar lights up [RESIZE] pill!
     swaymsg "mode RESIZE" >/dev/null
-    sleep 0.5
-    swaymsg "resize grow width 90 px" >/dev/null; sleep 0.65
-    swaymsg "resize shrink width 90 px" >/dev/null; sleep 0.65
+    sleep 0.35
+    for _ in $(seq 1 12); do swaymsg "resize grow width 9 px" >/dev/null; sleep 0.03; done
+    sleep 0.35
+    for _ in $(seq 1 12); do swaymsg "resize shrink width 9 px" >/dev/null; sleep 0.03; done
     swaymsg "mode default" >/dev/null
+    sleep 0.35
+
+    # Kinetic PiP 4-Corner Damped-Spring Glide (Super + .) across corners!
+    ~/.config/hypr/scripts/pip-corner.sh 1 >/dev/null 2>&1
+    sleep 0.35
+    ~/.config/hypr/scripts/pip-corner.sh 2 >/dev/null 2>&1
+    sleep 0.35
+    ~/.config/hypr/scripts/pip-corner.sh 3 >/dev/null 2>&1
+    sleep 0.35
+    swaymsg "floating disable" >/dev/null 2>&1 || true
     sleep 0.4
 
     # ── Scene 3: Workspace 2 — Monochrome GTK3 Thunar, 10 Wallpapers, OCR & Zen ──
@@ -469,11 +533,11 @@ dbus-run-session -- bash -c '
 
     while [ ! -f "$WORK/s3.done" ]; do sleep 0.2; done
 
-    # ── Scene 4: Workspace 3 — Full Automated 143-Check Verification Live ────
+    # ── Scene 4: Workspace 3 — Full Automated 161-Check Verification Live ────
     swaymsg "workspace number 3" >/dev/null
     sleep 0.35
     ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-14.jpg" >/dev/null 2>&1
-    notify-send -a mono "Workspace 3 · Verification" "Running install-sandbox.sh & 143-check run-all.sh"
+    notify-send -a mono "Workspace 3 · Verification" "Running install-sandbox.sh & 161-check run-all.sh"
 
     MONO_NO_BANNER=1 foot -c "$WORK/foot.ini" -D "$REPO" -e "$WORK/scene4.sh" >/dev/null 2>&1 </dev/null &
     W3_T1=$!; printf "%s\n" "$W3_T1" >> "$WORK/pids"

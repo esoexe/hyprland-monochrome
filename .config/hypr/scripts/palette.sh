@@ -138,6 +138,18 @@ build_entries() {
 💾  Session · Save Current Workspace Snapshot ('work')	sess:save
 ↺  Session · Restore Workspace Snapshot ('work')	sess:restore
 🗂  Session · Open Workspace Session Manager	sess:menu
+∿  Motion · Fluid Damped Springs & 18% Parallax (Default)	motion:fluid
+⚡  Motion · Snappy 140ms Studio Precision	motion:snappy
+✦  Motion · Cinematic Parallax + Orbiting Silver Border	motion:cinematic
+◌  Motion · Minimal Zero-Motion (Battery / Esports)	motion:minimal
+⟳  Motion · Toggle Orbiting Liquid-Silver Active Border	motion:loop
+◐  Shader · GLSL Noir Hardware Monochrome Enforcer	shader:noir
+🎞  Shader · GLSL 35mm Silver-Halide Film Grain	shader:grain
+▤  Shader · GLSL P4 Studio CRT Scanlines	shader:crt
+📖  Shader · GLSL Matte E-Ink Reading Tone	shader:eink
+○  Shader · Disable GLSL Screen Shader (Off)	shader:off
+✦  Wallpaper · Cycle Animated Live Monochrome Wallpaper	wall:live
+◹  Window · Spring Floating / PiP Window to Next Corner (Super + .)	pip:corner
 ⊞  Layout · Cycle Tiling Engine (Dwindle / Master / Scrolling)	layout:cycle
 ⊞  Layout · Switch to Master-Stack	layout:master
 ⊞  Layout · Switch to Scrolling Strip	layout:scrolling
@@ -199,6 +211,18 @@ run_token() {
         sess:save)      "$SCRIPTS_DIR/workspace-session.sh" save work ;;
         sess:restore)   "$SCRIPTS_DIR/workspace-session.sh" restore work ;;
         sess:menu)      "$SCRIPTS_DIR/workspace-session.sh" menu ;;
+        motion:fluid)   "$SCRIPTS_DIR/motion.sh" set fluid ;;
+        motion:snappy)  "$SCRIPTS_DIR/motion.sh" set snappy ;;
+        motion:cinematic) "$SCRIPTS_DIR/motion.sh" set cinematic ;;
+        motion:minimal) "$SCRIPTS_DIR/motion.sh" set minimal ;;
+        motion:loop)    "$SCRIPTS_DIR/motion.sh" border-loop toggle ;;
+        shader:noir)    "$SCRIPTS_DIR/shader.sh" set noir ;;
+        shader:grain)   "$SCRIPTS_DIR/shader.sh" set cinema-grain ;;
+        shader:crt)     "$SCRIPTS_DIR/shader.sh" set crt-studio ;;
+        shader:eink)    "$SCRIPTS_DIR/shader.sh" set paper-eink ;;
+        shader:off)     "$SCRIPTS_DIR/shader.sh" set off ;;
+        wall:live)      "$SCRIPTS_DIR/wallpaper.sh" live ;;
+        pip:corner)     "$SCRIPTS_DIR/pip-corner.sh" ;;
         layout:cycle)   "$SCRIPTS_DIR/layout.sh" cycle ;;
         layout:master)  "$SCRIPTS_DIR/layout.sh" set master ;;
         layout:scrolling) "$SCRIPTS_DIR/layout.sh" set scrolling ;;

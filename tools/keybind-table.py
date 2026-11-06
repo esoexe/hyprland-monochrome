@@ -40,6 +40,8 @@ KEY_LABELS = {
     "BACKSLASH": "\\",
     "SEMICOLON": ";",
     "APOSTROPHE": "'",
+    "COMMA": ",",
+    "PERIOD": ".",
     "EQUAL": "=",
     "MINUS": "-",
     "PRINT": "Print",

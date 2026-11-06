@@ -21,8 +21,12 @@ listview {
 }
 
 element {
+    children: [ element-text ];
     padding: 9px 14px;
-    font: "JetBrainsMono Nerd Font 12";
+}
+
+element-text {
+    font: "JetBrainsMono Nerd Font 11.5";
 }
 
 prompt {

@@ -176,7 +176,9 @@ cp "$REPO"/.config/hypr/scripts/*.sh "$C"
 cp "$REPO"/.config/waybar/scripts/*.sh "$XDG_CONFIG_HOME/waybar/scripts/"
 mkdir -p "$XDG_CONFIG_HOME/gtk-3.0" "$XDG_CONFIG_HOME/gtk-4.0" \
          "$XDG_CONFIG_HOME/qt5ct/colors" "$XDG_CONFIG_HOME/qt6ct/colors" \
-         "$XDG_CONFIG_HOME/nvim/colors" "$XDG_CONFIG_HOME/kitty"
+         "$XDG_CONFIG_HOME/nvim/colors" "$XDG_CONFIG_HOME/kitty" \
+         "$XDG_CONFIG_HOME/hypr/shaders"
+cp "$REPO"/.config/hypr/shaders/*.frag "$XDG_CONFIG_HOME/hypr/shaders/"
 cp "$REPO/.config/gtk-3.0/gtk.css" "$XDG_CONFIG_HOME/gtk-3.0/"
 cp "$REPO/.config/gtk-4.0/gtk.css" "$XDG_CONFIG_HOME/gtk-4.0/"
 cp "$REPO/.config/qt5ct/colors/Monochrome.conf" "$XDG_CONFIG_HOME/qt5ct/colors/"
@@ -714,6 +716,76 @@ print("pure" if not bad else ",".join(bad))
 PY
 )"
 eq "Qt5, Qt6 & Neovim palettes are 100% pure greyscale (R==G==B)" "pure" "$PURE_CHECK"
+
+# ═══════════════════════ 21. kinetic motion, shaders & live loops ════════
+printf '\n\033[1m21. motion.sh, shader.sh, pip-corner.sh & animate.py\033[0m\n'
+: > "$CALLS"
+contains "default motion profile is fluid" "fluid" "$(timeout 10 "$C/motion.sh" status)"
+timeout 10 "$C/motion.sh" cycle >/dev/null 2>&1
+contains "motion cycle advances fluid -> snappy" "snappy" "$(timeout 10 "$C/motion.sh" status)"
+timeout 10 "$C/motion.sh" cycle >/dev/null 2>&1
+contains "motion cycle advances snappy -> cinematic" "cinematic" "$(timeout 10 "$C/motion.sh" status)"
+contains "cinematic enables orbiting borderangle loop" "borderangle,1,55,monoLinear,loop" "$(cat "$CALLS")"
+timeout 10 "$C/motion.sh" set minimal >/dev/null 2>&1
+contains "minimal disables animations cleanly" "animations:enabled false" "$(cat "$CALLS")"
+timeout 10 "$C/motion.sh" set fluid >/dev/null 2>&1
+
+: > "$CALLS"
+timeout 10 "$C/shader.sh" set noir >/dev/null 2>&1
+eq "shader status reports noir" "noir" "$(timeout 10 "$C/shader.sh" status)"
+contains "shader.sh applies noir.frag via decoration:screen_shader" "noir.frag" "$(cat "$CALLS")"
+timeout 10 "$C/shader.sh" cycle >/dev/null 2>&1
+eq "shader cycle advances noir -> cinema-grain" "cinema-grain" "$(timeout 10 "$C/shader.sh" status)"
+timeout 10 "$C/shader.sh" set off >/dev/null 2>&1
+eq "shader off resets status" "off" "$(timeout 10 "$C/shader.sh" status)"
+
+GLSL_OK=0
+for frag in "$REPO"/.config/hypr/shaders/*.frag; do
+    head -1 "$frag" | grep -qx '#version 300 es' &&
+    grep -q 'uniform sampler2D tex;' "$frag" &&
+    grep -q 'out vec4 fragColor;' "$frag" &&
+    GLSL_OK=$((GLSL_OK + 1))
+done
+eq "all 4 GLSL ES 3.00 screen shaders match Hyprland uniform spec" "4" "$GLSL_OK"
+
+: > "$CALLS"
+timeout 10 "$C/pip-corner.sh" 2 >/dev/null 2>&1
+contains "pip-corner springs window via movewindowpixel exact" "movewindowpixel exact" "$(cat "$CALLS")"
+
+if [ -n "$LUA_BIN" ]; then
+    ANIM_STATS="$("$LUA_BIN" -e '
+        package.path = os.getenv("XDG_CONFIG_HOME") .. "/hypr/?.lua;" .. package.path
+        local springs, leaves = 0, 0
+        local function mock()
+            return setmetatable({}, {
+                __call = function() return mock() end,
+                __index = function() return mock() end,
+            })
+        end
+        hl = setmetatable({
+            curve = function(_n, spec) if spec and spec.type == "spring" then springs = springs + 1 end end,
+            animation = function(spec) if spec and spec.leaf then leaves = leaves + 1 end end,
+            define_submap = function(_n, _r, fn) if fn then fn() end end,
+        }, { __index = function() return mock() end })
+        dofile(os.getenv("XDG_CONFIG_HOME") .. "/hypr/hyprland.lua")
+        print(string.format("springs=%d leaves=%d", springs, leaves))
+    ' 2>&1)"
+    contains "animations.lua registers 3 physical spring curves" "springs=3" "$ANIM_STATS"
+    contains "animations.lua configures 29 animation leaves"     "leaves=29" "$ANIM_STATS"
+fi
+
+: > "$HOME/Pictures/Wallpapers/mono-live-01-orbital.gif"
+: > "$CALLS"
+timeout 10 "$C/wallpaper.sh" live >/dev/null 2>&1
+contains "wallpaper.sh live transitions at 120fps on Bezier curve" "--transition-fps 120" "$(cat "$CALLS")"
+contains "wallpaper.sh live selects animated gif" "mono-live-01-orbital.gif" "$(cat "$CALLS")"
+
+cp "$REPO/wallpapers/animate.py" "$GEN_DIR/"
+timeout 60 python3 "$GEN_DIR/animate.py" 160 90 --frames 6 --fps 12 --only orbital >/dev/null 2>&1
+eq "animate.py renders seamless multi-frame greyscale GIF" "6" "$(python3 -c "
+from PIL import Image
+print(Image.open('$GEN_DIR/mono-live-01-orbital.gif').n_frames)" 2>/dev/null || echo 0)"
+contains "doctor verifies 4 GLSL shaders & kinetic motion" "4 GLSL ES 3.00 shaders ready" "$(timeout 10 "$C/doctor.sh" --plain)"
 
 # ═══════════════════════ result ══════════════════════════════════════════
 printf '\n\033[2m%s\033[0m\n' "$M_RULE"

@@ -22,10 +22,14 @@ listview {
 }
 
 element {
+    children: [ element-text ];
     padding: 12px 16px;
     spacing: 14px;
-    font: "JetBrainsMono Nerd Font 13";
     border-radius: 11px;
+}
+
+element-text {
+    font: "JetBrainsMono Nerd Font 13";
 }
 
 prompt {

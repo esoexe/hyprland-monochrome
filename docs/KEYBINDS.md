@@ -35,7 +35,8 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + Shift + D` | Window switcher |
 | `Super + E` | File manager |
 | `Super + B` | Browser |
-| `Super + W` | Wallpaper picker |
+| `Super + W` | Wallpaper picker (120fps Bezier transition) |
+| `Alt + W` | Cycle animated live monochrome wallpaper |
 | `Super + I` | Settings menu (system, net, BT, monitors, sound) |
 | `Super + V` | Clipboard history |
 | `Super + Shift + V` | Clear clipboard history |
@@ -54,6 +55,8 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + Shift + F` | Toggle maximize |
 | `Super + Space` | Toggle floating window (centred at 70%) |
 | `Super + Shift + Space` | Pin window (visible on all workspaces) |
+| `Super + .` | Spring floating / PiP window to next corner |
+| `Super + ,` | Cycle GLSL screen shader (Off / Noir / 35mm / CRT / E-Ink) |
 | `Super + P` | Pseudo-tile (dwindle) |
 | `Super + Y` | Toggle split direction (dwindle) |
 | `Super + O` | Cycle window opacity |
@@ -171,6 +174,21 @@ The **main modifier is `Super`**. Change it in one place:
 | `[SCRATCH] R` | Restore saved workspace session |
 | `[SCRATCH] M` | Open workspace session manager |
 | `[SCRATCH] Escape` | Cancel scratch chord |
+| `Super + M` | Enter FX chord (motion physics, GLSL shaders, live wallpaper) |
+| `[FX] 1` | Motion: Fluid damped springs |
+| `[FX] 2` | Motion: Snappy 140ms studio |
+| `[FX] 3` | Motion: Cinematic parallax + liquid border |
+| `[FX] 0` | Motion: Minimal zero-motion |
+| `[FX] B` | Toggle orbiting liquid-silver border |
+| `[FX] M` | Open motion physics menu |
+| `[FX] S` | Open GLSL screen shader studio |
+| `[FX] N` | GLSL shader: Noir greyscale |
+| `[FX] G` | GLSL shader: 35mm film grain |
+| `[FX] C` | GLSL shader: P4 studio CRT |
+| `[FX] E` | GLSL shader: Matte E-Ink paper |
+| `[FX] O` | GLSL shader: Off |
+| `[FX] L` | Cycle animated live wallpaper |
+| `[FX] Escape` | Cancel FX chord |
 
 ## Media & Hardware Keys
 

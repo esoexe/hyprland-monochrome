@@ -345,33 +345,61 @@ code{font-family:var(--mono); background:var(--surface-2); border:1px solid var(
 .simbtn:hover{color:#fff; border-color:#fff}
 .simbtn.on{background:#e6e6e6; color:#080808; border-color:#e6e6e6; font-weight:600}
 .simstage{position:relative; aspect-ratio:16/9; border:1px solid var(--line-strong); border-radius:14px;
-          overflow:hidden; background:#050505; user-select:none}
-.simbg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s ease}
+          overflow:hidden; background:#050505; user-select:none; --dur:440ms; --ease:cubic-bezier(0.16,1,0.3,1)}
+.simstage.snappy{--dur:160ms; --ease:cubic-bezier(0.2,0,0,1)}
+.simstage.cinematic{--dur:680ms; --ease:cubic-bezier(0.12,1.04,0.28,1)}
+.simstage.minimal{--dur:0ms; --ease:linear}
+.simstage.sh-noir{filter:grayscale(1) contrast(1.12)}
+.simstage.sh-grain{filter:grayscale(0.9) contrast(1.08) brightness(0.96)}
+.simstage.sh-crt{filter:grayscale(1) contrast(1.16) brightness(1.03)}
+.simstage.sh-eink{filter:grayscale(1) contrast(0.84) brightness(1.08)}
+.simcrt{position:absolute; inset:0; pointer-events:none; opacity:0; z-index:6;
+        background:repeating-linear-gradient(0deg,rgba(0,0,0,.24) 0px,rgba(0,0,0,.24) 1px,transparent 1px,transparent 3px);
+        transition:opacity 240ms ease}
+.simstage.sh-crt .simcrt{opacity:1}
+.simcanvas{position:absolute; inset:0; width:100%; height:100%; display:block; transition:opacity 420ms var(--ease)}
+.simbg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0;
+       clip-path:circle(145% at 50% 50%); transition:opacity 360ms var(--ease), clip-path 680ms var(--ease)}
+.simbg.show{opacity:1}
 .simtop{position:absolute; top:8px; left:10px; right:10px; height:28px; display:flex; align-items:center;
-        justify-content:space-between; padding:0 10px; background:rgba(10,10,10,.82);
-        border:1px solid var(--line-strong); border-radius:9px; font-size:11px; transition:transform .22s ease, opacity .22s ease}
-.simstage.zen .simtop{transform:translateY(-42px); opacity:0}
+        justify-content:space-between; padding:0 10px; background:rgba(10,10,10,.82); backdrop-filter:blur(10px);
+        border:1px solid var(--line-strong); border-radius:9px; font-size:11px; z-index:3;
+        transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
+.simstage.zen .simtop{transform:translateY(-44px); opacity:0}
+.simws{display:inline-block; color:#6f6f6f; padding:1px 6px; min-width:18px; text-align:center;
+       border-radius:6px; cursor:pointer; transition:all 260ms cubic-bezier(0.16,1,0.3,1)}
+.simws:hover{color:#fff; background:rgba(255,255,255,.1)}
+.simws.active{background:#e6e6e6; color:#080808; font-weight:700; padding:1px 11px; min-width:26px}
 .simgrid{position:absolute; inset:46px 12px 12px 12px; display:grid; grid-template-columns:1.15fr .85fr;
-         gap:10px; transition:inset .22s ease, gap .22s ease}
+         gap:10px; z-index:2; transition:inset var(--dur) var(--ease), gap var(--dur) var(--ease), transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
 .simstage.zen .simgrid{inset:20px 26px 20px 26px; gap:18px}
 .simstage.airy .simgrid{inset:52px 24px 24px 24px; gap:18px}
 .simstage.compact .simgrid{inset:40px 5px 5px 5px; gap:4px}
 .simstage.zero .simgrid{inset:38px 0 0 0; gap:0}
+@keyframes borderOrbit{0%{border-color:rgba(255,255,255,.92); box-shadow:0 0 0 1px rgba(255,255,255,.38),0 14px 38px rgba(0,0,0,.6)}
+50%{border-color:rgba(135,135,135,.55); box-shadow:0 0 0 1px rgba(180,180,180,.12),0 14px 38px rgba(0,0,0,.6)}
+100%{border-color:rgba(255,255,255,.92); box-shadow:0 0 0 1px rgba(255,255,255,.38),0 14px 38px rgba(0,0,0,.6)}}
 .simwin{background:rgba(10,10,10,.84); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.14);
         border-radius:10px; padding:12px 14px; font-size:11.5px; line-height:1.55; overflow:hidden;
-        display:flex; flex-direction:column; transition:border-radius .2s ease}
+        display:flex; flex-direction:column; transition:border-radius var(--dur) var(--ease), transform var(--dur) var(--ease), border-color 240ms ease}
 .simstage.zero .simwin{border-radius:0}
-.simwin.focus{border-color:rgba(255,255,255,.68); box-shadow:0 12px 36px rgba(0,0,0,.55)}
+.simwin.focus{border-color:rgba(255,255,255,.72); box-shadow:0 12px 36px rgba(0,0,0,.55)}
+.simstage.cinematic .simwin.focus{animation:borderOrbit 2.8s ease-in-out infinite}
+.simdim{position:absolute; inset:0; background:rgba(0,0,0,.46); backdrop-filter:blur(3px); opacity:0;
+        pointer-events:none; z-index:3; transition:opacity var(--dur) var(--ease)}
+.simdim.on{opacity:1}
 .simtitle{display:flex; justify-content:space-between; color:var(--dim); font-size:10.5px;
           border-bottom:1px solid var(--line); padding-bottom:6px; margin-bottom:8px}
 .simdrawer{position:absolute; left:14%; right:14%; top:15%; bottom:17%; background:rgba(12,12,12,.94);
            border:1px solid #e6e6e6; border-radius:12px; padding:14px 16px; box-shadow:0 24px 64px rgba(0,0,0,.82);
-           display:none; flex-direction:column; z-index:4}
-.simdrawer.open{display:flex}
+           display:flex; flex-direction:column; z-index:4; opacity:0; pointer-events:none;
+           transform:translateY(-28px) scale(0.95); transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
+.simdrawer.open{opacity:1; pointer-events:auto; transform:translateY(0) scale(1)}
 .simpal{position:absolute; left:20%; right:20%; top:16%; background:rgba(10,10,10,.96);
         border:1px solid #ffffff; border-radius:12px; padding:12px; box-shadow:0 24px 64px rgba(0,0,0,.88);
-        display:none; flex-direction:column; gap:8px; z-index:5}
-.simpal.open{display:flex}
+        display:flex; flex-direction:column; gap:8px; z-index:5; opacity:0; pointer-events:none;
+        transform:scale(0.92) translateY(-8px); transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
+.simpal.open{opacity:1; pointer-events:auto; transform:scale(1) translateY(0)}
 .simpal input{width:100%; background:#141414; border:1px solid var(--line-strong); border-radius:8px;
               color:#fff; font:inherit; font-size:12px; padding:7px 10px; outline:none}
 .simpal ul{list-style:none; margin:0; padding:0; font-size:11.5px; max-height:150px; overflow:auto}
@@ -526,46 +554,51 @@ def build() -> str:
   <p class="caption">Vector layout drawn to the real gap, rounding and bar geometry from
   <code>modules/appearance.lua</code> (<code>docs/preview.svg</code>).</p>
 
-  <h3>Interactive Desktop Simulator &amp; 14-Design Wallpaper Studio (1080p → 16K)</h3>
+  <h3>60 FPS Kinetic Desktop Simulator, GLSL Shaders &amp; 16-Design Wallpaper Studio</h3>
   <div class="simbar" id="sim-controls">
-    <span style="color:var(--dim);font-size:11.5px;margin-right:4px">Live controls:</span>
+    <button type="button" class="simbtn on" id="sim-live-btn">✦ Live Orrery (60fps)</button>
     <button type="button" class="simbtn on" data-gap="default">Gaps: Default</button>
     <button type="button" class="simbtn" data-gap="airy">Airy</button>
     <button type="button" class="simbtn" data-gap="compact">Compact</button>
-    <button type="button" class="simbtn" data-gap="zero">Zero (0px)</button>
-    <button type="button" class="simbtn" id="sim-zen">Zen Mode (Super+Z)</button>
-    <button type="button" class="simbtn" id="sim-drawer">btop++ Drawer (Super+Shift+B)</button>
-    <button type="button" class="simbtn" id="sim-pal-btn">Command Palette (Super+;)</button>
+    <button type="button" class="simbtn" data-gap="zero">Zero</button>
+    <button type="button" class="simbtn on" data-mot="fluid">Motion: Fluid</button>
+    <button type="button" class="simbtn" data-mot="snappy">Snappy</button>
+    <button type="button" class="simbtn" data-mot="cinematic">Cinematic + Shimmer</button>
+    <button type="button" class="simbtn" id="sim-shader-btn">Shader: Off</button>
+    <button type="button" class="simbtn" id="sim-zen">Zen (Super+Z)</button>
+    <button type="button" class="simbtn" id="sim-drawer">btop++ Drawer</button>
+    <button type="button" class="simbtn" id="sim-pal-btn">Palette (Super+;)</button>
   </div>
   <div class="simstage" id="sim-stage">
+    <canvas class="simcanvas" id="sim-live-canvas" width="960" height="540"></canvas>
     <img class="simbg" id="wall-stage-img" src="{hero_wall_uri}" alt="Selected monochrome wallpaper">
+    <div class="simcrt"></div>
+    <div class="simdim" id="sim-dim"></div>
     <div class="simtop">
-      <div><b style="color:#fff;margin-right:8px">◆</b><span class="ws active">1</span> <span class="ws">2</span> <span class="ws">3</span> <span style="color:var(--dim);margin-left:8px">nvim · modules/smart.lua</span></div>
+      <div><b style="color:#fff;margin-right:7px">◆</b><span class="simws active" data-ws="1">1</span> <span class="simws" data-ws="2">2</span> <span class="simws" data-ws="3">3</span> <span style="color:var(--dim);margin-left:8px" id="sim-wintitle">nvim · modules/animations.lua</span></div>
       <div style="color:var(--dim)">♫ Midnight City — M83</div>
-      <div><span style="color:#e6e6e6;margin-right:8px">▁▂▄▆▃▂ 14%</span><span style="background:#e6e6e6;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:8px">◎ 24:58</span><b style="color:#fff">21:42</b></div>
+      <div><span style="color:#e6e6e6;margin-right:8px" id="sim-spark">▁▂▄▆▃▂ 14%</span><span style="background:#e6e6e6;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:8px">◎ 24:58</span><b style="color:#fff">21:42</b></div>
     </div>
-    <div class="simgrid">
+    <div class="simgrid" id="sim-grid">
       <div class="simwin focus">
-        <div class="simtitle"><span>NORMAL · ~/.config/hypr/modules/smart.lua</span><span>monochrome.lua</span></div>
-        <div style="color:#686868;font-style:italic">-- Reactive Lua engine (zero-polling event hooks)</div>
-        <div><b style="color:#fff">if</b> enabled(<span style="color:#b8b8b8;font-style:italic">"smart_screenshare_dnd"</span>, <b style="color:#fff">true</b>) <b style="color:#fff">then</b></div>
-        <div>&nbsp;&nbsp;hl.on(<span style="color:#b8b8b8;font-style:italic">"screenshare.state"</span>, <b style="color:#fff">function</b>(active)</div>
-        <div>&nbsp;&nbsp;&nbsp;&nbsp;hl.exec_cmd(scripts .. <span style="color:#b8b8b8;font-style:italic">"focus.sh "</span> .. (active <b style="color:#fff">and</b> <span style="color:#b8b8b8;font-style:italic">"screenshare-on"</span> <b style="color:#fff">or</b> <span style="color:#b8b8b8;font-style:italic">"screenshare-off"</span>))</div>
-        <div>&nbsp;&nbsp;<b style="color:#fff">end</b>)</div>
-        <div><b style="color:#fff">end</b></div>
+        <div class="simtitle"><span>NORMAL · ~/.config/hypr/modules/animations.lua</span><span>silkSpring</span></div>
+        <div style="color:#686868;font-style:italic">-- Damped Apple-style physical springs + 22-leaf choreography</div>
+        <div>hl.curve(<span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, {{ type = <span style="color:#b8b8b8;font-style:italic">"spring"</span>, mass = <b style="color:#fff">1.0</b>, stiffness = <b style="color:#fff">175</b>, damping = <b style="color:#fff">22</b> }})</div>
+        <div>hl.animation({{ leaf = <span style="color:#b8b8b8;font-style:italic">"windowsIn"</span>,  enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">4.6</b>, spring = <span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, style = <span style="color:#b8b8b8;font-style:italic">"popin 86%"</span> }})</div>
+        <div>hl.animation({{ leaf = <span style="color:#b8b8b8;font-style:italic">"workspaces"</span>, enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">5.2</b>, bezier = <span style="color:#b8b8b8;font-style:italic">"expoOut"</span>,    style = <span style="color:#b8b8b8;font-style:italic">"slidefade 18%"</span> }})</div>
         <div style="margin-top:auto;background:#141414;padding:3px 8px;border-radius:5px;color:var(--dim);display:flex;justify-content:space-between">
-          <span><b style="background:#e6e6e6;color:#080808;padding:0 5px;border-radius:3px">NORMAL</b> smart.lua</span><span>lua · 18:1</span>
+          <span><b style="background:#e6e6e6;color:#080808;padding:0 5px;border-radius:3px">NORMAL</b> animations.lua</span><span>lua · 22 leaves</span>
         </div>
       </div>
       <div class="simwin">
-        <div class="simtitle"><span>kitty · doctor.sh</span><span>zsh + starship</span></div>
+        <div class="simtitle"><span>kitty · doctor.sh (cursor_trail = 1)</span><span>zsh + starship</span></div>
         <div><b style="color:#fff">❯</b> ~/.config/hypr/scripts/doctor.sh</div>
-        <div style="color:#e6e6e6">✓ Lua config &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all modules parse cleanly</div>
+        <div style="color:#e6e6e6">✓ Lua config &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11/11 modules parse cleanly</div>
         <div style="color:#e6e6e6">✓ Monochrome &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7/7 toolkits (GTK3/4, Qt5/6, Nvim, Kitty, Bar)</div>
-        <div style="color:#e6e6e6">✓ Capture &amp; OCR &nbsp;&nbsp;grim + slurp + Tesseract + Satty</div>
-        <div style="color:#e6e6e6">✓ Wallpapers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14 procedural designs ready</div>
-        <div style="margin-top:auto;color:var(--dim)" id="wall-stage-title">Active: mono-11 — Gravitational Singularity</div>
-        <div style="color:var(--faint);font-size:10.5px" id="wall-stage-desc">4K relativistic accretion halo &amp; photon ring · click any card below</div>
+        <div style="color:#e6e6e6">✓ Kinetic &amp; GLSL &nbsp;motion=fluid · 4 GLSL ES 3.00 shaders ready</div>
+        <div style="color:#e6e6e6">✓ Wallpapers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14 static + 2 animated live loops (120fps awww)</div>
+        <div style="margin-top:auto;color:var(--dim)" id="wall-stage-title">Active: mono-live-01 — Bauhaus Celestial Orrery (60fps Live)</div>
+        <div style="color:var(--faint);font-size:10.5px" id="wall-stage-desc">Click workspace 1/2/3 in the bar for parallax · click any card below for 120fps iris wipe</div>
       </div>
     </div>
     <div class="simdrawer" id="sim-drawer-box">
@@ -680,21 +713,145 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
 </div>
 <script>
 (function(){{
+  var stage = document.getElementById('sim-stage');
+  var sgrid = document.getElementById('sim-grid');
+  var sdim = document.getElementById('sim-dim');
+  var dbox = document.getElementById('sim-drawer-box');
+  var pbox = document.getElementById('sim-pal-box');
+  var bgImg = document.getElementById('wall-stage-img');
+  var liveBtn = document.getElementById('sim-live-btn');
+  var cvs = document.getElementById('sim-live-canvas');
+  var liveMode = true;
+
+  // 60 FPS Live Bauhaus Celestial Orrery Canvas + Waybar Sparkline ticker
+  if (cvs && cvs.getContext) {{
+    var ctx = cvs.getContext('2d');
+    var startT = performance.now();
+    function drawOrrery(now) {{
+      if (liveMode) {{
+        var t = (now - startT) * 0.00055;
+        var w = cvs.width, h = cvs.height, cx = w * 0.5, cy = h * 0.5;
+        ctx.fillStyle = '#070707';
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(w*0.06, cy); ctx.lineTo(w*0.94, cy);
+        ctx.moveTo(cx, h*0.06); ctx.lineTo(cx, h*0.94); ctx.stroke();
+        var rc = h * 0.165;
+        var g = ctx.createRadialGradient(cx, cy, rc * 0.4, cx, cy, rc * (1.55 + 0.08 * Math.sin(t * 2)));
+        g.addColorStop(0, 'rgba(255,255,255,0.16)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, rc * 1.7, 0, Math.PI * 2); ctx.fill();
+        var orbs = [rc * 1.48, rc * 1.98, rc * 2.52];
+        orbs.forEach(function(r, i) {{
+          ctx.strokeStyle = 'rgba(255,255,255,' + (0.15 - i * 0.035) + ')';
+          ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+        }});
+        var sg = ctx.createLinearGradient(cx, cy - rc, cx, cy + rc);
+        sg.addColorStop(0, '#dcdcdc'); sg.addColorStop(0.55, '#545454'); sg.addColorStop(1, '#101010');
+        ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.fill();
+        ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.clip();
+        ctx.fillStyle = '#080808';
+        for (var y = cy; y < cy + rc; y += 5) ctx.fillRect(cx - rc, y, rc * 2, 2.2);
+        ctx.restore();
+        [[orbs[0], t * 1.3, 6.5, '#f4f4f4'], [orbs[1], -t * 0.85 + 1.8, 4.5, '#c4c4c4'], [orbs[2], t * 1.9 + 0.5, 3.2, '#9a9a9a']].forEach(function(m) {{
+          var mx = cx + Math.cos(m[1]) * m[0], my = cy + Math.sin(m[1]) * m[0];
+          ctx.fillStyle = m[3]; ctx.beginPath(); ctx.arc(mx, my, m[2], 0, Math.PI * 2); ctx.fill();
+        }});
+      }}
+      requestAnimationFrame(drawOrrery);
+    }}
+    requestAnimationFrame(drawOrrery);
+  }}
+
+  var sparkEl = document.getElementById('sim-spark');
+  var bars = ['▁','▂','▃','▄','▅','▆','▇'];
+  var ring = [1,2,4,3,2,1];
+  if (sparkEl) setInterval(function() {{
+    var v = Math.max(0, Math.min(6, ring[ring.length - 1] + (Math.random() > 0.5 ? 1 : -1)));
+    ring.push(v); ring.shift();
+    var pct = 10 + v * 5;
+    sparkEl.textContent = ring.map(function(i){{ return bars[i]; }}).join('') + ' ' + pct + '%';
+  }}, 1400);
+
+  function syncDim() {{
+    if (sdim) sdim.classList.toggle('on', dbox.classList.contains('open') || pbox.classList.contains('open'));
+  }}
+
   var grid = document.getElementById('wall-grid');
   if (grid) {{
     grid.addEventListener('click', function(ev) {{
       var btn = ev.target.closest('.wcard');
       if (!btn) return;
+      liveMode = false;
+      if (liveBtn) liveBtn.classList.remove('on');
       document.querySelectorAll('.wcard').forEach(function(b){{ b.classList.remove('active'); }});
       btn.classList.add('active');
-      document.getElementById('wall-stage-img').src = btn.getAttribute('data-uri');
+      bgImg.style.transition = 'none';
+      bgImg.style.clipPath = 'circle(0% at 50% 50%)';
+      bgImg.src = btn.getAttribute('data-uri');
+      bgImg.classList.add('show');
+      requestAnimationFrame(function() {{
+        requestAnimationFrame(function() {{
+          bgImg.style.transition = '';
+          bgImg.style.clipPath = 'circle(145% at 50% 50%)';
+        }});
+      }});
       document.getElementById('wall-stage-title').textContent = 'Active: ' + btn.getAttribute('data-title');
       document.getElementById('wall-stage-desc').textContent = btn.getAttribute('data-desc');
     }});
   }}
-  var stage = document.getElementById('sim-stage');
-  var dbox = document.getElementById('sim-drawer-box');
-  var pbox = document.getElementById('sim-pal-box');
+  if (liveBtn) liveBtn.addEventListener('click', function() {{
+    liveMode = true;
+    liveBtn.classList.add('on');
+    bgImg.classList.remove('show');
+    document.getElementById('wall-stage-title').textContent = 'Active: mono-live-01 — Bauhaus Celestial Orrery (60fps Live)';
+    document.getElementById('wall-stage-desc').textContent = 'Real-time 60fps monochrome orbital canvas';
+  }});
+
+  // Dynamic-Island Workspace Pill Morph + Slidefade Parallax
+  var curWs = 1;
+  document.querySelectorAll('.simws').forEach(function(ws) {{
+    ws.addEventListener('click', function() {{
+      var target = parseInt(ws.getAttribute('data-ws'), 10) || 1;
+      if (target === curWs) return;
+      var dir = target > curWs ? 1 : -1;
+      curWs = target;
+      document.querySelectorAll('.simws').forEach(function(w){{ w.classList.remove('active'); }});
+      ws.classList.add('active');
+      sgrid.style.transition = 'none';
+      sgrid.style.transform = 'translateX(' + (dir * 38) + 'px)';
+      sgrid.style.opacity = '0.35';
+      requestAnimationFrame(function() {{
+        requestAnimationFrame(function() {{
+          sgrid.style.transition = '';
+          sgrid.style.transform = 'translateX(0)';
+          sgrid.style.opacity = '1';
+        }});
+      }});
+    }});
+  }});
+
+  document.querySelectorAll('[data-mot]').forEach(function(btn) {{
+    btn.addEventListener('click', function() {{
+      document.querySelectorAll('[data-mot]').forEach(function(b){{ b.classList.remove('on'); }});
+      btn.classList.add('on');
+      stage.classList.remove('snappy','cinematic','minimal');
+      var m = btn.getAttribute('data-mot');
+      if (m !== 'fluid') stage.classList.add(m);
+    }});
+  }});
+
+  var shaders = [['off','Shader: Off'],['sh-noir','Shader: Noir'],['sh-grain','Shader: 35mm'],['sh-crt','Shader: P4 CRT'],['sh-eink','Shader: E-Ink']];
+  var shIdx = 0;
+  var shBtn = document.getElementById('sim-shader-btn');
+  if (shBtn) shBtn.addEventListener('click', function() {{
+    shIdx = (shIdx + 1) % shaders.length;
+    stage.classList.remove('sh-noir','sh-grain','sh-crt','sh-eink');
+    if (shaders[shIdx][0] !== 'off') stage.classList.add(shaders[shIdx][0]);
+    shBtn.textContent = shaders[shIdx][1];
+    shBtn.classList.toggle('on', shIdx > 0);
+  }});
+
   document.querySelectorAll('[data-gap]').forEach(function(btn) {{
     btn.addEventListener('click', function() {{
       document.querySelectorAll('[data-gap]').forEach(function(b){{ b.classList.remove('on'); }});
@@ -713,6 +870,7 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
   if (drwBtn) drwBtn.addEventListener('click', function() {{
     drwBtn.classList.toggle('on');
     dbox.classList.toggle('open');
+    syncDim();
   }});
   var palBtn = document.getElementById('sim-pal-btn');
   var palIn = document.getElementById('sim-pal-in');
@@ -720,6 +878,7 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
   if (palBtn) palBtn.addEventListener('click', function() {{
     palBtn.classList.toggle('on');
     pbox.classList.toggle('open');
+    syncDim();
     if (pbox.classList.contains('open')) palIn.focus();
   }});
   if (palIn) palIn.addEventListener('input', function() {{

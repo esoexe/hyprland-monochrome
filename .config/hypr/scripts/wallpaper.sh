@@ -26,15 +26,47 @@ ensure_daemon() {
     pgrep -x awww-daemon >/dev/null 2>&1 || { setsid awww-daemon >/dev/null 2>&1 & sleep 0.6; }
 }
 
-apply() {  # apply <path>
+apply() {  # apply <path> [transition_override]
     local img="$1"
+    local tmode="${2:-}"
     [ -f "$img" ] || { notify "Wallpaper" "File not found: $img" "dialog-error"; return 1; }
     ensure_daemon
+
+    if [ -z "$tmode" ]; then
+        tmode="$(cat "$CACHE_DIR/wallpaper.transition" 2>/dev/null || true)"
+        [ -z "$tmode" ] && tmode="$(mono_var wallpaper_transition choreo)"
+    fi
+
+    local -a tflags
+    case "$tmode" in
+        choreo)
+            local step_idx
+            step_idx="$(cat "$CACHE_DIR/wallpaper.tstep" 2>/dev/null || echo 0)"
+            step_idx=$(( (step_idx + 1) % 4 ))
+            printf '%s\n' "$step_idx" > "$CACHE_DIR/wallpaper.tstep"
+            case "$step_idx" in
+                0) tflags=(--transition-type grow --transition-pos "0.5,0.5") ;;
+                1) tflags=(--transition-type wave --transition-angle 28 --transition-wave "32,16") ;;
+                2) tflags=(--transition-type outer --transition-pos "0.5,0.5") ;;
+                *) tflags=(--transition-type wipe --transition-angle 35) ;;
+            esac ;;
+        wave)  tflags=(--transition-type wave --transition-angle 28 --transition-wave "32,16") ;;
+        wipe)  tflags=(--transition-type wipe --transition-angle 35) ;;
+        grow|center) tflags=(--transition-type grow --transition-pos "0.5,0.5") ;;
+        outer) tflags=(--transition-type outer --transition-pos "0.5,0.5") ;;
+        fade|simple|any|none) tflags=(--transition-type "$tmode") ;;
+        *)     tflags=(--transition-type any) ;;
+    esac
+
     if awww img "$img" \
-        --transition-type any --transition-duration 0.7 \
-        --transition-fps 60 --transition-step 5 >/dev/null 2>&1
+        "${tflags[@]}" \
+        --transition-bezier 0.16,1.0,0.3,1.0 \
+        --transition-duration 1.1 \
+        --transition-fps 120 \
+        --transition-step 90 >/dev/null 2>&1
     then
         printf '%s' "$img" > "$STATE"
+        printf '%s' "$img" > "$CACHE_DIR/current_wallpaper"
         return 0
     fi
     notify "Wallpaper failed" "awww could not set $img" "dialog-error"
@@ -42,12 +74,14 @@ apply() {  # apply <path>
 }
 
 thumb_for() {  # thumb_for <path>  →  prints thumbnail path
-    local img="$1" name thumb
+    local img="$1" name thumb src_spec
     name="$(printf '%s' "$img" | md5sum | cut -d' ' -f1)"
     thumb="$THUMBS/$name.jpg"
     if [ ! -f "$thumb" ]; then
         if have magick; then
-            magick "$img" -thumbnail '640x360^' -gravity center -extent 640x360 \
+            src_spec="$img"
+            case "${img,,}" in *.gif) src_spec="${img}[0]" ;; esac
+            magick "$src_spec" -thumbnail '640x360^' -gravity center -extent 640x360 \
                    -quality 80 "$thumb" 2>/dev/null || thumb="$img"
         else
             thumb="$img"
@@ -99,6 +133,25 @@ case "${1:-pick}" in
             magick -size 16x16 "xc:#${colour}" "$tmp"
         fi
         apply "$tmp"; exit 0 ;;
+
+    live)
+        mapfile -t gifs < <(find "$WALL_DIR" -maxdepth 2 -type f -iname '*.gif' 2>/dev/null | sort)
+        if [ "${#gifs[@]}" -eq 0 ]; then
+            notify "Live Wallpaper" "No animated .gif wallpapers in $WALL_DIR" "dialog-warning"
+            exit 1
+        fi
+        cur="$(cat "$STATE" 2>/dev/null || true)"
+        lidx=0
+        for i in "${!gifs[@]}"; do [ "${gifs[$i]}" = "$cur" ] && lidx=$(( (i + 1) % ${#gifs[@]} )); done
+        apply "${gifs[$lidx]}" grow
+        notify "Live Kinetic Wallpaper" "$(basename "${gifs[$lidx]}")"
+        exit 0 ;;
+
+    transition)
+        tset="${2:-choreo}"
+        printf '%s\n' "$tset" > "$CACHE_DIR/wallpaper.transition"
+        notify "Wallpaper Transition" "120fps Bezier style: $tset"
+        exit 0 ;;
 esac
 
 # ── Interactive picker ────────────────────────────────────────────────────

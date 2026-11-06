@@ -55,10 +55,16 @@ user = {
     night_shift_temp  = 4000,     -- Kelvin, higher = less orange
     screenshot_notify = true,
 
+    -- ── Motion physics & wallpaper choreography ──────────────────────────
+    motion_profile       = "fluid",  -- "fluid" | "snappy" | "cinematic" | "minimal"
+    border_loop          = false,    -- true = orbiting liquid-silver active border
+    wallpaper_transition = "choreo", -- "choreo" | "grow" | "wave" | "outer" | "wipe" | "fade"
+
     -- ── Reactive automation (modules/smart.lua) ──────────────────────────
     smart_screenshare_dnd = true, -- auto-pause notifications while screen-sharing
     smart_monitor_hotplug = true, -- restore wallpaper & bar on monitor plug/unplug
     smart_urgent_notify   = true, -- monochrome toast when a background app flags urgent
+    smart_single_window   = false,-- auto-expand gallery margins when a workspace has 1 window
 
     -- ── Screen recording ─────────────────────────────────────────────────
     record_backend  = "auto",     -- auto | gsr | wf-recorder

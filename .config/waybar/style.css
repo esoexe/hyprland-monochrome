@@ -100,15 +100,23 @@ window#waybar {
 #custom-focus.zen    { color: #e6e6e6; background: rgba(255, 255, 255, 0.10); }
 #custom-focus:hover  { background: #ffffff; color: #0a0a0a; }
 
-/* Recording indicator: invisible while idle, a white dot + timer while live */
+/* Recording indicator: invisible while idle, breathing silver dot + timer while live */
+@keyframes monoPulse {
+    0%   { opacity: 1.00; background-color: rgba(255, 255, 255, 0.14); }
+    50%  { opacity: 0.72; background-color: rgba(255, 255, 255, 0.04); }
+    100% { opacity: 1.00; background-color: rgba(255, 255, 255, 0.14); }
+}
+
 #custom-recording {
     font-size: 12px;
     color: #ffffff;
-    padding: 0 8px;
+    padding: 0 9px;
+    border-radius: 8px;
+    animation: monoPulse 2.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
-#custom-recording.off   { font-size: 0; padding: 0; margin: 0; min-width: 0; }
-#custom-recording.paused { color: #8a8a8a; }
-#custom-recording:hover { background: rgba(255, 255, 255, 0.06); border-radius: 8px; }
+#custom-recording.off    { font-size: 0; padding: 0; margin: 0; min-width: 0; animation: none; }
+#custom-recording.paused { color: #8a8a8a; animation: none; }
+#custom-recording:hover  { background: rgba(255, 255, 255, 0.12); border-radius: 8px; }
 
 #custom-launcher {
     font-size: 15px;
@@ -134,11 +142,12 @@ window#waybar {
 
 #workspaces button {
     padding: 0 7px;
+    min-width: 18px;
     margin: 3px 1px;
     color: #6f6f6f;
     background: transparent;
     border-radius: 8px;
-    transition: all .15s ease;
+    transition: all 240ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #workspaces button:hover {
@@ -147,13 +156,17 @@ window#waybar {
 }
 
 #workspaces button.active {
+    padding: 0 12px;
+    min-width: 26px;
     color: #0a0a0a;
     background: #e6e6e6;
+    font-weight: 700;
 }
 
 #workspaces button.urgent {
     color: #0a0a0a;
     background: #ffffff;
+    animation: monoPulse 1.4s ease-in-out infinite;
 }
 
 #workspaces button.empty { color: #4a4a4a; }

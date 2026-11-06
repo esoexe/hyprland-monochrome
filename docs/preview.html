@@ -68,33 +68,61 @@ code{font-family:var(--mono); background:var(--surface-2); border:1px solid var(
 .simbtn:hover{color:#fff; border-color:#fff}
 .simbtn.on{background:#e6e6e6; color:#080808; border-color:#e6e6e6; font-weight:600}
 .simstage{position:relative; aspect-ratio:16/9; border:1px solid var(--line-strong); border-radius:14px;
-          overflow:hidden; background:#050505; user-select:none}
-.simbg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:opacity .25s ease}
+          overflow:hidden; background:#050505; user-select:none; --dur:440ms; --ease:cubic-bezier(0.16,1,0.3,1)}
+.simstage.snappy{--dur:160ms; --ease:cubic-bezier(0.2,0,0,1)}
+.simstage.cinematic{--dur:680ms; --ease:cubic-bezier(0.12,1.04,0.28,1)}
+.simstage.minimal{--dur:0ms; --ease:linear}
+.simstage.sh-noir{filter:grayscale(1) contrast(1.12)}
+.simstage.sh-grain{filter:grayscale(0.9) contrast(1.08) brightness(0.96)}
+.simstage.sh-crt{filter:grayscale(1) contrast(1.16) brightness(1.03)}
+.simstage.sh-eink{filter:grayscale(1) contrast(0.84) brightness(1.08)}
+.simcrt{position:absolute; inset:0; pointer-events:none; opacity:0; z-index:6;
+        background:repeating-linear-gradient(0deg,rgba(0,0,0,.24) 0px,rgba(0,0,0,.24) 1px,transparent 1px,transparent 3px);
+        transition:opacity 240ms ease}
+.simstage.sh-crt .simcrt{opacity:1}
+.simcanvas{position:absolute; inset:0; width:100%; height:100%; display:block; transition:opacity 420ms var(--ease)}
+.simbg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0;
+       clip-path:circle(145% at 50% 50%); transition:opacity 360ms var(--ease), clip-path 680ms var(--ease)}
+.simbg.show{opacity:1}
 .simtop{position:absolute; top:8px; left:10px; right:10px; height:28px; display:flex; align-items:center;
-        justify-content:space-between; padding:0 10px; background:rgba(10,10,10,.82);
-        border:1px solid var(--line-strong); border-radius:9px; font-size:11px; transition:transform .22s ease, opacity .22s ease}
-.simstage.zen .simtop{transform:translateY(-42px); opacity:0}
+        justify-content:space-between; padding:0 10px; background:rgba(10,10,10,.82); backdrop-filter:blur(10px);
+        border:1px solid var(--line-strong); border-radius:9px; font-size:11px; z-index:3;
+        transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
+.simstage.zen .simtop{transform:translateY(-44px); opacity:0}
+.simws{display:inline-block; color:#6f6f6f; padding:1px 6px; min-width:18px; text-align:center;
+       border-radius:6px; cursor:pointer; transition:all 260ms cubic-bezier(0.16,1,0.3,1)}
+.simws:hover{color:#fff; background:rgba(255,255,255,.1)}
+.simws.active{background:#e6e6e6; color:#080808; font-weight:700; padding:1px 11px; min-width:26px}
 .simgrid{position:absolute; inset:46px 12px 12px 12px; display:grid; grid-template-columns:1.15fr .85fr;
-         gap:10px; transition:inset .22s ease, gap .22s ease}
+         gap:10px; z-index:2; transition:inset var(--dur) var(--ease), gap var(--dur) var(--ease), transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
 .simstage.zen .simgrid{inset:20px 26px 20px 26px; gap:18px}
 .simstage.airy .simgrid{inset:52px 24px 24px 24px; gap:18px}
 .simstage.compact .simgrid{inset:40px 5px 5px 5px; gap:4px}
 .simstage.zero .simgrid{inset:38px 0 0 0; gap:0}
+@keyframes borderOrbit{0%{border-color:rgba(255,255,255,.92); box-shadow:0 0 0 1px rgba(255,255,255,.38),0 14px 38px rgba(0,0,0,.6)}
+50%{border-color:rgba(135,135,135,.55); box-shadow:0 0 0 1px rgba(180,180,180,.12),0 14px 38px rgba(0,0,0,.6)}
+100%{border-color:rgba(255,255,255,.92); box-shadow:0 0 0 1px rgba(255,255,255,.38),0 14px 38px rgba(0,0,0,.6)}}
 .simwin{background:rgba(10,10,10,.84); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.14);
         border-radius:10px; padding:12px 14px; font-size:11.5px; line-height:1.55; overflow:hidden;
-        display:flex; flex-direction:column; transition:border-radius .2s ease}
+        display:flex; flex-direction:column; transition:border-radius var(--dur) var(--ease), transform var(--dur) var(--ease), border-color 240ms ease}
 .simstage.zero .simwin{border-radius:0}
-.simwin.focus{border-color:rgba(255,255,255,.68); box-shadow:0 12px 36px rgba(0,0,0,.55)}
+.simwin.focus{border-color:rgba(255,255,255,.72); box-shadow:0 12px 36px rgba(0,0,0,.55)}
+.simstage.cinematic .simwin.focus{animation:borderOrbit 2.8s ease-in-out infinite}
+.simdim{position:absolute; inset:0; background:rgba(0,0,0,.46); backdrop-filter:blur(3px); opacity:0;
+        pointer-events:none; z-index:3; transition:opacity var(--dur) var(--ease)}
+.simdim.on{opacity:1}
 .simtitle{display:flex; justify-content:space-between; color:var(--dim); font-size:10.5px;
           border-bottom:1px solid var(--line); padding-bottom:6px; margin-bottom:8px}
 .simdrawer{position:absolute; left:14%; right:14%; top:15%; bottom:17%; background:rgba(12,12,12,.94);
            border:1px solid #e6e6e6; border-radius:12px; padding:14px 16px; box-shadow:0 24px 64px rgba(0,0,0,.82);
-           display:none; flex-direction:column; z-index:4}
-.simdrawer.open{display:flex}
+           display:flex; flex-direction:column; z-index:4; opacity:0; pointer-events:none;
+           transform:translateY(-28px) scale(0.95); transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
+.simdrawer.open{opacity:1; pointer-events:auto; transform:translateY(0) scale(1)}
 .simpal{position:absolute; left:20%; right:20%; top:16%; background:rgba(10,10,10,.96);
         border:1px solid #ffffff; border-radius:12px; padding:12px; box-shadow:0 24px 64px rgba(0,0,0,.88);
-        display:none; flex-direction:column; gap:8px; z-index:5}
-.simpal.open{display:flex}
+        display:flex; flex-direction:column; gap:8px; z-index:5; opacity:0; pointer-events:none;
+        transform:scale(0.92) translateY(-8px); transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease)}
+.simpal.open{opacity:1; pointer-events:auto; transform:scale(1) translateY(0)}
 .simpal input{width:100%; background:#141414; border:1px solid var(--line-strong); border-radius:8px;
               color:#fff; font:inherit; font-size:12px; padding:7px 10px; outline:none}
 .simpal ul{list-style:none; margin:0; padding:0; font-size:11.5px; max-height:150px; overflow:auto}
@@ -154,7 +182,7 @@ footer{margin-top:72px; padding-top:20px; border-top:1px solid var(--line);
   aspirational — it is what the files actually say.</p>
   <div class="badges">
     <span class="badge"><b>Hyprland</b> 0.55+ · Lua config</span>
-    <span class="badge"><b>129</b> keybinds</span>
+    <span class="badge"><b>147</b> keybinds</span>
     <span class="badge"><b>64</b> packages, all official repos</span>
     <span class="badge"><b>4</b> optional AUR extras</span>
     <span class="badge"><b>kitty</b> · <b>thunar</b> · Zsh + Starship</span>
@@ -353,46 +381,51 @@ footer{margin-top:72px; padding-top:20px; border-top:1px solid var(--line);
   <p class="caption">Vector layout drawn to the real gap, rounding and bar geometry from
   <code>modules/appearance.lua</code> (<code>docs/preview.svg</code>).</p>
 
-  <h3>Interactive Desktop Simulator &amp; 14-Design Wallpaper Studio (1080p → 16K)</h3>
+  <h3>60 FPS Kinetic Desktop Simulator, GLSL Shaders &amp; 16-Design Wallpaper Studio</h3>
   <div class="simbar" id="sim-controls">
-    <span style="color:var(--dim);font-size:11.5px;margin-right:4px">Live controls:</span>
+    <button type="button" class="simbtn on" id="sim-live-btn">✦ Live Orrery (60fps)</button>
     <button type="button" class="simbtn on" data-gap="default">Gaps: Default</button>
     <button type="button" class="simbtn" data-gap="airy">Airy</button>
     <button type="button" class="simbtn" data-gap="compact">Compact</button>
-    <button type="button" class="simbtn" data-gap="zero">Zero (0px)</button>
-    <button type="button" class="simbtn" id="sim-zen">Zen Mode (Super+Z)</button>
-    <button type="button" class="simbtn" id="sim-drawer">btop++ Drawer (Super+Shift+B)</button>
-    <button type="button" class="simbtn" id="sim-pal-btn">Command Palette (Super+;)</button>
+    <button type="button" class="simbtn" data-gap="zero">Zero</button>
+    <button type="button" class="simbtn on" data-mot="fluid">Motion: Fluid</button>
+    <button type="button" class="simbtn" data-mot="snappy">Snappy</button>
+    <button type="button" class="simbtn" data-mot="cinematic">Cinematic + Shimmer</button>
+    <button type="button" class="simbtn" id="sim-shader-btn">Shader: Off</button>
+    <button type="button" class="simbtn" id="sim-zen">Zen (Super+Z)</button>
+    <button type="button" class="simbtn" id="sim-drawer">btop++ Drawer</button>
+    <button type="button" class="simbtn" id="sim-pal-btn">Palette (Super+;)</button>
   </div>
   <div class="simstage" id="sim-stage">
+    <canvas class="simcanvas" id="sim-live-canvas" width="960" height="540"></canvas>
     <img class="simbg" id="wall-stage-img" src="data:image/jpeg;base64,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" alt="Selected monochrome wallpaper">
+    <div class="simcrt"></div>
+    <div class="simdim" id="sim-dim"></div>
     <div class="simtop">
-      <div><b style="color:#fff;margin-right:8px">◆</b><span class="ws active">1</span> <span class="ws">2</span> <span class="ws">3</span> <span style="color:var(--dim);margin-left:8px">nvim · modules/smart.lua</span></div>
+      <div><b style="color:#fff;margin-right:7px">◆</b><span class="simws active" data-ws="1">1</span> <span class="simws" data-ws="2">2</span> <span class="simws" data-ws="3">3</span> <span style="color:var(--dim);margin-left:8px" id="sim-wintitle">nvim · modules/animations.lua</span></div>
       <div style="color:var(--dim)">♫ Midnight City — M83</div>
-      <div><span style="color:#e6e6e6;margin-right:8px">▁▂▄▆▃▂ 14%</span><span style="background:#e6e6e6;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:8px">◎ 24:58</span><b style="color:#fff">21:42</b></div>
+      <div><span style="color:#e6e6e6;margin-right:8px" id="sim-spark">▁▂▄▆▃▂ 14%</span><span style="background:#e6e6e6;color:#080808;padding:1px 7px;border-radius:6px;font-weight:700;margin-right:8px">◎ 24:58</span><b style="color:#fff">21:42</b></div>
     </div>
-    <div class="simgrid">
+    <div class="simgrid" id="sim-grid">
       <div class="simwin focus">
-        <div class="simtitle"><span>NORMAL · ~/.config/hypr/modules/smart.lua</span><span>monochrome.lua</span></div>
-        <div style="color:#686868;font-style:italic">-- Reactive Lua engine (zero-polling event hooks)</div>
-        <div><b style="color:#fff">if</b> enabled(<span style="color:#b8b8b8;font-style:italic">"smart_screenshare_dnd"</span>, <b style="color:#fff">true</b>) <b style="color:#fff">then</b></div>
-        <div>&nbsp;&nbsp;hl.on(<span style="color:#b8b8b8;font-style:italic">"screenshare.state"</span>, <b style="color:#fff">function</b>(active)</div>
-        <div>&nbsp;&nbsp;&nbsp;&nbsp;hl.exec_cmd(scripts .. <span style="color:#b8b8b8;font-style:italic">"focus.sh "</span> .. (active <b style="color:#fff">and</b> <span style="color:#b8b8b8;font-style:italic">"screenshare-on"</span> <b style="color:#fff">or</b> <span style="color:#b8b8b8;font-style:italic">"screenshare-off"</span>))</div>
-        <div>&nbsp;&nbsp;<b style="color:#fff">end</b>)</div>
-        <div><b style="color:#fff">end</b></div>
+        <div class="simtitle"><span>NORMAL · ~/.config/hypr/modules/animations.lua</span><span>silkSpring</span></div>
+        <div style="color:#686868;font-style:italic">-- Damped Apple-style physical springs + 22-leaf choreography</div>
+        <div>hl.curve(<span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, { type = <span style="color:#b8b8b8;font-style:italic">"spring"</span>, mass = <b style="color:#fff">1.0</b>, stiffness = <b style="color:#fff">175</b>, damping = <b style="color:#fff">22</b> })</div>
+        <div>hl.animation({ leaf = <span style="color:#b8b8b8;font-style:italic">"windowsIn"</span>,  enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">4.6</b>, spring = <span style="color:#b8b8b8;font-style:italic">"silkSpring"</span>, style = <span style="color:#b8b8b8;font-style:italic">"popin 86%"</span> })</div>
+        <div>hl.animation({ leaf = <span style="color:#b8b8b8;font-style:italic">"workspaces"</span>, enabled = <b style="color:#fff">true</b>, speed = <b style="color:#fff">5.2</b>, bezier = <span style="color:#b8b8b8;font-style:italic">"expoOut"</span>,    style = <span style="color:#b8b8b8;font-style:italic">"slidefade 18%"</span> })</div>
         <div style="margin-top:auto;background:#141414;padding:3px 8px;border-radius:5px;color:var(--dim);display:flex;justify-content:space-between">
-          <span><b style="background:#e6e6e6;color:#080808;padding:0 5px;border-radius:3px">NORMAL</b> smart.lua</span><span>lua · 18:1</span>
+          <span><b style="background:#e6e6e6;color:#080808;padding:0 5px;border-radius:3px">NORMAL</b> animations.lua</span><span>lua · 22 leaves</span>
         </div>
       </div>
       <div class="simwin">
-        <div class="simtitle"><span>kitty · doctor.sh</span><span>zsh + starship</span></div>
+        <div class="simtitle"><span>kitty · doctor.sh (cursor_trail = 1)</span><span>zsh + starship</span></div>
         <div><b style="color:#fff">❯</b> ~/.config/hypr/scripts/doctor.sh</div>
-        <div style="color:#e6e6e6">✓ Lua config &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;all modules parse cleanly</div>
+        <div style="color:#e6e6e6">✓ Lua config &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11/11 modules parse cleanly</div>
         <div style="color:#e6e6e6">✓ Monochrome &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7/7 toolkits (GTK3/4, Qt5/6, Nvim, Kitty, Bar)</div>
-        <div style="color:#e6e6e6">✓ Capture &amp; OCR &nbsp;&nbsp;grim + slurp + Tesseract + Satty</div>
-        <div style="color:#e6e6e6">✓ Wallpapers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14 procedural designs ready</div>
-        <div style="margin-top:auto;color:var(--dim)" id="wall-stage-title">Active: mono-11 — Gravitational Singularity</div>
-        <div style="color:var(--faint);font-size:10.5px" id="wall-stage-desc">4K relativistic accretion halo &amp; photon ring · click any card below</div>
+        <div style="color:#e6e6e6">✓ Kinetic &amp; GLSL &nbsp;motion=fluid · 4 GLSL ES 3.00 shaders ready</div>
+        <div style="color:#e6e6e6">✓ Wallpapers &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;14 static + 2 animated live loops (120fps awww)</div>
+        <div style="margin-top:auto;color:var(--dim)" id="wall-stage-title">Active: mono-live-01 — Bauhaus Celestial Orrery (60fps Live)</div>
+        <div style="color:var(--faint);font-size:10.5px" id="wall-stage-desc">Click workspace 1/2/3 in the bar for parallax · click any card below for 120fps iris wipe</div>
       </div>
     </div>
     <div class="simdrawer" id="sim-drawer-box">
@@ -431,10 +464,10 @@ Module values are sample data; the right group is ordered
   <p class="lead">The main modifier is <kbd>Super</kbd> (one line in
   <code>modules/user.lua</code> changes it). Every bind carries a description, so
   <kbd>Super + /</kbd> (interactive launcher) and <code>hyprctl binds</code> show the same wording
-  as this page. Filter all 129 binds live below:</p>
+  as this page. Filter all 147 binds live below:</p>
   <input id="kb-filter" class="kbsearch" type="search"
-         placeholder="Filter 129 keybinds (try: palette, zen, resize, capture, ocr, layout, record)…">
-  <div id="kb-container"><h3>APPLICATIONS</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Enter</kbd></td><td>Terminal</td></tr><tr><td><kbd>Super + T</kbd></td><td>Terminal</td></tr><tr><td><kbd>Super + Shift + Enter</kbd></td><td>Floating terminal</td></tr><tr><td><kbd>Super + Shift + T</kbd></td><td>Dropdown terminal (quake style)</td></tr><tr><td><kbd>Super + Shift + B</kbd></td><td>Floating btop++ telemetry drawer</td></tr><tr><td><kbd>Super + &#x27;</kbd></td><td>Scratchpad Markdown notes (~/Documents/scratch.md)</td></tr><tr><td><kbd>Super + D</kbd></td><td>App launcher</td></tr><tr><td><kbd>Super + Shift + P</kbd></td><td>Command palette &amp; live math calculator</td></tr><tr><td><kbd>Super + ;</kbd></td><td>Command palette (home-row alias)</td></tr><tr><td><kbd>Super + Shift + D</kbd></td><td>Window switcher</td></tr><tr><td><kbd>Super + E</kbd></td><td>File manager</td></tr><tr><td><kbd>Super + B</kbd></td><td>Browser</td></tr><tr><td><kbd>Super + W</kbd></td><td>Wallpaper picker</td></tr><tr><td><kbd>Super + I</kbd></td><td>Settings menu (system, net, BT, monitors, sound)</td></tr><tr><td><kbd>Super + V</kbd></td><td>Clipboard history</td></tr><tr><td><kbd>Super + Shift + V</kbd></td><td>Clear clipboard history</td></tr><tr><td><kbd>Super + /</kbd></td><td>Keyboard shortcut cheat sheet</td></tr><tr><td><kbd>Super + Shift + C</kbd></td><td>Colour picker (copies hex to clipboard)</td></tr><tr><td><kbd>Super + N</kbd></td><td>Show the last notification</td></tr><tr><td><kbd>Super + X</kbd></td><td>Switch keyboard layout</td></tr></tbody></table><h3>WINDOW MANAGEMENT</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Q</kbd></td><td>Close window</td></tr><tr><td><kbd>Super + Shift + Q</kbd></td><td>Force-close window</td></tr><tr><td><kbd>Super + F</kbd></td><td>Toggle fullscreen</td></tr><tr><td><kbd>Super + Shift + F</kbd></td><td>Toggle maximize</td></tr><tr><td><kbd>Super + Space</kbd></td><td>Toggle floating window (centred at 70%)</td></tr><tr><td><kbd>Super + Shift + Space</kbd></td><td>Pin window (visible on all workspaces)</td></tr><tr><td><kbd>Super + P</kbd></td><td>Pseudo-tile (dwindle)</td></tr><tr><td><kbd>Super + Y</kbd></td><td>Toggle split direction (dwindle)</td></tr><tr><td><kbd>Super + O</kbd></td><td>Cycle window opacity</td></tr><tr><td><kbd>Super + \</kbd></td><td>Cycle tiling layout (Dwindle / Master / Scrolling)</td></tr><tr><td><kbd>Super + Shift + \</kbd></td><td>Tiling layout &amp; gap-preset picker</td></tr><tr><td><kbd>Super + G</kbd></td><td>Group / ungroup window (tabs)</td></tr><tr><td><kbd>Alt + G</kbd></td><td>Next tab in window group</td></tr><tr><td><kbd>Super + Shift + G</kbd></td><td>Lock / unlock window group</td></tr><tr><td><kbd>Super + U</kbd></td><td>Jump to urgent window</td></tr><tr><td><kbd>Alt + Tab</kbd></td><td>Next window</td></tr><tr><td><kbd>Alt + Shift + Tab</kbd></td><td>Previous window</td></tr></tbody></table><h3>FOCUS / MOVE / RESIZE</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + H</kbd></td><td>Focus left</td></tr><tr><td><kbd>Super + J</kbd></td><td>Focus down</td></tr><tr><td><kbd>Super + K</kbd></td><td>Focus up</td></tr><tr><td><kbd>Super + L</kbd></td><td>Focus right</td></tr><tr><td><kbd>Super + Left</kbd></td><td>Focus left</td></tr><tr><td><kbd>Super + Down</kbd></td><td>Focus down</td></tr><tr><td><kbd>Super + Up</kbd></td><td>Focus up</td></tr><tr><td><kbd>Super + Right</kbd></td><td>Focus right</td></tr><tr><td><kbd>Super + Shift + H</kbd></td><td>Move window left</td></tr><tr><td><kbd>Super + Shift + J</kbd></td><td>Move window down</td></tr><tr><td><kbd>Super + Shift + K</kbd></td><td>Move window up</td></tr><tr><td><kbd>Super + Shift + L</kbd></td><td>Move window right</td></tr><tr><td><kbd>Ctrl + H</kbd></td><td>Shrink window width</td></tr><tr><td><kbd>Ctrl + L</kbd></td><td>Grow window width</td></tr><tr><td><kbd>Ctrl + K</kbd></td><td>Shrink window height</td></tr><tr><td><kbd>Ctrl + J</kbd></td><td>Grow window height</td></tr></tbody></table><h3>WORKSPACES</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + scroll down</kbd></td><td>Next workspace</td></tr><tr><td><kbd>Super + scroll up</kbd></td><td>Previous workspace</td></tr><tr><td><kbd>Super + Ctrl + scroll down</kbd></td><td>Move window to next workspace</td></tr><tr><td><kbd>Super + Ctrl + scroll up</kbd></td><td>Move window to previous workspace</td></tr><tr><td><kbd>Super + S</kbd></td><td>Toggle scratchpad</td></tr><tr><td><kbd>Super + Shift + S</kbd></td><td>Move window to scratchpad</td></tr><tr><td><kbd>Super + 1..0</kbd></td><td>Switch workspace (10 is bound to the 0 key)</td></tr><tr><td><kbd>Super + Shift + 1..0</kbd></td><td>Move the focused window to that workspace</td></tr><tr><td><kbd>Super + Alt + 1..0</kbd></td><td>Move it there without following</td></tr></tbody></table><h3>BAR / SESSION / SYSTEM</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Shift + W</kbd></td><td>Toggle the top bar</td></tr><tr><td><kbd>Super + Z</kbd></td><td>Zen mode (hide bar, frame workspace, mute notifications)</td></tr><tr><td><kbd>Super + Shift + Z</kbd></td><td>Deep-work focus &amp; Pomodoro timer</td></tr><tr><td><kbd>Super + Shift + R</kbd></td><td>Reload Hyprland config</td></tr><tr><td><kbd>Super + Escape</kbd></td><td>Logout menu (lock, suspend, reboot, shutdown)</td></tr><tr><td><kbd>Super + `</kbd></td><td>Logout menu</td></tr><tr><td><kbd>Super + Shift + E</kbd></td><td>Quit the session</td></tr><tr><td><kbd>Super + Tab</kbd></td><td>Lock screen</td></tr><tr><td><kbd>Ctrl + Alt + L</kbd></td><td>Lock screen</td></tr><tr><td><kbd>Super + Shift + N</kbd></td><td>Night shift (blue light filter)</td></tr><tr><td><kbd>Super + Shift + M</kbd></td><td>Mute / unmute microphone</td></tr></tbody></table><h3>SCREENSHOTS, RECORDING &amp; ZOOM</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Print</kbd></td><td>Screenshot: select an area</td></tr><tr><td><kbd>Super + Shift + Print</kbd></td><td>Screenshot: whole screen</td></tr><tr><td><kbd>Ctrl + Print</kbd></td><td>Screenshot: active window</td></tr><tr><td><kbd>Ctrl + Shift + Print</kbd></td><td>OCR: extract text from screen region</td></tr><tr><td><kbd>Ctrl + Alt + Print</kbd></td><td>Screenshot: select &amp; annotate</td></tr><tr><td><kbd>Alt + Print</kbd></td><td>Record the screen (again = stop)</td></tr><tr><td><kbd>Alt + Shift + Print</kbd></td><td>Record a selected area</td></tr><tr><td><kbd>Alt + S</kbd></td><td>Save the last minute (instant replay)</td></tr><tr><td><kbd>Alt + P</kbd></td><td>Pause / resume recording</td></tr><tr><td><kbd>Super + -</kbd></td><td>Zoom out</td></tr><tr><td><kbd>Super + =</kbd></td><td>Zoom in</td></tr></tbody></table><h3>MODAL SUBMAPS (CHORDS)</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + R</kbd></td><td>Enter RESIZE mode (h/j/k/l, 1-3/0 gaps, Esc)</td></tr><tr><td><kbd>[RESIZE] H</kbd></td><td>Resize narrower</td></tr><tr><td><kbd>[RESIZE] L</kbd></td><td>Resize wider</td></tr><tr><td><kbd>[RESIZE] K</kbd></td><td>Resize shorter</td></tr><tr><td><kbd>[RESIZE] J</kbd></td><td>Resize taller</td></tr><tr><td><kbd>[RESIZE] Left</kbd></td><td>Resize narrower</td></tr><tr><td><kbd>[RESIZE] Right</kbd></td><td>Resize wider</td></tr><tr><td><kbd>[RESIZE] Up</kbd></td><td>Resize shorter</td></tr><tr><td><kbd>[RESIZE] Down</kbd></td><td>Resize taller</td></tr><tr><td><kbd>[RESIZE] 1</kbd></td><td>Gap preset: Default</td></tr><tr><td><kbd>[RESIZE] 2</kbd></td><td>Gap preset: Compact</td></tr><tr><td><kbd>[RESIZE] 3</kbd></td><td>Gap preset: Airy gallery</td></tr><tr><td><kbd>[RESIZE] 0</kbd></td><td>Gap preset: Zero monocle</td></tr><tr><td><kbd>[RESIZE] Enter</kbd></td><td>Exit RESIZE mode</td></tr><tr><td><kbd>[RESIZE] Escape</kbd></td><td>Exit RESIZE mode</td></tr><tr><td><kbd>Super + C</kbd></td><td>Enter CAPTURE chord (s/f/w/o/e/r/p/m)</td></tr><tr><td><kbd>[CAPTURE] S</kbd></td><td>Region screenshot</td></tr><tr><td><kbd>[CAPTURE] F</kbd></td><td>Full-screen screenshot</td></tr><tr><td><kbd>[CAPTURE] W</kbd></td><td>Active-window screenshot</td></tr><tr><td><kbd>[CAPTURE] O</kbd></td><td>OCR region to clipboard</td></tr><tr><td><kbd>[CAPTURE] E</kbd></td><td>Region screenshot &amp; annotate</td></tr><tr><td><kbd>[CAPTURE] R</kbd></td><td>Start / stop screen recording</td></tr><tr><td><kbd>[CAPTURE] P</kbd></td><td>Save 60s instant replay</td></tr><tr><td><kbd>[CAPTURE] M</kbd></td><td>Open screen recording menu</td></tr><tr><td><kbd>[CAPTURE] Escape</kbd></td><td>Cancel capture chord</td></tr><tr><td><kbd>Ctrl + S</kbd></td><td>Enter SCRATCH &amp; SESSION chord (t/b/n/f/w/r)</td></tr><tr><td><kbd>[SCRATCH] T</kbd></td><td>Toggle dropdown terminal drawer</td></tr><tr><td><kbd>[SCRATCH] B</kbd></td><td>Toggle btop++ telemetry drawer</td></tr><tr><td><kbd>[SCRATCH] N</kbd></td><td>Toggle Markdown scratch notes</td></tr><tr><td><kbd>[SCRATCH] F</kbd></td><td>Toggle quick file drawer</td></tr><tr><td><kbd>[SCRATCH] W</kbd></td><td>Save current workspace session</td></tr><tr><td><kbd>[SCRATCH] R</kbd></td><td>Restore saved workspace session</td></tr><tr><td><kbd>[SCRATCH] M</kbd></td><td>Open workspace session manager</td></tr><tr><td><kbd>[SCRATCH] Escape</kbd></td><td>Cancel scratch chord</td></tr></tbody></table><h3>MEDIA &amp; HARDWARE KEYS</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>XF86AudioRaiseVolume</kbd></td><td>Volume up</td></tr><tr><td><kbd>XF86AudioLowerVolume</kbd></td><td>Volume down</td></tr><tr><td><kbd>XF86AudioMute</kbd></td><td>Mute the output</td></tr><tr><td><kbd>XF86AudioMicMute</kbd></td><td>Mute the microphone</td></tr><tr><td><kbd>XF86MonBrightnessUp</kbd></td><td>Brightness up (OSD)</td></tr><tr><td><kbd>XF86MonBrightnessDown</kbd></td><td>Brightness down (OSD)</td></tr><tr><td><kbd>XF86AudioNext</kbd></td><td>Next track</td></tr><tr><td><kbd>XF86AudioPrev</kbd></td><td>Previous track</td></tr><tr><td><kbd>XF86AudioPlay</kbd></td><td>Play / pause</td></tr><tr><td><kbd>XF86AudioPause</kbd></td><td>Play / pause</td></tr><tr><td><kbd>XF86AudioStop</kbd></td><td>Stop playback</td></tr></tbody></table></div>
+         placeholder="Filter 147 keybinds (try: palette, zen, resize, capture, ocr, layout, record)…">
+  <div id="kb-container"><h3>APPLICATIONS</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Enter</kbd></td><td>Terminal</td></tr><tr><td><kbd>Super + T</kbd></td><td>Terminal</td></tr><tr><td><kbd>Super + Shift + Enter</kbd></td><td>Floating terminal</td></tr><tr><td><kbd>Super + Shift + T</kbd></td><td>Dropdown terminal (quake style)</td></tr><tr><td><kbd>Super + Shift + B</kbd></td><td>Floating btop++ telemetry drawer</td></tr><tr><td><kbd>Super + &#x27;</kbd></td><td>Scratchpad Markdown notes (~/Documents/scratch.md)</td></tr><tr><td><kbd>Super + D</kbd></td><td>App launcher</td></tr><tr><td><kbd>Super + Shift + P</kbd></td><td>Command palette &amp; live math calculator</td></tr><tr><td><kbd>Super + ;</kbd></td><td>Command palette (home-row alias)</td></tr><tr><td><kbd>Super + Shift + D</kbd></td><td>Window switcher</td></tr><tr><td><kbd>Super + E</kbd></td><td>File manager</td></tr><tr><td><kbd>Super + B</kbd></td><td>Browser</td></tr><tr><td><kbd>Super + W</kbd></td><td>Wallpaper picker (120fps Bezier transition)</td></tr><tr><td><kbd>Alt + W</kbd></td><td>Cycle animated live monochrome wallpaper</td></tr><tr><td><kbd>Super + I</kbd></td><td>Settings menu (system, net, BT, monitors, sound)</td></tr><tr><td><kbd>Super + V</kbd></td><td>Clipboard history</td></tr><tr><td><kbd>Super + Shift + V</kbd></td><td>Clear clipboard history</td></tr><tr><td><kbd>Super + /</kbd></td><td>Keyboard shortcut cheat sheet</td></tr><tr><td><kbd>Super + Shift + C</kbd></td><td>Colour picker (copies hex to clipboard)</td></tr><tr><td><kbd>Super + N</kbd></td><td>Show the last notification</td></tr><tr><td><kbd>Super + X</kbd></td><td>Switch keyboard layout</td></tr></tbody></table><h3>WINDOW MANAGEMENT</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Q</kbd></td><td>Close window</td></tr><tr><td><kbd>Super + Shift + Q</kbd></td><td>Force-close window</td></tr><tr><td><kbd>Super + F</kbd></td><td>Toggle fullscreen</td></tr><tr><td><kbd>Super + Shift + F</kbd></td><td>Toggle maximize</td></tr><tr><td><kbd>Super + Space</kbd></td><td>Toggle floating window (centred at 70%)</td></tr><tr><td><kbd>Super + Shift + Space</kbd></td><td>Pin window (visible on all workspaces)</td></tr><tr><td><kbd>Super + .</kbd></td><td>Spring floating / PiP window to next corner</td></tr><tr><td><kbd>Super + ,</kbd></td><td>Cycle GLSL screen shader (Off / Noir / 35mm / CRT / E-Ink)</td></tr><tr><td><kbd>Super + P</kbd></td><td>Pseudo-tile (dwindle)</td></tr><tr><td><kbd>Super + Y</kbd></td><td>Toggle split direction (dwindle)</td></tr><tr><td><kbd>Super + O</kbd></td><td>Cycle window opacity</td></tr><tr><td><kbd>Super + \</kbd></td><td>Cycle tiling layout (Dwindle / Master / Scrolling)</td></tr><tr><td><kbd>Super + Shift + \</kbd></td><td>Tiling layout &amp; gap-preset picker</td></tr><tr><td><kbd>Super + G</kbd></td><td>Group / ungroup window (tabs)</td></tr><tr><td><kbd>Alt + G</kbd></td><td>Next tab in window group</td></tr><tr><td><kbd>Super + Shift + G</kbd></td><td>Lock / unlock window group</td></tr><tr><td><kbd>Super + U</kbd></td><td>Jump to urgent window</td></tr><tr><td><kbd>Alt + Tab</kbd></td><td>Next window</td></tr><tr><td><kbd>Alt + Shift + Tab</kbd></td><td>Previous window</td></tr></tbody></table><h3>FOCUS / MOVE / RESIZE</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + H</kbd></td><td>Focus left</td></tr><tr><td><kbd>Super + J</kbd></td><td>Focus down</td></tr><tr><td><kbd>Super + K</kbd></td><td>Focus up</td></tr><tr><td><kbd>Super + L</kbd></td><td>Focus right</td></tr><tr><td><kbd>Super + Left</kbd></td><td>Focus left</td></tr><tr><td><kbd>Super + Down</kbd></td><td>Focus down</td></tr><tr><td><kbd>Super + Up</kbd></td><td>Focus up</td></tr><tr><td><kbd>Super + Right</kbd></td><td>Focus right</td></tr><tr><td><kbd>Super + Shift + H</kbd></td><td>Move window left</td></tr><tr><td><kbd>Super + Shift + J</kbd></td><td>Move window down</td></tr><tr><td><kbd>Super + Shift + K</kbd></td><td>Move window up</td></tr><tr><td><kbd>Super + Shift + L</kbd></td><td>Move window right</td></tr><tr><td><kbd>Ctrl + H</kbd></td><td>Shrink window width</td></tr><tr><td><kbd>Ctrl + L</kbd></td><td>Grow window width</td></tr><tr><td><kbd>Ctrl + K</kbd></td><td>Shrink window height</td></tr><tr><td><kbd>Ctrl + J</kbd></td><td>Grow window height</td></tr></tbody></table><h3>WORKSPACES</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + scroll down</kbd></td><td>Next workspace</td></tr><tr><td><kbd>Super + scroll up</kbd></td><td>Previous workspace</td></tr><tr><td><kbd>Super + Ctrl + scroll down</kbd></td><td>Move window to next workspace</td></tr><tr><td><kbd>Super + Ctrl + scroll up</kbd></td><td>Move window to previous workspace</td></tr><tr><td><kbd>Super + S</kbd></td><td>Toggle scratchpad</td></tr><tr><td><kbd>Super + Shift + S</kbd></td><td>Move window to scratchpad</td></tr><tr><td><kbd>Super + 1..0</kbd></td><td>Switch workspace (10 is bound to the 0 key)</td></tr><tr><td><kbd>Super + Shift + 1..0</kbd></td><td>Move the focused window to that workspace</td></tr><tr><td><kbd>Super + Alt + 1..0</kbd></td><td>Move it there without following</td></tr></tbody></table><h3>BAR / SESSION / SYSTEM</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Shift + W</kbd></td><td>Toggle the top bar</td></tr><tr><td><kbd>Super + Z</kbd></td><td>Zen mode (hide bar, frame workspace, mute notifications)</td></tr><tr><td><kbd>Super + Shift + Z</kbd></td><td>Deep-work focus &amp; Pomodoro timer</td></tr><tr><td><kbd>Super + Shift + R</kbd></td><td>Reload Hyprland config</td></tr><tr><td><kbd>Super + Escape</kbd></td><td>Logout menu (lock, suspend, reboot, shutdown)</td></tr><tr><td><kbd>Super + `</kbd></td><td>Logout menu</td></tr><tr><td><kbd>Super + Shift + E</kbd></td><td>Quit the session</td></tr><tr><td><kbd>Super + Tab</kbd></td><td>Lock screen</td></tr><tr><td><kbd>Ctrl + Alt + L</kbd></td><td>Lock screen</td></tr><tr><td><kbd>Super + Shift + N</kbd></td><td>Night shift (blue light filter)</td></tr><tr><td><kbd>Super + Shift + M</kbd></td><td>Mute / unmute microphone</td></tr></tbody></table><h3>SCREENSHOTS, RECORDING &amp; ZOOM</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + Print</kbd></td><td>Screenshot: select an area</td></tr><tr><td><kbd>Super + Shift + Print</kbd></td><td>Screenshot: whole screen</td></tr><tr><td><kbd>Ctrl + Print</kbd></td><td>Screenshot: active window</td></tr><tr><td><kbd>Ctrl + Shift + Print</kbd></td><td>OCR: extract text from screen region</td></tr><tr><td><kbd>Ctrl + Alt + Print</kbd></td><td>Screenshot: select &amp; annotate</td></tr><tr><td><kbd>Alt + Print</kbd></td><td>Record the screen (again = stop)</td></tr><tr><td><kbd>Alt + Shift + Print</kbd></td><td>Record a selected area</td></tr><tr><td><kbd>Alt + S</kbd></td><td>Save the last minute (instant replay)</td></tr><tr><td><kbd>Alt + P</kbd></td><td>Pause / resume recording</td></tr><tr><td><kbd>Super + -</kbd></td><td>Zoom out</td></tr><tr><td><kbd>Super + =</kbd></td><td>Zoom in</td></tr></tbody></table><h3>MODAL SUBMAPS (CHORDS)</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>Super + R</kbd></td><td>Enter RESIZE mode (h/j/k/l, 1-3/0 gaps, Esc)</td></tr><tr><td><kbd>[RESIZE] H</kbd></td><td>Resize narrower</td></tr><tr><td><kbd>[RESIZE] L</kbd></td><td>Resize wider</td></tr><tr><td><kbd>[RESIZE] K</kbd></td><td>Resize shorter</td></tr><tr><td><kbd>[RESIZE] J</kbd></td><td>Resize taller</td></tr><tr><td><kbd>[RESIZE] Left</kbd></td><td>Resize narrower</td></tr><tr><td><kbd>[RESIZE] Right</kbd></td><td>Resize wider</td></tr><tr><td><kbd>[RESIZE] Up</kbd></td><td>Resize shorter</td></tr><tr><td><kbd>[RESIZE] Down</kbd></td><td>Resize taller</td></tr><tr><td><kbd>[RESIZE] 1</kbd></td><td>Gap preset: Default</td></tr><tr><td><kbd>[RESIZE] 2</kbd></td><td>Gap preset: Compact</td></tr><tr><td><kbd>[RESIZE] 3</kbd></td><td>Gap preset: Airy gallery</td></tr><tr><td><kbd>[RESIZE] 0</kbd></td><td>Gap preset: Zero monocle</td></tr><tr><td><kbd>[RESIZE] Enter</kbd></td><td>Exit RESIZE mode</td></tr><tr><td><kbd>[RESIZE] Escape</kbd></td><td>Exit RESIZE mode</td></tr><tr><td><kbd>Super + C</kbd></td><td>Enter CAPTURE chord (s/f/w/o/e/r/p/m)</td></tr><tr><td><kbd>[CAPTURE] S</kbd></td><td>Region screenshot</td></tr><tr><td><kbd>[CAPTURE] F</kbd></td><td>Full-screen screenshot</td></tr><tr><td><kbd>[CAPTURE] W</kbd></td><td>Active-window screenshot</td></tr><tr><td><kbd>[CAPTURE] O</kbd></td><td>OCR region to clipboard</td></tr><tr><td><kbd>[CAPTURE] E</kbd></td><td>Region screenshot &amp; annotate</td></tr><tr><td><kbd>[CAPTURE] R</kbd></td><td>Start / stop screen recording</td></tr><tr><td><kbd>[CAPTURE] P</kbd></td><td>Save 60s instant replay</td></tr><tr><td><kbd>[CAPTURE] M</kbd></td><td>Open screen recording menu</td></tr><tr><td><kbd>[CAPTURE] Escape</kbd></td><td>Cancel capture chord</td></tr><tr><td><kbd>Ctrl + S</kbd></td><td>Enter SCRATCH &amp; SESSION chord (t/b/n/f/w/r)</td></tr><tr><td><kbd>[SCRATCH] T</kbd></td><td>Toggle dropdown terminal drawer</td></tr><tr><td><kbd>[SCRATCH] B</kbd></td><td>Toggle btop++ telemetry drawer</td></tr><tr><td><kbd>[SCRATCH] N</kbd></td><td>Toggle Markdown scratch notes</td></tr><tr><td><kbd>[SCRATCH] F</kbd></td><td>Toggle quick file drawer</td></tr><tr><td><kbd>[SCRATCH] W</kbd></td><td>Save current workspace session</td></tr><tr><td><kbd>[SCRATCH] R</kbd></td><td>Restore saved workspace session</td></tr><tr><td><kbd>[SCRATCH] M</kbd></td><td>Open workspace session manager</td></tr><tr><td><kbd>[SCRATCH] Escape</kbd></td><td>Cancel scratch chord</td></tr><tr><td><kbd>Super + M</kbd></td><td>Enter FX chord (motion physics, GLSL shaders, live wallpaper)</td></tr><tr><td><kbd>[FX] 1</kbd></td><td>Motion: Fluid damped springs</td></tr><tr><td><kbd>[FX] 2</kbd></td><td>Motion: Snappy 140ms studio</td></tr><tr><td><kbd>[FX] 3</kbd></td><td>Motion: Cinematic parallax + liquid border</td></tr><tr><td><kbd>[FX] 0</kbd></td><td>Motion: Minimal zero-motion</td></tr><tr><td><kbd>[FX] B</kbd></td><td>Toggle orbiting liquid-silver border</td></tr><tr><td><kbd>[FX] M</kbd></td><td>Open motion physics menu</td></tr><tr><td><kbd>[FX] S</kbd></td><td>Open GLSL screen shader studio</td></tr><tr><td><kbd>[FX] N</kbd></td><td>GLSL shader: Noir greyscale</td></tr><tr><td><kbd>[FX] G</kbd></td><td>GLSL shader: 35mm film grain</td></tr><tr><td><kbd>[FX] C</kbd></td><td>GLSL shader: P4 studio CRT</td></tr><tr><td><kbd>[FX] E</kbd></td><td>GLSL shader: Matte E-Ink paper</td></tr><tr><td><kbd>[FX] O</kbd></td><td>GLSL shader: Off</td></tr><tr><td><kbd>[FX] L</kbd></td><td>Cycle animated live wallpaper</td></tr><tr><td><kbd>[FX] Escape</kbd></td><td>Cancel FX chord</td></tr></tbody></table><h3>MEDIA &amp; HARDWARE KEYS</h3><table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody><tr><td><kbd>XF86AudioRaiseVolume</kbd></td><td>Volume up</td></tr><tr><td><kbd>XF86AudioLowerVolume</kbd></td><td>Volume down</td></tr><tr><td><kbd>XF86AudioMute</kbd></td><td>Mute the output</td></tr><tr><td><kbd>XF86AudioMicMute</kbd></td><td>Mute the microphone</td></tr><tr><td><kbd>XF86MonBrightnessUp</kbd></td><td>Brightness up (OSD)</td></tr><tr><td><kbd>XF86MonBrightnessDown</kbd></td><td>Brightness down (OSD)</td></tr><tr><td><kbd>XF86AudioNext</kbd></td><td>Next track</td></tr><tr><td><kbd>XF86AudioPrev</kbd></td><td>Previous track</td></tr><tr><td><kbd>XF86AudioPlay</kbd></td><td>Play / pause</td></tr><tr><td><kbd>XF86AudioPause</kbd></td><td>Play / pause</td></tr><tr><td><kbd>XF86AudioStop</kbd></td><td>Stop playback</td></tr></tbody></table></div>
 
   <h2><span class="num">04</span>Palette</h2>
   <p class="lead">Greyscale everywhere. Each surface has its own one-line palette so you can shift
@@ -468,7 +501,7 @@ Module values are sample data; the right group is ordered
   <p class="lead">Hyprland reads <code>hyprland.lua</code>, which loads the modules beside it —
   so the file you normally open is <code>modules/user.lua</code>. The shell scripts are what power
   the menus, pickers and bar helpers.</p>
-  <div class="tree"><div><span class="d">.config/</span></div><div>│  <span class="d">btop/</span></div><div>│  │  <span class="">btop.conf</span></div><div>│  │  <span class="d">themes/</span></div><div>│  │  │  <span class="">mono.theme</span></div><div>│  <span class="d">dunst/</span></div><div>│  │  <span class="">dunstrc</span></div><div>│  <span class="d">fastfetch/</span></div><div>│  │  <span class="">config.jsonc</span></div><div>│  <span class="d">gtk-3.0/</span></div><div>│  │  <span class="">gtk.css</span></div><div>│  │  <span class="">settings.ini</span></div><div>│  <span class="d">gtk-4.0/</span></div><div>│  │  <span class="">gtk.css</span></div><div>│  │  <span class="">settings.ini</span></div><div>│  <span class="d">hypr/</span></div><div>│  │  <span class="">hypridle.conf</span></div><div>│  │  <span class="">hyprland.lua</span></div><div>│  │  <span class="">hyprlock.conf</span></div><div>│  │  <span class="">hyprsunset.conf</span></div><div>│  │  <span class="d">modules/</span></div><div>│  │  │  <span class="">appearance.lua</span></div><div>│  │  │  <span class="">autostart.lua</span></div><div>│  │  │  <span class="">binds.lua</span></div><div>│  │  │  <span class="">monitors.lua</span></div><div>│  │  │  <span class="">rules.lua</span></div><div>│  │  │  <span class="">smart.lua</span></div><div>│  │  │  <span class="">user.lua</span></div><div>│  │  <span class="d">scripts/</span></div><div>│  │  │  <span class="">brightness.sh</span></div><div>│  │  │  <span class="">clipboard.sh</span></div><div>│  │  │  <span class="">doctor.sh</span></div><div>│  │  │  <span class="">float-center.sh</span></div><div>│  │  │  <span class="">focus.sh</span></div><div>│  │  │  <span class="">layout.sh</span></div><div>│  │  │  <span class="">lib.sh</span></div><div>│  │  │  <span class="">menu.sh</span></div><div>│  │  │  <span class="">nightshift.sh</span></div><div>│  │  │  <span class="">opacity.sh</span></div><div>│  │  │  <span class="">palette.sh</span></div><div>│  │  │  <span class="">polkit.sh</span></div><div>│  │  │  <span class="">powermenu.sh</span></div><div>│  │  │  <span class="">record.sh</span></div><div>│  │  │  <span class="">scratchpad.sh</span></div><div>│  │  │  <span class="">scratchterm.sh</span></div><div>│  │  │  <span class="">screenshot.sh</span></div><div>│  │  │  <span class="">session.sh</span></div><div>│  │  │  <span class="">settings.sh</span></div><div>│  │  │  <span class="">spotify-theme.sh</span></div><div>│  │  │  <span class="">volume.sh</span></div><div>│  │  │  <span class="">wallpaper.sh</span></div><div>│  │  │  <span class="">waybar-toggle.sh</span></div><div>│  │  │  <span class="">workspace-session.sh</span></div><div>│  │  │  <span class="">zoom.sh</span></div><div>│  <span class="d">kitty/</span></div><div>│  │  <span class="">kitty.conf</span></div><div>│  │  <span class="">theme.conf</span></div><div>│  <span class="d">nvim/</span></div><div>│  │  <span class="d">colors/</span></div><div>│  │  │  <span class="">monochrome.lua</span></div><div>│  │  <span class="">init.lua</span></div><div>│  <span class="d">qt5ct/</span></div><div>│  │  <span class="d">colors/</span></div><div>│  │  │  <span class="">Monochrome.conf</span></div><div>│  │  <span class="">qt5ct.conf</span></div><div>│  <span class="d">qt6ct/</span></div><div>│  │  <span class="d">colors/</span></div><div>│  │  │  <span class="">Monochrome.conf</span></div><div>│  │  <span class="">qt6ct.conf</span></div><div>│  <span class="d">rofi/</span></div><div>│  │  <span class="">clipboard.rasi</span></div><div>│  │  <span class="">keybinds.rasi</span></div><div>│  │  <span class="">launcher.rasi</span></div><div>│  │  <span class="">palette.rasi</span></div><div>│  │  <span class="">powermenu.rasi</span></div><div>│  │  <span class="">settings.rasi</span></div><div>│  │  <span class="">theme.rasi</span></div><div>│  │  <span class="">wallpaper.rasi</span></div><div>│  <span class="d">spicetify/</span></div><div>│  │  <span class="d">Themes/</span></div><div>│  │  │  <span class="d">monochrome/</span></div><div>│  │  │  │  <span class="">color.ini</span></div><div>│  │  │  │  <span class="">user.css</span></div><div>│  <span class="">starship.toml</span></div><div>│  <span class="d">waybar/</span></div><div>│  │  <span class="">config.jsonc</span></div><div>│  │  <span class="d">scripts/</span></div><div>│  │  │  <span class="">sysgraph.sh</span></div><div>│  │  │  <span class="">updates.sh</span></div><div>│  │  <span class="">style.css</span></div><div>│  <span class="d">wlogout/</span></div><div>│  │  <span class="">layout</span></div><div>│  │  <span class="">style.css</span></div><div><span class="">.editorconfig</span></div><div><span class="">.gitattributes</span></div><div><span class="">.gitignore</span></div><div><span class="">.zshrc</span></div><div><span class="">CHANGELOG.md</span></div><div><span class="">CONTRIBUTING.md</span></div><div><span class="">LICENSE</span></div><div><span class="">README.md</span></div><div><span class="">aur-packages.txt</span></div><div><span class="d">docs/</span></div><div>│  <span class="">CUSTOMIZE.md</span></div><div>│  <span class="">INSTALL.md</span></div><div>│  <span class="">KEYBINDS.md</span></div><div>│  <span class="">ON-WINDOWS.md</span></div><div>│  <span class="">QUICKSTART.md</span></div><div>│  <span class="">TROUBLESHOOTING.md</span></div><div>│  <span class="">desktop-demo.mp4</span></div><div>│  <span class="">preview.html</span></div><div>│  <span class="">preview.png</span></div><div>│  <span class="">preview.svg</span></div><div>│  <span class="">test-run.mp4</span></div><div><span class="">install.sh</span></div><div><span class="">packages.txt</span></div><div><span class="d">test/</span></div><div>│  <span class="">install-sandbox.sh</span></div><div>│  <span class="">run-all.sh</span></div><div>│  <span class="">smoke-test.sh</span></div><div><span class="d">tools/</span></div><div>│  <span class="">build-preview.py</span></div><div>│  <span class="">build-windows-kit.py</span></div><div>│  <span class="">demo.sh</span></div><div>│  <span class="">keybind-table.py</span></div><div>│  <span class="">record-desktop.sh</span></div><div><span class="">uninstall.sh</span></div><div><span class="d">wallpapers/</span></div><div>│  <span class="">generate.py</span></div><div>│  <span class="">mono-01.jpg</span></div><div>│  <span class="">mono-02.jpg</span></div><div>│  <span class="">mono-03.jpg</span></div><div>│  <span class="">mono-04.jpg</span></div><div>│  <span class="">mono-05.jpg</span></div><div>│  <span class="">mono-06-16k.jpg</span></div><div>│  <span class="">mono-06.jpg</span></div><div>│  <span class="">mono-07-4k.jpg</span></div><div>│  <span class="">mono-07.jpg</span></div><div>│  <span class="">mono-08.jpg</span></div><div>│  <span class="">mono-09.jpg</span></div><div>│  <span class="">mono-10.jpg</span></div><div>│  <span class="">mono-11-4k.jpg</span></div><div>│  <span class="">mono-11.jpg</span></div><div>│  <span class="">mono-12.jpg</span></div><div>│  <span class="">mono-13.jpg</span></div><div>│  <span class="">mono-14.jpg</span></div><div><span class="d">windows/</span></div><div>│  <span class="">glazewm-config.yaml</span></div><div>│  <span class="">windows-terminal-scheme.json</span></div><div>│  <span class="">windows-terminal-settings.json</span></div></div>
+  <div class="tree"><div><span class="d">.config/</span></div><div>│  <span class="d">btop/</span></div><div>│  │  <span class="">btop.conf</span></div><div>│  │  <span class="d">themes/</span></div><div>│  │  │  <span class="">mono.theme</span></div><div>│  <span class="d">dunst/</span></div><div>│  │  <span class="">dunstrc</span></div><div>│  <span class="d">fastfetch/</span></div><div>│  │  <span class="">config.jsonc</span></div><div>│  <span class="d">gtk-3.0/</span></div><div>│  │  <span class="">gtk.css</span></div><div>│  │  <span class="">settings.ini</span></div><div>│  <span class="d">gtk-4.0/</span></div><div>│  │  <span class="">gtk.css</span></div><div>│  │  <span class="">settings.ini</span></div><div>│  <span class="d">hypr/</span></div><div>│  │  <span class="">hypridle.conf</span></div><div>│  │  <span class="">hyprland.lua</span></div><div>│  │  <span class="">hyprlock.conf</span></div><div>│  │  <span class="">hyprsunset.conf</span></div><div>│  │  <span class="d">modules/</span></div><div>│  │  │  <span class="">animations.lua</span></div><div>│  │  │  <span class="">appearance.lua</span></div><div>│  │  │  <span class="">autostart.lua</span></div><div>│  │  │  <span class="">binds.lua</span></div><div>│  │  │  <span class="">monitors.lua</span></div><div>│  │  │  <span class="">rules.lua</span></div><div>│  │  │  <span class="">smart.lua</span></div><div>│  │  │  <span class="">user.lua</span></div><div>│  │  <span class="d">scripts/</span></div><div>│  │  │  <span class="">brightness.sh</span></div><div>│  │  │  <span class="">clipboard.sh</span></div><div>│  │  │  <span class="">doctor.sh</span></div><div>│  │  │  <span class="">float-center.sh</span></div><div>│  │  │  <span class="">focus.sh</span></div><div>│  │  │  <span class="">layout.sh</span></div><div>│  │  │  <span class="">lib.sh</span></div><div>│  │  │  <span class="">menu.sh</span></div><div>│  │  │  <span class="">motion.sh</span></div><div>│  │  │  <span class="">nightshift.sh</span></div><div>│  │  │  <span class="">opacity.sh</span></div><div>│  │  │  <span class="">palette.sh</span></div><div>│  │  │  <span class="">pip-corner.sh</span></div><div>│  │  │  <span class="">polkit.sh</span></div><div>│  │  │  <span class="">powermenu.sh</span></div><div>│  │  │  <span class="">record.sh</span></div><div>│  │  │  <span class="">scratchpad.sh</span></div><div>│  │  │  <span class="">scratchterm.sh</span></div><div>│  │  │  <span class="">screenshot.sh</span></div><div>│  │  │  <span class="">session.sh</span></div><div>│  │  │  <span class="">settings.sh</span></div><div>│  │  │  <span class="">shader.sh</span></div><div>│  │  │  <span class="">spotify-theme.sh</span></div><div>│  │  │  <span class="">volume.sh</span></div><div>│  │  │  <span class="">wallpaper.sh</span></div><div>│  │  │  <span class="">waybar-toggle.sh</span></div><div>│  │  │  <span class="">workspace-session.sh</span></div><div>│  │  │  <span class="">zoom.sh</span></div><div>│  │  <span class="d">shaders/</span></div><div>│  │  │  <span class="">cinema-grain.frag</span></div><div>│  │  │  <span class="">crt-studio.frag</span></div><div>│  │  │  <span class="">noir.frag</span></div><div>│  │  │  <span class="">paper-eink.frag</span></div><div>│  <span class="d">kitty/</span></div><div>│  │  <span class="">kitty.conf</span></div><div>│  │  <span class="">theme.conf</span></div><div>│  <span class="d">nvim/</span></div><div>│  │  <span class="d">colors/</span></div><div>│  │  │  <span class="">monochrome.lua</span></div><div>│  │  <span class="">init.lua</span></div><div>│  <span class="d">qt5ct/</span></div><div>│  │  <span class="d">colors/</span></div><div>│  │  │  <span class="">Monochrome.conf</span></div><div>│  │  <span class="">qt5ct.conf</span></div><div>│  <span class="d">qt6ct/</span></div><div>│  │  <span class="d">colors/</span></div><div>│  │  │  <span class="">Monochrome.conf</span></div><div>│  │  <span class="">qt6ct.conf</span></div><div>│  <span class="d">rofi/</span></div><div>│  │  <span class="">clipboard.rasi</span></div><div>│  │  <span class="">keybinds.rasi</span></div><div>│  │  <span class="">launcher.rasi</span></div><div>│  │  <span class="">palette.rasi</span></div><div>│  │  <span class="">powermenu.rasi</span></div><div>│  │  <span class="">settings.rasi</span></div><div>│  │  <span class="">theme.rasi</span></div><div>│  │  <span class="">wallpaper.rasi</span></div><div>│  <span class="d">spicetify/</span></div><div>│  │  <span class="d">Themes/</span></div><div>│  │  │  <span class="d">monochrome/</span></div><div>│  │  │  │  <span class="">color.ini</span></div><div>│  │  │  │  <span class="">user.css</span></div><div>│  <span class="">starship.toml</span></div><div>│  <span class="d">waybar/</span></div><div>│  │  <span class="">config.jsonc</span></div><div>│  │  <span class="d">scripts/</span></div><div>│  │  │  <span class="">sysgraph.sh</span></div><div>│  │  │  <span class="">updates.sh</span></div><div>│  │  <span class="">style.css</span></div><div>│  <span class="d">wlogout/</span></div><div>│  │  <span class="">layout</span></div><div>│  │  <span class="">style.css</span></div><div><span class="">.editorconfig</span></div><div><span class="">.gitattributes</span></div><div><span class="">.gitignore</span></div><div><span class="">.zshrc</span></div><div><span class="">CHANGELOG.md</span></div><div><span class="">CONTRIBUTING.md</span></div><div><span class="">LICENSE</span></div><div><span class="">README.md</span></div><div><span class="">aur-packages.txt</span></div><div><span class="d">docs/</span></div><div>│  <span class="">CUSTOMIZE.md</span></div><div>│  <span class="">INSTALL.md</span></div><div>│  <span class="">KEYBINDS.md</span></div><div>│  <span class="">ON-WINDOWS.md</span></div><div>│  <span class="">QUICKSTART.md</span></div><div>│  <span class="">TROUBLESHOOTING.md</span></div><div>│  <span class="">desktop-demo.mp4</span></div><div>│  <span class="">preview.html</span></div><div>│  <span class="">preview.png</span></div><div>│  <span class="">preview.svg</span></div><div>│  <span class="">test-run.mp4</span></div><div><span class="">install.sh</span></div><div><span class="">packages.txt</span></div><div><span class="d">test/</span></div><div>│  <span class="">install-sandbox.sh</span></div><div>│  <span class="">run-all.sh</span></div><div>│  <span class="">smoke-test.sh</span></div><div><span class="d">tools/</span></div><div>│  <span class="">build-preview.py</span></div><div>│  <span class="">build-windows-kit.py</span></div><div>│  <span class="">demo.sh</span></div><div>│  <span class="">keybind-table.py</span></div><div>│  <span class="">record-desktop.sh</span></div><div><span class="">uninstall.sh</span></div><div><span class="d">wallpapers/</span></div><div>│  <span class="">animate.py</span></div><div>│  <span class="">generate.py</span></div><div>│  <span class="">mono-01.jpg</span></div><div>│  <span class="">mono-02.jpg</span></div><div>│  <span class="">mono-03.jpg</span></div><div>│  <span class="">mono-04.jpg</span></div><div>│  <span class="">mono-05.jpg</span></div><div>│  <span class="">mono-06-16k.jpg</span></div><div>│  <span class="">mono-06.jpg</span></div><div>│  <span class="">mono-07-4k.jpg</span></div><div>│  <span class="">mono-07.jpg</span></div><div>│  <span class="">mono-08.jpg</span></div><div>│  <span class="">mono-09.jpg</span></div><div>│  <span class="">mono-10.jpg</span></div><div>│  <span class="">mono-11-4k.jpg</span></div><div>│  <span class="">mono-11.jpg</span></div><div>│  <span class="">mono-12.jpg</span></div><div>│  <span class="">mono-13.jpg</span></div><div>│  <span class="">mono-14.jpg</span></div><div>│  <span class="">mono-live-01-orbital.gif</span></div><div>│  <span class="">mono-live-02-pulse.gif</span></div><div><span class="d">windows/</span></div><div>│  <span class="">glazewm-config.yaml</span></div><div>│  <span class="">windows-terminal-scheme.json</span></div><div>│  <span class="">windows-terminal-settings.json</span></div></div>
 
   <h2><span class="num">07</span>Try it</h2>
   <div class="grid3">
@@ -503,7 +536,7 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
 
   <footer>
     Generated from this repository's config on 2026-11-06 by
-    <code>tools/build-preview.py</code> · 129 binds, 64 packages, MIT licensed.
+    <code>tools/build-preview.py</code> · 147 binds, 64 packages, MIT licensed.
     Start reading at <code>README.md</code>; troubleshooting lives in
     <code>docs/TROUBLESHOOTING.md</code>.
   </footer>
@@ -511,21 +544,145 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
 </div>
 <script>
 (function(){
+  var stage = document.getElementById('sim-stage');
+  var sgrid = document.getElementById('sim-grid');
+  var sdim = document.getElementById('sim-dim');
+  var dbox = document.getElementById('sim-drawer-box');
+  var pbox = document.getElementById('sim-pal-box');
+  var bgImg = document.getElementById('wall-stage-img');
+  var liveBtn = document.getElementById('sim-live-btn');
+  var cvs = document.getElementById('sim-live-canvas');
+  var liveMode = true;
+
+  // 60 FPS Live Bauhaus Celestial Orrery Canvas + Waybar Sparkline ticker
+  if (cvs && cvs.getContext) {
+    var ctx = cvs.getContext('2d');
+    var startT = performance.now();
+    function drawOrrery(now) {
+      if (liveMode) {
+        var t = (now - startT) * 0.00055;
+        var w = cvs.width, h = cvs.height, cx = w * 0.5, cy = h * 0.5;
+        ctx.fillStyle = '#070707';
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(w*0.06, cy); ctx.lineTo(w*0.94, cy);
+        ctx.moveTo(cx, h*0.06); ctx.lineTo(cx, h*0.94); ctx.stroke();
+        var rc = h * 0.165;
+        var g = ctx.createRadialGradient(cx, cy, rc * 0.4, cx, cy, rc * (1.55 + 0.08 * Math.sin(t * 2)));
+        g.addColorStop(0, 'rgba(255,255,255,0.16)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, rc * 1.7, 0, Math.PI * 2); ctx.fill();
+        var orbs = [rc * 1.48, rc * 1.98, rc * 2.52];
+        orbs.forEach(function(r, i) {
+          ctx.strokeStyle = 'rgba(255,255,255,' + (0.15 - i * 0.035) + ')';
+          ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+        });
+        var sg = ctx.createLinearGradient(cx, cy - rc, cx, cy + rc);
+        sg.addColorStop(0, '#dcdcdc'); sg.addColorStop(0.55, '#545454'); sg.addColorStop(1, '#101010');
+        ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.fill();
+        ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, rc, 0, Math.PI * 2); ctx.clip();
+        ctx.fillStyle = '#080808';
+        for (var y = cy; y < cy + rc; y += 5) ctx.fillRect(cx - rc, y, rc * 2, 2.2);
+        ctx.restore();
+        [[orbs[0], t * 1.3, 6.5, '#f4f4f4'], [orbs[1], -t * 0.85 + 1.8, 4.5, '#c4c4c4'], [orbs[2], t * 1.9 + 0.5, 3.2, '#9a9a9a']].forEach(function(m) {
+          var mx = cx + Math.cos(m[1]) * m[0], my = cy + Math.sin(m[1]) * m[0];
+          ctx.fillStyle = m[3]; ctx.beginPath(); ctx.arc(mx, my, m[2], 0, Math.PI * 2); ctx.fill();
+        });
+      }
+      requestAnimationFrame(drawOrrery);
+    }
+    requestAnimationFrame(drawOrrery);
+  }
+
+  var sparkEl = document.getElementById('sim-spark');
+  var bars = ['▁','▂','▃','▄','▅','▆','▇'];
+  var ring = [1,2,4,3,2,1];
+  if (sparkEl) setInterval(function() {
+    var v = Math.max(0, Math.min(6, ring[ring.length - 1] + (Math.random() > 0.5 ? 1 : -1)));
+    ring.push(v); ring.shift();
+    var pct = 10 + v * 5;
+    sparkEl.textContent = ring.map(function(i){ return bars[i]; }).join('') + ' ' + pct + '%';
+  }, 1400);
+
+  function syncDim() {
+    if (sdim) sdim.classList.toggle('on', dbox.classList.contains('open') || pbox.classList.contains('open'));
+  }
+
   var grid = document.getElementById('wall-grid');
   if (grid) {
     grid.addEventListener('click', function(ev) {
       var btn = ev.target.closest('.wcard');
       if (!btn) return;
+      liveMode = false;
+      if (liveBtn) liveBtn.classList.remove('on');
       document.querySelectorAll('.wcard').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
-      document.getElementById('wall-stage-img').src = btn.getAttribute('data-uri');
+      bgImg.style.transition = 'none';
+      bgImg.style.clipPath = 'circle(0% at 50% 50%)';
+      bgImg.src = btn.getAttribute('data-uri');
+      bgImg.classList.add('show');
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          bgImg.style.transition = '';
+          bgImg.style.clipPath = 'circle(145% at 50% 50%)';
+        });
+      });
       document.getElementById('wall-stage-title').textContent = 'Active: ' + btn.getAttribute('data-title');
       document.getElementById('wall-stage-desc').textContent = btn.getAttribute('data-desc');
     });
   }
-  var stage = document.getElementById('sim-stage');
-  var dbox = document.getElementById('sim-drawer-box');
-  var pbox = document.getElementById('sim-pal-box');
+  if (liveBtn) liveBtn.addEventListener('click', function() {
+    liveMode = true;
+    liveBtn.classList.add('on');
+    bgImg.classList.remove('show');
+    document.getElementById('wall-stage-title').textContent = 'Active: mono-live-01 — Bauhaus Celestial Orrery (60fps Live)';
+    document.getElementById('wall-stage-desc').textContent = 'Real-time 60fps monochrome orbital canvas';
+  });
+
+  // Dynamic-Island Workspace Pill Morph + Slidefade Parallax
+  var curWs = 1;
+  document.querySelectorAll('.simws').forEach(function(ws) {
+    ws.addEventListener('click', function() {
+      var target = parseInt(ws.getAttribute('data-ws'), 10) || 1;
+      if (target === curWs) return;
+      var dir = target > curWs ? 1 : -1;
+      curWs = target;
+      document.querySelectorAll('.simws').forEach(function(w){ w.classList.remove('active'); });
+      ws.classList.add('active');
+      sgrid.style.transition = 'none';
+      sgrid.style.transform = 'translateX(' + (dir * 38) + 'px)';
+      sgrid.style.opacity = '0.35';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          sgrid.style.transition = '';
+          sgrid.style.transform = 'translateX(0)';
+          sgrid.style.opacity = '1';
+        });
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-mot]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('[data-mot]').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      stage.classList.remove('snappy','cinematic','minimal');
+      var m = btn.getAttribute('data-mot');
+      if (m !== 'fluid') stage.classList.add(m);
+    });
+  });
+
+  var shaders = [['off','Shader: Off'],['sh-noir','Shader: Noir'],['sh-grain','Shader: 35mm'],['sh-crt','Shader: P4 CRT'],['sh-eink','Shader: E-Ink']];
+  var shIdx = 0;
+  var shBtn = document.getElementById('sim-shader-btn');
+  if (shBtn) shBtn.addEventListener('click', function() {
+    shIdx = (shIdx + 1) % shaders.length;
+    stage.classList.remove('sh-noir','sh-grain','sh-crt','sh-eink');
+    if (shaders[shIdx][0] !== 'off') stage.classList.add(shaders[shIdx][0]);
+    shBtn.textContent = shaders[shIdx][1];
+    shBtn.classList.toggle('on', shIdx > 0);
+  });
+
   document.querySelectorAll('[data-gap]').forEach(function(btn) {
     btn.addEventListener('click', function() {
       document.querySelectorAll('[data-gap]').forEach(function(b){ b.classList.remove('on'); });
@@ -544,6 +701,7 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
   if (drwBtn) drwBtn.addEventListener('click', function() {
     drwBtn.classList.toggle('on');
     dbox.classList.toggle('open');
+    syncDim();
   });
   var palBtn = document.getElementById('sim-pal-btn');
   var palIn = document.getElementById('sim-pal-in');
@@ -551,6 +709,7 @@ git clone &lt;this repo&gt; &amp;&amp; cd hyprland-monochrome
   if (palBtn) palBtn.addEventListener('click', function() {
     palBtn.classList.toggle('on');
     pbox.classList.toggle('open');
+    syncDim();
     if (pbox.classList.contains('open')) palIn.focus();
   });
   if (palIn) palIn.addEventListener('input', function() {

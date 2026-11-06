@@ -517,6 +517,8 @@ capture_menu() {
 while :; do
     key="$(choose settings "settings:" \
         "palette$TAB⌘  Command palette & math calculator" \
+        "motion$TAB∿  Motion physics & liquid-silver border (Fluid / Snappy / Cinematic)" \
+        "shaders$TAB◐  GLSL ES 3.00 screen shaders (Noir / 35mm / CRT / E-Ink)" \
         "focus$TAB◎  Deep-work focus & Zen mode" \
         "drawers$TAB▣  Named floating drawers (term / btop / notes)" \
         "sessions$TAB💾  Workspace session snapshots (save / restore)" \
@@ -529,11 +531,13 @@ while :; do
         "sound$TAB󰕾  Sound" \
         "nightshift$TAB󰖔  Night shift (blue light filter)" \
         "capture$TAB󰄄  Screenshots, OCR & recording" \
-        "wallpaper$TAB󰸉  Wallpaper…" \
+        "wallpaper$TAB󰸉  Wallpaper studio & live loops…" \
         "hyprland$TAB󰒓  Hyprland / config files")" || exit 0
 
     case "$key" in
         palette)    "$SCRIPTS_DIR/palette.sh"; exit 0 ;;
+        motion)     "$SCRIPTS_DIR/motion.sh" menu ;;
+        shaders)    "$SCRIPTS_DIR/shader.sh" menu ;;
         focus)      "$SCRIPTS_DIR/focus.sh" menu ;;
         drawers)    "$SCRIPTS_DIR/scratchpad.sh" menu; exit 0 ;;
         sessions)   "$SCRIPTS_DIR/workspace-session.sh" menu ;;

@@ -20,8 +20,8 @@ listview {
 }
 
 element {
+    children: [ element-text ];
     padding: 7px 12px;
-    font: "JetBrainsMono Nerd Font 11";
 }
 
 element-text {

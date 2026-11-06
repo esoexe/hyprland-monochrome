@@ -26,9 +26,9 @@ hl.config({
         gaps_out    = gaps_out,
         border_size = border_size,
 
-        -- Focused window: white-to-grey hairline gradient. Unfocused: dark grey.
+        -- Focused window: 3-stop liquid-silver gradient (orbits when border_loop = true).
         col = {
-            active_border   = { colors = { "rgba(ffffffe6)", "rgba(9a9a9a99)" }, angle = 45 },
+            active_border   = { colors = { "rgba(ffffffff)", "rgba(cfcfcfe6)", "rgba(78787899)" }, angle = 45 },
             inactive_border = "rgba(3a3a3a99)",
         },
 
@@ -71,34 +71,11 @@ hl.config({
             xray     = false,
         },
     },
-
-    animations = { enabled = true },
 })
 
 
--- ────────────────────────────── Animations ─────────────────────────────────
-
-hl.curve("monoOut",    { type = "bezier", points = { { 0.16, 1.0 }, { 0.3, 1.0 } } })
-hl.curve("monoInOut",  { type = "bezier", points = { { 0.65, 0.05 }, { 0.36, 1.0 } } })
-hl.curve("monoLinear", { type = "bezier", points = { { 0, 0 }, { 1, 1 } } })
-hl.curve("monoSnap",   { type = "bezier", points = { { 0.15, 0 }, { 0.1, 1 } } })
-
-hl.animation({ leaf = "global",       enabled = true,  speed = 8,    bezier = "monoInOut" })
-hl.animation({ leaf = "border",       enabled = true,  speed = 6,    bezier = "monoOut" })
-hl.animation({ leaf = "windows",      enabled = true,  speed = 5,    bezier = "monoOut" })
-hl.animation({ leaf = "windowsIn",    enabled = true,  speed = 4.5,  bezier = "monoOut", style = "popin 94%" })
-hl.animation({ leaf = "windowsOut",   enabled = true,  speed = 4,    bezier = "monoSnap", style = "popin 94%" })
-hl.animation({ leaf = "fadeIn",       enabled = true,  speed = 4,    bezier = "monoOut" })
-hl.animation({ leaf = "fadeOut",      enabled = true,  speed = 3.5,  bezier = "monoSnap" })
-hl.animation({ leaf = "fade",         enabled = true,  speed = 4,    bezier = "monoOut" })
-hl.animation({ leaf = "layers",       enabled = true,  speed = 4,    bezier = "monoOut" })
-hl.animation({ leaf = "layersIn",     enabled = true,  speed = 4,    bezier = "monoOut", style = "fade" })
-hl.animation({ leaf = "layersOut",    enabled = true,  speed = 3,    bezier = "monoSnap", style = "fade" })
-hl.animation({ leaf = "fadeLayersIn", enabled = true,  speed = 3,    bezier = "monoOut" })
-hl.animation({ leaf = "fadeLayersOut",enabled = true,  speed = 3,    bezier = "monoSnap" })
-hl.animation({ leaf = "workspaces",   enabled = true,  speed = 5,    bezier = "monoOut", style = "slidefade 12%" })
-hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 5, bezier = "monoOut", style = "slidefadevert 12%" })
-hl.animation({ leaf = "zoomFactor",   enabled = true,  speed = 6,    bezier = "monoSnap" })
+-- (Animations live in modules/animations.lua — edit `motion_profile` in user.lua
+--  or press Super + M to switch physics live between fluid/snappy/cinematic/minimal.)
 
 
 -- ──────────────────────────────── Layouts ──────────────────────────────────

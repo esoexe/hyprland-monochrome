@@ -53,3 +53,26 @@ if enabled("smart_urgent_notify", true) then
         end
     end)
 end
+
+-- ── 4. Smart Single-Window Gallery Framing ─────────────────────────────────
+-- Optional (`smart_single_window = true` in user.lua): gives a solo tiled
+-- window generous 20px gallery margins and smoothly springs back to `gaps_out`
+-- the instant a second window joins the workspace.
+if enabled("smart_single_window", false) then
+    local base_out = u.gaps_out or 10
+    local function sync_solo_frame()
+        if hl.get_active_workspace == nil or hl.get_workspace_windows == nil then return end
+        local ws = hl.get_active_workspace()
+        if ws == nil or ws.id == nil then return end
+        local wins = hl.get_workspace_windows(ws.id) or {}
+        local tiled = 0
+        for _, win in ipairs(wins) do
+            if not win.floating then tiled = tiled + 1 end
+        end
+        hl.config({ general = { gaps_out = (tiled == 1) and math.max(base_out, 20) or base_out } })
+    end
+    hl.on("window.open", sync_solo_frame)
+    hl.on("window.destroy", sync_solo_frame)
+    hl.on("window.move_to_workspace", sync_solo_frame)
+    hl.on("workspace.active", sync_solo_frame)
+end
