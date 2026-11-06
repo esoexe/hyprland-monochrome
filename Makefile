@@ -69,6 +69,7 @@ docs: $(BIN_DIR)/keybind-table $(BIN_DIR)/build-windows-kit $(BIN_DIR)/build-pre
 site: docs $(BIN_DIR)/serve-site
 
 serve: $(BIN_DIR)/serve-site
+	@chmod +x $(BIN_DIR)/serve-site
 	./$(BIN_DIR)/serve-site --port 8080
 
 wallpapers: $(BIN_DIR)/wallpaper-gen $(BIN_DIR)/wallpaper-anim
