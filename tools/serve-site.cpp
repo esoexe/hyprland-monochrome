@@ -4,7 +4,7 @@
 //  Serves `site/` on 0.0.0.0:8080 (or --port <N> / PORT env) with:
 //    • Host/Origin-agnostic routing for live cloud/browser iframe previews
 //    • Virtual mounts for `/wallpapers/*`, `/media/*` (`docs/*`), and
-//      `/startpage.html` (`.config/browser/opencode/startpage.html`) so no
+//      `/startpage.html` (`site/newtab.html`) so no
 //      large binary assets are duplicated in git
 //    • Full RFC-7233 `Range: bytes=...` (`206 Partial Content`) support for
 //      instant HTML5 `<video>` playback & scrubbing
@@ -111,8 +111,8 @@ fs::path resolve_target(const fs::path& repo, const std::string& raw_uri) {
     if (uri == "/" || uri == "/index.html") {
         return site_dir / "index.html";
     }
-    if (uri == "/startpage.html") {
-        return repo / ".config/browser/opencode/startpage.html";
+    if (uri == "/startpage.html" || uri == "/newtab.html") {
+        return site_dir / "newtab.html";
     }
     if (uri == "/preview.html") {
         return docs_dir / "preview.html";

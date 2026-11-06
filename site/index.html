@@ -1,639 +1,758 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>hyprland-monochrome — Universal Monochrome Hyprland Desktop</title>
-  <meta name="description" content="A 100% C++20 + Lua + Bash monochrome Hyprland 0.56 desktop that runs on any PC, opens any app, and ships an OpenCode browser theme.">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>hyprland-monochrome : Precision Monochrome Wayland Desktop</title>
+  <meta name="description" content="A minimalist monochrome Hyprland 0.56 desktop environment engineered in C++20 and Lua. Adaptive GPU profiles, GLSL shaders, cohesive browser chrome, and 172 ergonomic keybinds." />
+  <meta name="theme-color" content="#060606" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- 1px Scroll Luminance Progress -->
+  <div class="scroll-progress" id="scroll-progress"></div>
 
-<div class="scroll-progress" id="scroll-progress"></div>
+  <!-- Sticky Waybar Navigation -->
+  <header class="site-nav-wrap">
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#top" class="nav-brand">
+        <span class="brand-mark-svg" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M6 1L11 6L6 11L1 6Z" />
+          </svg>
+        </span>
+        <span>hyprland-monochrome</span>
+        <span style="color:var(--ink-muted);font-weight:500">v5.2</span>
+      </a>
 
-<!-- ═══════════════════════ STICKY WAYBAR NAVIGATION ═══════════════════════ -->
-<div class="site-nav-wrap">
-  <header class="site-nav">
-    <a href="#top" class="nav-brand">
-      <span class="brand-diamond">◆</span>
-      <span>hyprland-monochrome</span>
-    </a>
+      <div class="nav-links" id="nav-links">
+        <a href="#simulator" class="nav-link active">Simulator</a>
+        <a href="#browser" class="nav-link">Browser</a>
+        <a href="#hardware" class="nav-link">Hardware</a>
+        <a href="#apps" class="nav-link">Compatibility</a>
+        <a href="#wallpapers" class="nav-link">Wallpapers</a>
+        <a href="#footage" class="nav-link">Footage</a>
+        <a href="#keybinds" class="nav-link">Keybinds</a>
+      </div>
 
-    <nav class="nav-links" id="nav-links">
-      <a class="nav-link active" href="#live-os">01 Live OS</a>
-      <a class="nav-link" href="#opencode">02 OpenCode</a>
-      <a class="nav-link" href="#any-pc">03 Any PC</a>
-      <a class="nav-link" href="#any-app">04 Any App</a>
-      <a class="nav-link" href="#studio">05 Wallpapers</a>
-      <a class="nav-link" href="#session-video">06 Video</a>
-      <a class="nav-link" href="#keybinds">07 Keybinds</a>
+      <div class="nav-actions">
+        <span class="fps-pill" id="fps-meter">60 FPS</span>
+        <button type="button" class="cmdk-btn" id="open-cmdk" title="Open Command Palette (Ctrl+K)">
+          <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="7" cy="7" r="4.5" />
+            <path d="M10.5 10.5L14 14" stroke-linecap="round" />
+          </svg>
+          <span>Search</span>
+          <kbd style="color:var(--ink-muted)">Ctrl K</kbd>
+        </button>
+        <a href="https://github.com/esoexe/hyprland-monochrome" target="_blank" rel="noopener" class="nav-cta">
+          <span>GitHub</span>
+          <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4.5 11.5L11.5 4.5M6 4.5H11.5V10" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
     </nav>
-
-    <div class="nav-actions">
-      <span class="fps-pill" id="fps-badge">60 FPS · 0-fork</span>
-      <button type="button" class="cmdk-btn" id="open-cmdk" title="Open Command Palette (Ctrl+K / ⌘K)">
-        <span>⌘K</span>
-        <span style="color:var(--ink-muted)">Palette</span>
-      </button>
-      <a class="nav-cta" href="https://github.com/esoexe/hyprland-monochrome" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
   </header>
-</div>
 
-<!-- ═════════════════════════════ HERO STAGE ═══════════════════════════════ -->
-<section class="hero" id="top">
-  <canvas id="hero-canvas"></canvas>
-  <div class="hero-vignette"></div>
+  <!-- HERO: Live Interactive 60 FPS Generative Monochrome Field -->
+  <section class="hero" id="top">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-vignette" aria-hidden="true"></div>
 
-  <div class="hero-inner">
-    <div class="hero-eyebrow">
-      <span class="pulse-dot"></span>
-      <span>v5.2.0 · Hyprland 0.56 Lua · 100% Native C++20 Toolchain · Zero Python</span>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <span class="pulse-dot"></span>
+        <span>v5.2.0 Release  /  Hyprland 0.56 Lua Engine  /  C++20 Native Utilities</span>
+      </div>
+
+      <h1 class="hero-title">
+        Pure monochrome.<br />
+        <span class="silver">Engineered for focus.</span>
+      </h1>
+
+      <p class="hero-sub">
+        A cohesive Wayland desktop environment built around strict luminance hierarchy,
+        spring-damped motion, automatic GPU and display profiling, universal application
+        routing, and a unified monochrome browser workspace.
+      </p>
+
+      <div class="install-box" role="region" aria-label="One-line install command">
+        <span class="install-prompt">$</span>
+        <code class="install-cmd" id="install-cmd">git clone https://github.com/esoexe/hyprland-monochrome.git &amp;&amp; cd hyprland-monochrome &amp;&amp; ./install.sh</code>
+        <button type="button" class="copy-btn" id="copy-install">Copy</button>
+      </div>
+
+      <div class="hero-ctas">
+        <a href="#simulator" class="btn-primary">
+          <svg class="ico" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M4.5 3.2L12.5 8L4.5 12.8V3.2Z" />
+          </svg>
+          <span>Launch Live Desktop</span>
+        </a>
+        <a href="https://github.com/esoexe/hyprland-monochrome/releases/tag/v5.2.0" target="_blank" rel="noopener" class="btn-ghost">
+          <span>Release v5.2.0</span>
+        </a>
+        <a href="newtab.html" target="_blank" rel="noopener" class="btn-ghost">
+          <span>Open Browser Startpage</span>
+          <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M4.5 11.5L11.5 4.5M6 4.5H11.5V10" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="canvas-switcher" role="group" aria-label="Generative background field">
+        <button type="button" class="c-mode active" data-cmode="flow">Flow Field</button>
+        <button type="button" class="c-mode" data-cmode="topo">Contour</button>
+        <button type="button" class="c-mode" data-cmode="grid">Dither Grid</button>
+        <button type="button" class="c-mode" data-cmode="off">Minimal</button>
+      </div>
+
+      <div class="hero-metrics">
+        <div class="metric-cell">
+          <div class="metric-val" data-count="172">172</div>
+          <div class="metric-lbl">Synced Keybinds</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-val">C++20</div>
+          <div class="metric-lbl">Native Core Utilities</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-val" data-count="20">20</div>
+          <div class="metric-lbl">Procedural 1080p Wallpapers</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-val" data-count="5">5</div>
+          <div class="metric-lbl">Live GLSL Screen Shaders</div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <h1 class="hero-title">
-      Pure Luminance.<br>
-      <span class="silver">Runs on Any PC. Opens Any App.</span>
-    </h1>
-
-    <p class="hero-sub">
-      An obsessive monochrome Wayland desktop engineered with physical spring choreography,
-      continuous G2 squircles, 5 real-time GLSL screen shaders, automatic NVIDIA / Optimus / VM
-      hardware adaptation, universal Linux &amp; Windows app launching, and an
-      <b>OpenCode</b> browser design system.
+  <!-- 01. INTERACTIVE LIVE HYPRLAND 0.56 DESKTOP SIMULATOR -->
+  <section class="section reveal" id="simulator">
+    <div class="sec-kicker">01 / Interactive Compositor Preview</div>
+    <h2 class="sec-title">Test the compositor in your browser.</h2>
+    <p class="sec-desc">
+      Switch workspaces with spring-physics transitions, preview real-time GLSL screen shaders,
+      adjust compositor motion curves, toggle the dropdown Quake terminal, or run commands directly
+      inside the interactive Kitty session.
     </p>
 
-    <div class="install-box" id="hero-install-box">
-      <span class="install-prompt">$</span>
-      <code class="install-cmd" id="install-cmd-text">git clone https://github.com/esoexe/hyprland-monochrome.git &amp;&amp; cd hyprland-monochrome &amp;&amp; ./install.sh</code>
-      <button type="button" class="copy-btn" id="copy-install-btn">Copy</button>
-    </div>
-
-    <div class="hero-ctas">
-      <a href="#live-os" class="btn-primary">▶ Launch Interactive Desktop</a>
-      <a href="startpage.html" target="_blank" rel="noopener" class="btn-ghost">OpenCode Startpage ↗</a>
-      <a href="https://github.com/esoexe/hyprland-monochrome/releases/tag/v5.2.0" target="_blank" rel="noopener" class="btn-ghost">Download v5.2.0 (.tar.gz)</a>
-    </div>
-
-    <div class="hero-metrics">
-      <div class="metric-cell">
-        <div class="metric-val" data-count="192" data-suffix="/192">192/192</div>
-        <div class="metric-lbl">Automated Smoke Checks</div>
+    <div class="sim-toolbar">
+      <div class="sim-group" role="group" aria-label="Workspaces">
+        <span class="sim-group-lbl">WS</span>
+        <button type="button" class="sbtn on" data-ws="0">1 Code</button>
+        <button type="button" class="sbtn" data-ws="1">2 Browser</button>
+        <button type="button" class="sbtn" data-ws="2">3 Launcher</button>
+        <button type="button" class="sbtn" data-ws="3">4 System</button>
       </div>
-      <div class="metric-cell">
-        <div class="metric-val">&lt;0.2ms</div>
-        <div class="metric-lbl">Sysfs GPU &amp; VM Auto-Probe</div>
+
+      <div class="sim-group" role="group" aria-label="Motion preset">
+        <span class="sim-group-lbl">Motion</span>
+        <button type="button" class="sbtn on" data-motion="spring">Spring</button>
+        <button type="button" class="sbtn" data-motion="snappy">Snappy</button>
+        <button type="button" class="sbtn" data-motion="cinematic">Cinematic</button>
+        <button type="button" class="sbtn" data-motion="minimal">Minimal</button>
       </div>
-      <div class="metric-cell">
-        <div class="metric-val" data-count="20" data-suffix=" Masters">20 Masters</div>
-        <div class="metric-lbl">16K Static + 120fps Live GIFs</div>
+
+      <div class="sim-group" role="group" aria-label="GLSL Shader">
+        <span class="sim-group-lbl">Shader</span>
+        <button type="button" class="sbtn on" data-shader="off">Off</button>
+        <button type="button" class="sbtn" data-shader="noir">Noir</button>
+        <button type="button" class="sbtn" data-shader="grain">Film Grain</button>
+        <button type="button" class="sbtn" data-shader="crt">CRT</button>
+        <button type="button" class="sbtn" data-shader="eink">E-Ink</button>
+        <button type="button" class="sbtn" data-shader="oled">OLED</button>
       </div>
-      <div class="metric-cell">
-        <div class="metric-val" data-count="172" data-suffix=" Binds">172 Binds</div>
-        <div class="metric-lbl">5 Modal Chords + 1:1 Gestures</div>
-      </div>
-    </div>
 
-    <div class="canvas-switcher" aria-label="Hero background generative mode">
-      <button type="button" class="c-mode active" data-hmode="orrery">01 Celestial Orrery</button>
-      <button type="button" class="c-mode" data-hmode="singularity">02 Relativistic Ring</button>
-      <button type="button" class="c-mode" data-hmode="lissajous">03 P4 Lissajous</button>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ 01. INTERACTIVE LIVE DESKTOP OS ════════════════════ -->
-<section class="section reveal" id="live-os">
-  <div class="sec-kicker">01 // Interactive Wayland Compositor</div>
-  <h2 class="sec-title">Test-drive the desktop right in your browser.</h2>
-  <p class="sec-desc">
-    Switch workspaces <b>1–4</b> with physical spring parallax, type live commands inside <b>Kitty</b>,
-    browse inside the <b>OpenCode</b> tabstrip, watch 8-core <b>btop++</b> telemetry, or toggle
-    <b>GLSL ES 3.00 screen shaders</b>, <b>Liquid Acrylic glass</b>, and <b>Turbo 0ms mode</b>.
-  </p>
-
-  <div class="sim-toolbar">
-    <div class="sim-group">
-      <span class="sim-group-lbl">Workspace</span>
-      <button type="button" class="sbtn on" data-ws="0">1 · Code + Kitty</button>
-      <button type="button" class="sbtn" data-ws="1">2 · OpenCode Browser</button>
-      <button type="button" class="sbtn" data-ws="2">3 · Universal Apps</button>
-      <button type="button" class="sbtn" data-ws="3">4 · btop++ Studio</button>
-    </div>
-
-    <div class="sim-group">
-      <span class="sim-group-lbl">Physics</span>
-      <button type="button" class="sbtn on" data-mot="fluid">Fluid</button>
-      <button type="button" class="sbtn" data-mot="snappy">Snappy</button>
-      <button type="button" class="sbtn" data-mot="cinematic">Cinematic ✦</button>
-      <button type="button" class="sbtn" data-mot="minimal">0ms</button>
-    </div>
-
-    <div class="sim-group">
-      <span class="sim-group-lbl">Optics</span>
-      <button type="button" class="sbtn on" data-glass="kawase">Kawase</button>
-      <button type="button" class="sbtn" data-glass="xray">X-Ray</button>
-      <button type="button" class="sbtn" data-glass="acrylic">Acrylic</button>
-      <button type="button" class="sbtn" id="btn-turbo">⚡ Turbo</button>
-    </div>
-
-    <div class="sim-group">
-      <span class="sim-group-lbl">GLSL</span>
-      <button type="button" class="sbtn on" data-shader="off">Off</button>
-      <button type="button" class="sbtn" data-shader="noir">Noir</button>
-      <button type="button" class="sbtn" data-shader="grain">35mm</button>
-      <button type="button" class="sbtn" data-shader="crt">CRT</button>
-      <button type="button" class="sbtn" data-shader="eink">E-Ink</button>
-      <button type="button" class="sbtn" data-shader="oled">OLED</button>
-    </div>
-
-    <div class="sim-group">
-      <button type="button" class="sbtn" id="btn-zen">◌ Zen</button>
-      <button type="button" class="sbtn" id="btn-quake">◒ Quake Term</button>
-    </div>
-  </div>
-
-  <div class="os-stage" id="os-stage">
-    <img class="os-wallpaper" id="os-wallpaper" src="wallpapers/mono-11.jpg" alt="Active monochrome wallpaper">
-    <canvas class="os-grain-canvas" id="os-grain" width="320" height="180"></canvas>
-    <div class="os-crt-overlay"></div>
-
-    <!-- Simulated Waybar -->
-    <div class="os-waybar">
-      <div class="wb-left">
-        <span style="color:#fff;font-weight:800;margin-right:4px">◆</span>
-        <button type="button" class="wb-ws active" data-ws="0">1</button>
-        <button type="button" class="wb-ws" data-ws="1">2</button>
-        <button type="button" class="wb-ws" data-ws="2">3</button>
-        <button type="button" class="wb-ws" data-ws="3">4</button>
-        <span style="color:var(--ink-muted);margin-left:8px" id="wb-title">nvim · modules/hardware.lua</span>
-      </div>
-      <div class="wb-center" style="color:var(--ink-2)">
-        <span>♫ Brian Eno — An Ending (Ascent)</span>
-      </div>
-      <div class="wb-right">
-        <span class="wb-pill" id="wb-turbo-pill" style="display:none">⚡ TURBO</span>
-        <span id="wb-spark" style="color:#e6e6e6">▁▂▄▆▃▂ 11%</span>
-        <span class="wb-pill" id="wb-pomo" title="Click to toggle Pomodoro timer">◎ 24:59</span>
-        <span id="wb-clock" style="color:#fff;font-weight:700">21:42</span>
+      <div class="sim-group" role="group" aria-label="Glass & Modes">
+        <button type="button" class="sbtn" id="sim-glass">Glass: Frosted</button>
+        <button type="button" class="sbtn" id="sim-quake">
+          <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M3 5L6.5 8L3 11M8 11H13" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>Quake</span>
+        </button>
+        <button type="button" class="sbtn" id="sim-turbo">
+          <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M9 1.8L3.5 9H8L7 14.2L12.5 7H8L9 1.8Z" stroke-linejoin="round" />
+          </svg>
+          <span>Direct Scanout</span>
+        </button>
+        <button type="button" class="sbtn" id="sim-zen">
+          <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="8" cy="8" r="5.5" />
+            <circle cx="8" cy="8" r="1.8" fill="currentColor" />
+          </svg>
+          <span>Zen</span>
+        </button>
       </div>
     </div>
 
-    <!-- Quake Dropdown Overlay -->
-    <div class="os-quake" id="os-quake">
-      <div class="win-bar">
-        <span style="color:#fff;font-weight:700">◒ special:dropdown — kitty --class dropdown-term (Super + Shift + T)</span>
-        <button type="button" class="wtab" id="close-quake">Esc · Hide</button>
-      </div>
-      <div style="color:#d6d6d6;line-height:1.7">
-        <div><b style="color:#fff">❯</b> ~/.config/hypr/scripts/hardware.sh status</div>
-        <div>Chassis       : laptop (Hybrid Optimus)</div>
-        <div>GPU(s)        : Intel + NVIDIA  (AQ_FORCE_LINEAR_BLIT=0 · no_hardware_cursors=2)</div>
-        <div>Power profile : balanced  (squircle=4.0 · direct_scanout=2 · vfr=true)</div>
-        <div style="margin-top:8px;color:var(--ink-muted)">Tip: Use the interactive Kitty window on Workspace 1 to run commands live!</div>
-      </div>
-    </div>
+    <div class="os-stage" id="os-stage">
+      <img src="wallpapers/mono-11.jpg" alt="Active monochrome desktop wallpaper" class="os-wallpaper" id="os-wallpaper" />
+      <canvas class="os-grain-canvas" id="os-grain-canvas" width="240" height="150"></canvas>
+      <div class="os-crt-overlay"></div>
 
-    <!-- 4-Workspace Spring Parallax Track -->
-    <div class="os-track" id="os-track">
-
-      <!-- WS 1: Neovim Group Tabs + Interactive Live Kitty -->
-      <div class="os-ws-pane ws-split-2">
-        <div class="os-win focused">
-          <div class="win-bar">
-            <div class="win-tabs" id="nvim-tabs">
-              <button type="button" class="wtab active" data-code="hardware">1: hardware.lua</button>
-              <button type="button" class="wtab" data-code="animations">2: animations.lua</button>
-              <button type="button" class="wtab" data-code="openapp">3: open-app.sh</button>
-            </div>
-            <span>GROUP · Super+G</span>
-          </div>
-          <pre class="code-view" id="nvim-code-view">-- modules/hardware.lua — &lt;0.2ms zero-fork sysfs hardware probe
-hl.config({
-    xwayland = { enabled = true, force_zero_scaling = true },
-    cursor   = { no_hardware_cursors = M.is_vm and 1 or 2 },
-    opengl   = { nvidia_anti_flicker = true },
-})
-
-if M.has_nvidia then
-    hl.env("LIBVA_DRIVER_NAME", "nvidia")
-    hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
-    if M.is_hybrid then
-        hl.env("AQ_FORCE_LINEAR_BLIT", "0") -- Optimus external HDMI/DP fix
-    end
-elseif M.is_vm then
-    hl.env("WLR_RENDERER_ALLOW_SOFTWARE", "1")
-    hl.env("AQ_NO_MODIFIERS", "1")
-end</pre>
+      <!-- Simulated Waybar -->
+      <div class="os-waybar">
+        <div class="wb-left">
+          <span style="display:inline-flex;align-items:center;color:#fff;padding:0 4px">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor">
+              <path d="M6 1L11 6L6 11L1 6Z" />
+            </svg>
+          </span>
+          <button type="button" class="wb-ws active" data-ws="0">1</button>
+          <button type="button" class="wb-ws" data-ws="1">2</button>
+          <button type="button" class="wb-ws" data-ws="2">3</button>
+          <button type="button" class="wb-ws" data-ws="3">4</button>
+          <span style="color:#8d8888;margin-left:6px" id="wb-win-title">hyprland.conf.lua</span>
         </div>
-
-        <div class="os-win">
-          <div class="win-bar">
-            <span style="color:#fff">kitty --single-instance (&lt;3ms GPU glyph cache)</span>
-            <span>interactive shell</span>
-          </div>
-          <div class="kitty-out" id="kitty-out">
-            <div><b style="color:#fff">❯</b> doctor.sh</div>
-            <div style="color:#e8e8e8">✓ Lua config       12/12 modules · squircle=4.0</div>
-            <div style="color:#e8e8e8">✓ PC Hardware      AMD · Intel · NVIDIA · Optimus · VM ready</div>
-            <div style="color:#e8e8e8">✓ OpenCode browser Firefox CSS + Chromium MV3 + Startpage</div>
-            <div style="color:#e8e8e8">✓ Any App engine   Wayland · X11 · Flatpak · AppImage · Wine</div>
-            <div style="color:var(--ink-muted);margin-top:4px">Try typing: <b style="color:#fff">help</b>, <b style="color:#fff">fastfetch</b>, <b style="color:#fff">hw</b>, <b style="color:#fff">calc 3840*2160</b>, <b style="color:#fff">shader crt</b>, <b style="color:#fff">zen</b></div>
-          </div>
-          <form class="kitty-form" id="kitty-form" autocomplete="off">
-            <span style="color:#fff;font-weight:700">❯</span>
-            <input type="text" class="kitty-input" id="kitty-input" placeholder="Type a command (help, fastfetch, hw, calc 16*9, clear)…">
-          </form>
+        <div class="wb-center">
+          <span style="color:#fff;font-weight:700" id="wb-clock">14:32:08</span>
+        </div>
+        <div class="wb-right">
+          <span class="wb-pill" id="wb-shader-pill" title="Click to cycle GLSL shader">SHADER: OFF</span>
+          <span class="wb-spark-wrap">
+            <span>CPU</span>
+            <svg id="wb-spark-svg" width="38" height="12" viewBox="0 0 38 12" aria-hidden="true">
+              <rect x="1" y="7" width="4" height="5" fill="#eaeaea" rx="1" />
+              <rect x="7" y="5" width="4" height="7" fill="#eaeaea" rx="1" />
+              <rect x="13" y="3" width="4" height="9" fill="#eaeaea" rx="1" />
+              <rect x="19" y="6" width="4" height="6" fill="#eaeaea" rx="1" />
+              <rect x="25" y="4" width="4" height="8" fill="#eaeaea" rx="1" />
+              <rect x="31" y="2" width="4" height="10" fill="#eaeaea" rx="1" />
+            </svg>
+          </span>
+          <span style="color:#aaa">MEM 2.4G</span>
+          <span style="color:#fff">BAT 96%</span>
         </div>
       </div>
 
-      <!-- WS 2: Live OpenCode Browser -->
-      <div class="os-ws-pane" style="grid-template-columns:1fr">
-        <div class="os-win focused" style="padding:0;background:#131010;border-color:#646262;border-radius:6px">
-          <div class="oc-tabstrip">
-            <span class="oc-tab active">opencode // newtab</span>
-            <span class="oc-tab">github.com/esoexe/hyprland-monochrome</span>
-            <span class="oc-tab">wiki.hypr.land</span>
-            <span style="margin-left:auto;color:#7f7a7a;padding-right:8px">Super + Alt + B</span>
-          </div>
-          <div class="oc-urlbar">
-            <span style="color:#7f7a7a">← → ↻</span>
-            <span class="oc-url-pill">file://~/.config/browser/opencode/startpage.html</span>
-            <span style="padding:2px 8px;background:#ffffff;color:#131010;border-radius:3px;font-weight:700;font-size:10.5px" id="sim-oc-mode">INSERT</span>
-          </div>
-          <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;flex:1;justify-content:center;max-width:860px;width:100%;margin:0 auto">
-            <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <div style="font-size:30px;font-weight:800;color:#fdfcfc"><span id="sim-oc-clock">21:42:09</span><span style="display:inline-block;width:11px;height:24px;background:#fff;margin-left:6px;vertical-align:-3px"></span></div>
-              <span style="color:#7f7a7a;font-size:11.5px">opencode-dark · 1px grid · 4px radius</span>
+      <!-- Quake Dropdown Terminal -->
+      <div class="os-quake" id="os-quake">
+        <div class="win-bar">
+          <span>quake-kitty (scratchpad / F12)</span>
+          <span style="color:#fff">60fps spring dropdown</span>
+        </div>
+        <div style="color:#cfcfcf;line-height:1.7">
+          <div><span style="color:#fff;font-weight:700">mono@arch</span> <span style="color:#777">~</span> &gt; hyprctl version</div>
+          <div style="color:#9d9898">Hyprland 0.56.0 built from branch main (Lua config engine active)</div>
+          <div><span style="color:#fff;font-weight:700">mono@arch</span> <span style="color:#777">~</span> &gt; mono-pc-detect --status</div>
+          <div style="color:#9d9898">GPU: hybrid (amd + nvidia)  |  AqDRM: card1:card0  |  Scale: auto  |  CursorHW: 2</div>
+        </div>
+      </div>
+
+      <!-- 4-Workspace Sliding Track -->
+      <div class="os-track" id="os-track">
+        <!-- WS 1: Code + Interactive Kitty -->
+        <div class="os-ws-pane ws-split-2">
+          <div class="os-win focused">
+            <div class="win-bar">
+              <span>nvim : ~/.config/hypr/</span>
+              <div class="win-tabs">
+                <button type="button" class="wtab active" data-code="lua">hyprland.conf.lua</button>
+                <button type="button" class="wtab" data-code="pc">mono-pc-detect</button>
+                <button type="button" class="wtab" data-code="glsl">noir.glsl</button>
+              </div>
             </div>
-            <form id="sim-oc-form" style="display:flex;gap:10px;padding:11px 14px;background:#201d1d;border:1px solid #fdfcfc;border-radius:4px">
-              <b style="color:#fff">&gt;</b>
-              <input id="sim-oc-input" type="text" style="flex:1;background:transparent;border:0;outline:none;color:#fdfcfc;font-family:var(--mono);font-size:13px" placeholder="Try '= 15360 * 8640' or '/gh hyprland' and press Enter…">
-              <span id="sim-oc-out" style="color:#ffffff;font-weight:700;font-size:12px">READY</span>
+            <pre class="code-view" id="sim-code-view"></pre>
+          </div>
+
+          <div class="os-win">
+            <div class="win-bar">
+              <span>kitty : zsh + starship (interactive)</span>
+              <span>try: help, calc, shader, fastfetch</span>
+            </div>
+            <div class="kitty-out" id="kitty-out">
+              <div><span style="color:#fff;font-weight:700">hyprland-monochrome v5.2.0</span> <span style="color:#7f7a7a">: interactive shell</span></div>
+              <div style="color:#9e9a9a">Type <span style="color:#fff">help</span>, <span style="color:#fff">fastfetch</span>, <span style="color:#fff">calc 2^16</span>, <span style="color:#fff">shader crt</span>, or <span style="color:#fff">ws 2</span>.</div>
+            </div>
+            <form class="kitty-form" id="kitty-form" autocomplete="off">
+              <span style="color:#fff;font-weight:700">&gt;</span>
+              <input type="text" class="kitty-input" id="kitty-input" placeholder="Enter command (e.g. calc (1920*1080)/1e6)..." aria-label="Interactive terminal input" />
             </form>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #3d3838;border-left:1px solid #3d3838">
-              <div style="padding:12px;background:#1b1818;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838"><b style="color:#fdfcfc">[1] GitHub</b><div style="color:#7f7a7a;font-size:11px">esoexe/hyprland-monochrome</div></div>
-              <div style="padding:12px;background:#1b1818;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838"><b style="color:#fdfcfc">[2] OpenCode</b><div style="color:#7f7a7a;font-size:11px">opencode.ai/docs</div></div>
-              <div style="padding:12px;background:#1b1818;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838"><b style="color:#fdfcfc">[3] ArchWiki</b><div style="color:#7f7a7a;font-size:11px">wiki.archlinux.org</div></div>
-              <div style="padding:12px;background:#1b1818;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838"><b style="color:#fdfcfc">[4] Localhost</b><div style="color:#7f7a7a;font-size:11px">127.0.0.1:3000</div></div>
+          </div>
+        </div>
+
+        <!-- WS 2: Monochrome Browser Workspace -->
+        <div class="os-ws-pane">
+          <div class="os-win focused" style="background:#131010;border-color:#3d3838;border-radius:4px">
+            <div class="win-bar" style="border-color:#3d3838">
+              <span style="color:#fdfcfc">monochrome // newtab : structural 1px grid browser</span>
+              <span style="color:#7f7a7a">Firefox  /  Zen  /  Chromium  /  Brave  /  Qutebrowser</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:680px;margin:0 auto;width:100%;gap:16px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #3d3838;padding-bottom:10px">
+                <span style="font-size:20px;font-weight:800;color:#fdfcfc">monochrome // workspace</span>
+                <span style="color:#7f7a7a;font-size:12px">4px radius  /  #131010 canvas  /  1px rules</span>
+              </div>
+              <div style="display:flex;gap:8px;padding:10px 14px;background:#201d1d;border:1px solid #646262;border-radius:4px">
+                <span style="color:#7f7a7a">/</span>
+                <span style="color:#fdfcfc">search web, bangs (!gh, !aw, !aur), or direct URL...</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #3d3838;border-left:1px solid #3d3838">
+                <div style="padding:12px;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838;background:#1b1818"><div style="color:#7f7a7a;font-size:10px">[1]</div><div style="color:#fdfcfc;font-weight:700;margin-top:2px">GitHub</div></div>
+                <div style="padding:12px;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838;background:#1b1818"><div style="color:#7f7a7a;font-size:10px">[2]</div><div style="color:#fdfcfc;font-weight:700;margin-top:2px">Hyprland Wiki</div></div>
+                <div style="padding:12px;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838;background:#1b1818"><div style="color:#7f7a7a;font-size:10px">[3]</div><div style="color:#fdfcfc;font-weight:700;margin-top:2px">ArchWiki</div></div>
+                <div style="padding:12px;border-right:1px solid #3d3838;border-bottom:1px solid #3d3838;background:#1b1818"><div style="color:#7f7a7a;font-size:10px">[4]</div><div style="color:#fdfcfc;font-weight:700;margin-top:2px">Localhost</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WS 3: Universal App Launcher & Calculator -->
+        <div class="os-ws-pane ws-split-2">
+          <div class="os-win focused">
+            <div class="win-bar">
+              <span>rofi-wayland + mono-open</span>
+              <span>Wayland  /  X11  /  Flatpak  /  AppImage</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+              <div class="app-row selected">
+                <span>1. Kitty Terminal</span>
+                <span class="app-row-tag">native wayland</span>
+              </div>
+              <div class="app-row">
+                <span>2. Zen Browser</span>
+                <span class="app-row-tag">ozone / wayland</span>
+              </div>
+              <div class="app-row">
+                <span>3. JetBrains Fleet / IDEA</span>
+                <span class="app-row-tag">java awt fix</span>
+              </div>
+              <div class="app-row">
+                <span>4. Obsidian.AppImage</span>
+                <span class="app-row-tag">fuse / extract-run</span>
+              </div>
+              <div class="app-row">
+                <span>5. Steam / Proton</span>
+                <span class="app-row-tag">xwayland + tearing</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="os-win">
+            <div class="win-bar">
+              <span>mono-calc (C++20 expression engine)</span>
+              <span>Super + =</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+              <input type="text" id="ws-calc-in" value="sqrt(1920^2 + 1080^2) / 27" style="padding:9px 12px;background:#1b1818;border:1px solid #3d3838;border-radius:6px;color:#fff;font-family:var(--mono);font-size:12.5px" aria-label="Calculator expression" />
+              <div style="padding:12px;background:rgba(255,255,255,0.04);border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+                <span style="color:#888">Result (PPI)</span>
+                <span id="ws-calc-out" style="font-size:18px;font-weight:800;color:#fff">81.59</span>
+              </div>
+              <div style="color:#888;font-size:11px;line-height:1.5">
+                Compiled native C++20 recursive-descent parser supporting <code>sin</code>, <code>cos</code>, <code>sqrt</code>, <code>log</code>, <code>pi</code>, and exponentiation with sub-millisecond latency.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WS 4: System Telemetry & Recorder -->
+        <div class="os-ws-pane ws-split-2">
+          <div class="os-win focused">
+            <div class="win-bar">
+              <span>btop++ (monochrome luminance graph)</span>
+              <span>nvtop + pipewire</span>
+            </div>
+            <div id="sim-btop-bars" style="display:flex;flex-direction:column;gap:9px;margin-top:8px"></div>
+          </div>
+
+          <div class="os-win">
+            <div class="win-bar">
+              <span>mono-record (screen capture studio)</span>
+              <span>Print  /  Super+Print</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:9px;color:#cfcfcf;margin-top:4px">
+              <div style="padding:9px 11px;border:1px solid rgba(255,255,255,0.14);border-radius:7px">
+                <div style="color:#fff;font-weight:700">1. gpu-screen-recorder (NVENC / VAAPI)</div>
+                <div style="color:#888;font-size:11px">Zero-copy 60 FPS capture + 30s instant replay buffer</div>
+              </div>
+              <div style="padding:9px 11px;border:1px solid rgba(255,255,255,0.08);border-radius:7px">
+                <div style="color:#ddd">2. wf-recorder + slurp</div>
+                <div style="color:#888;font-size:11px">Region or full-output MP4 and GIF capture</div>
+              </div>
+              <div style="padding:9px 11px;border:1px solid rgba(255,255,255,0.08);border-radius:7px">
+                <div style="color:#ddd">3. grim + swappy</div>
+                <div style="color:#888;font-size:11px">Lossless PNG capture with instant vector annotation</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02. MONOCHROME BROWSER SUITE -->
+  <section class="section reveal" id="browser">
+    <div class="sec-kicker">02 / Cohesive Browser Architecture</div>
+    <h2 class="sec-title">The desktop stops jarring when you open a browser.</h2>
+    <p class="sec-desc">
+      Every supported browser inherits the exact monochrome structural grid of the compositor:
+      100% monospace chrome, crisp <code>1px</code> structural dividers, restrained <code>4px</code>
+      corner geometry, and luminance-only visual hierarchy.
+    </p>
+
+    <div class="oc-showcase">
+      <div class="oc-browser-frame">
+        <div class="oc-tabstrip">
+          <div class="oc-tab active" data-btab="start">monochrome // newtab</div>
+          <div class="oc-tab" data-btab="firefox">userChrome.css</div>
+          <div class="oc-tab" data-btab="ext">MV3 Extension</div>
+          <div class="oc-tab" data-btab="qute">qutebrowser</div>
+        </div>
+        <div class="oc-urlbar">
+          <span class="oc-nav-icons" aria-hidden="true">
+            <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M10 3.5L5.5 8L10 12.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M6 3.5L10.5 8L6 12.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <svg class="ico-sm" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M12.5 8A4.5 4.5 0 1 1 11.2 4.8M12.5 3V5.5H10" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <div class="oc-url-pill" id="oc-url-pill">file://~/.config/browser/monochrome/startpage.html</div>
+          <a href="newtab.html" target="_blank" rel="noopener" style="color:#fdfcfc;font-size:11px;border:1px solid #3d3838;padding:3px 9px;border-radius:4px">Launch</a>
+        </div>
+        <div class="oc-body" id="oc-body-view">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <div style="font-size:18px;font-weight:800;color:#fdfcfc">monochrome // newtab</div>
+            <div style="font-size:11.5px;color:#7f7a7a">bangs: !g  !gh  !aw  !aur  !yt</div>
+          </div>
+          <form id="oc-demo-search" style="display:flex;gap:8px">
+            <input type="text" id="oc-demo-input" placeholder="/ Search web or type !gh esoexe/hyprland-monochrome..." style="flex:1;padding:10px 12px;background:#201d1d;border:1px solid #3d3838;border-radius:4px;color:#fdfcfc;font-family:var(--mono);font-size:12.5px;outline:none" aria-label="Demo startpage search" />
+            <button type="submit" style="padding:10px 16px;background:#ffffff;color:#0a0909;border:0;border-radius:4px;font-family:var(--mono);font-weight:700;font-size:12px;cursor:pointer">GO</button>
+          </form>
+          <div class="oc-swatches" title="Click any token to copy its hex value">
+            <div class="oc-swatch" data-hex="#131010">
+              <div class="oc-chip" style="background:#131010"></div>
+              <div style="font-size:11px;color:#fdfcfc;font-weight:700">#131010</div>
+              <div style="font-size:10px;color:#7f7a7a">surface</div>
+            </div>
+            <div class="oc-swatch" data-hex="#201D1D">
+              <div class="oc-chip" style="background:#201D1D"></div>
+              <div style="font-size:11px;color:#fdfcfc;font-weight:700">#201D1D</div>
+              <div style="font-size:10px;color:#7f7a7a">elevated</div>
+            </div>
+            <div class="oc-swatch" data-hex="#3D3838">
+              <div class="oc-chip" style="background:#3D3838"></div>
+              <div style="font-size:11px;color:#fdfcfc;font-weight:700">#3D3838</div>
+              <div style="font-size:10px;color:#7f7a7a">1px border</div>
+            </div>
+            <div class="oc-swatch" data-hex="#FDFCFC">
+              <div class="oc-chip" style="background:#FDFCFC"></div>
+              <div style="font-size:11px;color:#fdfcfc;font-weight:700">#FDFCFC</div>
+              <div style="font-size:10px;color:#7f7a7a">ink-primary</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- WS 3: Open Any App & Monochrome Viewers -->
-      <div class="os-ws-pane ws-split-2">
-        <div class="os-win focused">
-          <div class="win-bar">
-            <span style="color:#fff">open-app.sh picker (Super + Shift + O)</span>
-            <span>Wayland · X11 · Flatpak · AppImage · Wine</span>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:7px;font-size:11.5px">
-            <div style="padding:7px 10px;background:#eaeaea;color:#080808;border-radius:6px;font-weight:700">󰀻  AppImage · Obsidian-1.7.7.AppImage  (--appimage-extract-and-run auto-ready)</div>
-            <div style="padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:6px">󰏖  Flatpak  · com.spotify.Client  (XDG_DATA_DIRS auto-discovered)</div>
-            <div style="padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:6px">☕  Java IDE · IntelliJ IDEA Ultimate  (_JAVA_AWT_WM_NONEREPARENTING=1)</div>
-            <div style="padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:6px">󰍲  Windows  · FLStudio64.exe  (umu-run / Wine / Bottles routed)</div>
-            <div style="padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:6px">󰈦  PDF Doc  · ~/Documents/architecture.pdf  → zathura (monochrome recolor)</div>
-            <div style="padding:7px 10px;background:rgba(255,255,255,0.05);border-radius:6px">󰕧  Media    · ~/Videos/demo-1080p.mp4  → mpv (gpu-next · hwdec=auto-safe)</div>
-          </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="spot-card" style="padding:20px;border-radius:8px">
+          <div class="mono" style="font-size:12px;color:var(--pure);font-weight:700">Firefox, Zen, LibreWolf, Floorp</div>
+          <p style="font-size:13.5px;color:var(--ink-2);margin-top:6px">
+            <code>mono-browser-theme --apply</code> discovers active profiles via <code>profiles.ini</code> and installs <code>userChrome.css</code>, <code>userContent.css</code>, and Wayland hardware acceleration defaults cleanly and non-destructively.
+          </p>
         </div>
-        <div class="os-win">
-          <div class="win-bar">
-            <span style="color:#fff">zathura · monochrome PDF reader (Ctrl+R)</span>
-            <span>#0e0e0e / #f2eded</span>
-          </div>
-          <div style="padding:14px;background:#0e0e0e;border:1px solid #2c2c2c;border-radius:7px;flex:1;display:flex;flex-direction:column;justify-content:space-between">
-            <div>
-              <div style="font-size:14px;font-weight:700;color:#f2eded;margin-bottom:8px">§ 4.2 Continuous G2 Squircle Optics</div>
-              <p style="color:#b8b2b2;font-size:11.5px;line-height:1.65">
-                Every window, menu, and notification layer shares a unified greyscale ramp
-                across GTK3/4, Qt5/6, Kitty, Neovim, Zathura, imv, mpv, and Rofi — eliminating
-                chromatic eye strain during extended engineering sessions.
-              </p>
-            </div>
-            <div style="display:flex;justify-content:space-between;color:#7f7a7a;font-size:10.5px;border-top:1px solid #262626;padding-top:8px">
-              <span>architecture.pdf</span>
-              <span>[14 / 42] · 100%</span>
-            </div>
-          </div>
+        <div class="spot-card" style="padding:20px;border-radius:8px">
+          <div class="mono" style="font-size:12px;color:var(--pure);font-weight:700">Chromium, Brave, Vivaldi, Ungoogled</div>
+          <p style="font-size:13.5px;color:var(--ink-2);margin-top:6px">
+            Ships a Manifest V3 monochrome theme and new-tab extension alongside managed dark-scheme policy files and <code>chromium-flags.conf</code> Wayland flags.
+          </p>
+        </div>
+        <div class="spot-card" style="padding:20px;border-radius:8px">
+          <div class="mono" style="font-size:12px;color:var(--pure);font-weight:700">Qutebrowser &amp; Terminal Web</div>
+          <p style="font-size:13.5px;color:var(--ink-2);margin-top:6px">
+            Pre-configured keyboard-driven <code>qutebrowser</code> status bar, completion menu, hint labels, and dark webpage rendering matched to the compositor palette.
+          </p>
         </div>
       </div>
+    </div>
+  </section>
 
-      <!-- WS 4: Live Animated btop++ Studio -->
-      <div class="os-ws-pane" style="grid-template-columns:1fr">
-        <div class="os-win focused">
-          <div class="win-bar">
-            <span style="color:#fff">▣ btop++ — mono.theme · Live 8-Core Telemetry</span>
-            <span>Super + Shift + B</span>
-          </div>
-          <div id="btop-cores" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px 20px;margin-bottom:14px"></div>
-          <div style="border-top:1px solid var(--line);padding-top:10px;color:#bdbdbd;font-size:11.5px;line-height:1.7">
-            <div style="color:var(--ink-muted)">PID     USER     PROGRAM                          THREADS    CPU%     MEM</div>
-            <div style="color:#fff">1042    esoexe   Hyprland (Lua 0.56 · squircle)        14     1.8%    148M</div>
-            <div>1190    esoexe   kitty --single-instance                6     0.4%     62M</div>
-            <div>1244    esoexe   waybar (0-fork sysgraph.sh)            4     0.1%     38M</div>
-            <div>1310    esoexe   awww-daemon (120fps bezier)            4     0.2%     44M</div>
+  <!-- 03. HARDWARE & DISTRO CONFIGURATOR -->
+  <section class="section reveal" id="hardware">
+    <div class="sec-kicker">03 / Hardware &amp; Distribution Matrix</div>
+    <h2 class="sec-title">Adaptive configuration for every machine.</h2>
+    <p class="sec-desc">
+      <code>mono-pc-detect</code> inspects PCI display class codes, DRM connectors, battery state,
+      chassis DMI, and virtualized hypervisors on startup to generate hardware-matched Hyprland
+      and Aquamarine overrides automatically.
+    </p>
+
+    <div class="pc-lab">
+      <div class="spot-card pc-selectors">
+        <div>
+          <div class="mono" style="font-size:11.5px;color:var(--ink-muted);margin-bottom:8px">1. SELECT GPU ARCHITECTURE</div>
+          <div class="chip-grid" id="gpu-chips">
+            <button type="button" class="hw-chip active" data-gpu="hybrid">Hybrid Laptop (iGPU + NVIDIA)</button>
+            <button type="button" class="hw-chip" data-gpu="nvidia">NVIDIA RTX / GTX</button>
+            <button type="button" class="hw-chip" data-gpu="amd">AMD Radeon (RDNA / Vega)</button>
+            <button type="button" class="hw-chip" data-gpu="intel">Intel Iris / Arc</button>
+            <button type="button" class="hw-chip" data-gpu="vm">VM (QEMU / VirtIO / VMware)</button>
           </div>
         </div>
-      </div>
 
-    </div>
-  </div>
-</section>
+        <div>
+          <div class="mono" style="font-size:11.5px;color:var(--ink-muted);margin-bottom:8px">2. SELECT CHASSIS / DISPLAY</div>
+          <div class="chip-grid" id="form-chips">
+            <button type="button" class="hw-chip active" data-form="laptop">HiDPI Laptop + Touchpad</button>
+            <button type="button" class="hw-chip" data-form="desktop">Multi-Monitor VRR Desktop</button>
+            <button type="button" class="hw-chip" data-form="ultrawide">Ultrawide 21:9 / 4K</button>
+          </div>
+        </div>
 
-<!-- ═══════════════════ 02. OPENCODE BROWSER DESIGN SYSTEM ═════════════════ -->
-<section class="section reveal" id="opencode">
-  <div class="sec-kicker">02 // Browser Theme · OpenCode Design System</div>
-  <h2 class="sec-title">Terminal-native browser chrome. Zero visual noise.</h2>
-  <p class="sec-desc">
-    Styled after <b>OpenCode (`opencode.ai`)</b>: 100% monospace typography, utilitarian
-    <code>4px</code> corners, visible <code>1px solid #3d3838</code> structural dividers, an offline
-    command startpage, and automatic profile provisioning across Firefox &amp; Chromium families.
-  </p>
-
-  <div class="oc-showcase">
-    <div class="oc-browser-frame">
-      <div class="oc-tabstrip" id="oc-target-tabs">
-        <span class="oc-tab active" data-octab="firefox">firefox / zen · userChrome.css</span>
-        <span class="oc-tab" data-octab="chromium">chromium / brave · manifest.json</span>
-        <span class="oc-tab" data-octab="tui">opencode CLI · monochrome.json</span>
-      </div>
-      <div class="oc-urlbar">
-        <span style="color:#7f7a7a">target</span>
-        <span class="oc-url-pill" id="oc-file-label">~/.config/browser/opencode/firefox/userChrome.css</span>
-        <a href="startpage.html" target="_blank" rel="noopener" style="padding:3px 10px;background:#fff;color:#131010;border-radius:3px;font-weight:700;font-size:11px">Open Live Startpage ↗</a>
-      </div>
-      <div class="oc-body">
-        <pre class="pc-code" id="oc-code-box" style="margin:0;background:#0d0b0b;border-color:#3d3838">/* OpenCode Firefox / Zen / LibreWolf Chrome */
-:root {
-  --toolbar-bgcolor: #1b1818 !important;
-  --urlbar-box-bgcolor: #131010 !important;
-  --tab-selected-bgcolor: #201d1d !important;
-  --tab-border-radius: 4px !important;
-}
-.tabbrowser-tab[selected="true"] .tab-background {
-  border: 1px solid #3d3838 !important;
-  border-bottom: 2px solid #ffffff !important;
-}</pre>
-      </div>
-    </div>
-
-    <div class="spot-card" style="padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:18px">
-      <div>
-        <h3 style="font-family:var(--mono);font-size:16px;margin-bottom:6px">OpenCode Token Ramp (Click to Copy)</h3>
-        <p style="font-size:13.5px;color:var(--ink-2)">
-          Hierarchy is achieved strictly through luminance contrast — never decorative saturation.
-        </p>
-      </div>
-
-      <div class="oc-swatches">
-        <div class="oc-swatch" data-hex="#131010"><div class="oc-chip" style="background:#131010"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#131010</div><div class="mono" style="font-size:10px;color:#7f7a7a">canvas</div></div>
-        <div class="oc-swatch" data-hex="#1b1818"><div class="oc-chip" style="background:#1b1818"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#1b1818</div><div class="mono" style="font-size:10px;color:#7f7a7a">surface</div></div>
-        <div class="oc-swatch" data-hex="#201d1d"><div class="oc-chip" style="background:#201d1d"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#201d1d</div><div class="mono" style="font-size:10px;color:#7f7a7a">elevated</div></div>
-        <div class="oc-swatch" data-hex="#3d3838"><div class="oc-chip" style="background:#3d3838"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#3d3838</div><div class="mono" style="font-size:10px;color:#7f7a7a">1px border</div></div>
-        <div class="oc-swatch" data-hex="#7f7a7a"><div class="oc-chip" style="background:#7f7a7a"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#7f7a7a</div><div class="mono" style="font-size:10px;color:#7f7a7a">ink-muted</div></div>
-        <div class="oc-swatch" data-hex="#b8b2b2"><div class="oc-chip" style="background:#b8b2b2"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#b8b2b2</div><div class="mono" style="font-size:10px;color:#7f7a7a">secondary</div></div>
-        <div class="oc-swatch" data-hex="#fdfcfc"><div class="oc-chip" style="background:#fdfcfc"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#fdfcfc</div><div class="mono" style="font-size:10px;color:#7f7a7a">ink-primary</div></div>
-        <div class="oc-swatch" data-hex="#ffffff"><div class="oc-chip" style="background:#ffffff"></div><div class="mono" style="font-size:11.5px;color:#fdfcfc">#ffffff</div><div class="mono" style="font-size:10px;color:#7f7a7a">action</div></div>
-      </div>
-
-      <div class="mono" style="font-size:12px;color:var(--ink-muted)">
-        Auto-applied on login &amp; install via <code>browser-theme.sh apply</code> across Firefox, LibreWolf, Zen, Floorp, Waterfox, Brave, Chromium, Chrome &amp; Vivaldi.
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ 03. WORKS ON ANY PC CONFIGURATOR ═══════════════════ -->
-<section class="section reveal" id="any-pc">
-  <div class="sec-kicker">03 // Universal Hardware &amp; Multi-Distro Engine</div>
-  <h2 class="sec-title">Select your PC. See how it adapts in &lt;0.2ms.</h2>
-  <p class="sec-desc">
-    <code>modules/hardware.lua</code> probes PCI DRM vendor IDs, SMBIOS chassis types, battery rails,
-    and hypervisor flags directly from Linux sysfs — zero subprocesses, zero black screens, zero invisible cursors.
-  </p>
-
-  <div class="pc-lab">
-    <div class="spot-card pc-selectors">
-      <div>
-        <div class="sec-kicker" style="margin-bottom:8px">1. Choose GPU / Hardware Profile</div>
-        <div class="chip-grid" id="gpu-chips">
-          <button type="button" class="hw-chip active" data-gpu="nvidia">NVIDIA RTX / GTX</button>
-          <button type="button" class="hw-chip" data-gpu="optimus">Hybrid Optimus Laptop</button>
-          <button type="button" class="hw-chip" data-gpu="amd">AMD Radeon</button>
-          <button type="button" class="hw-chip" data-gpu="intel">Intel Arc / Iris</button>
-          <button type="button" class="hw-chip" data-gpu="vm">Virtual Machine (QEMU/VMware)</button>
+        <div>
+          <div class="mono" style="font-size:11.5px;color:var(--ink-muted);margin-bottom:8px">3. SELECT LINUX DISTRIBUTION</div>
+          <div class="chip-grid" id="distro-chips">
+            <button type="button" class="hw-chip active" data-distro="arch">Arch / CachyOS / EndeavourOS / Manjaro</button>
+            <button type="button" class="hw-chip" data-distro="fedora">Fedora Workstation</button>
+            <button type="button" class="hw-chip" data-distro="debian">Ubuntu / Debian / Pop!_OS</button>
+            <button type="button" class="hw-chip" data-distro="opensuse">openSUSE / Void / Alpine</button>
+          </div>
         </div>
       </div>
 
-      <div>
-        <div class="sec-kicker" style="margin-bottom:8px">2. Choose Linux Distribution</div>
-        <div class="chip-grid" id="distro-chips">
-          <button type="button" class="hw-chip active" data-distro="arch">Arch / CachyOS / EndeavourOS / Manjaro</button>
-          <button type="button" class="hw-chip" data-distro="apt">Debian / Ubuntu / Pop!_OS</button>
-          <button type="button" class="hw-chip" data-distro="dnf">Fedora / Nobara</button>
-          <button type="button" class="hw-chip" data-distro="zypper">openSUSE Tumbleweed</button>
+      <div class="spot-card pc-output">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--pure);font-weight:700">Generated Profile: ~/.config/hypr/lua/hw-auto.lua</span>
+          <span style="color:var(--ink-muted);font-size:11px" id="pc-badge">auto-detected at login</span>
+        </div>
+        <pre class="pc-code" id="pc-code-out"></pre>
+        <div style="color:var(--ink-2);font-size:12px" id="pc-install-note"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04. APPLICATION COMPATIBILITY LAYER -->
+  <section class="section reveal" id="apps">
+    <div class="sec-kicker">04 / Universal Application Compatibility</div>
+    <h2 class="sec-title">Consistent launch and rendering across every runtime.</h2>
+    <p class="sec-desc">
+      Native Wayland clients, XWayland games, Electron Ozone windows, Java Swing and JetBrains IDEs,
+      Qt6/GTK4 toolkits, Flatpaks, and AppImages run without blank gray windows, broken file dialogs,
+      or blurry fractional scaling.
+    </p>
+
+    <div class="marquee-wrap" aria-label="Supported application frameworks">
+      <div class="marquee-row">
+        <div class="app-pill"><span>Kitty + Zsh + Starship</span><span class="tag">Wayland GPU</span></div>
+        <div class="app-pill"><span>Firefox / Zen / LibreWolf</span><span class="tag">MOZ_ENABLE_WAYLAND</span></div>
+        <div class="app-pill"><span>VS Code / Cursor / VSCodium</span><span class="tag">Ozone Wayland</span></div>
+        <div class="app-pill"><span>JetBrains IDEA / CLion / Studio</span><span class="tag">_JAVA_AWT Fix</span></div>
+        <div class="app-pill"><span>Steam / Heroic / Gamescope</span><span class="tag">XWayland + VRR</span></div>
+        <div class="app-pill"><span>Flatpak + Flathub</span><span class="tag">XDG_DATA_DIRS</span></div>
+        <div class="app-pill"><span>AppImage Portable</span><span class="tag">FUSE Fallback</span></div>
+        <!-- Duplicate for seamless 50% loop -->
+        <div class="app-pill"><span>Kitty + Zsh + Starship</span><span class="tag">Wayland GPU</span></div>
+        <div class="app-pill"><span>Firefox / Zen / LibreWolf</span><span class="tag">MOZ_ENABLE_WAYLAND</span></div>
+        <div class="app-pill"><span>VS Code / Cursor / VSCodium</span><span class="tag">Ozone Wayland</span></div>
+        <div class="app-pill"><span>JetBrains IDEA / CLion / Studio</span><span class="tag">_JAVA_AWT Fix</span></div>
+        <div class="app-pill"><span>Steam / Heroic / Gamescope</span><span class="tag">XWayland + VRR</span></div>
+        <div class="app-pill"><span>Flatpak + Flathub</span><span class="tag">XDG_DATA_DIRS</span></div>
+        <div class="app-pill"><span>AppImage Portable</span><span class="tag">FUSE Fallback</span></div>
+      </div>
+
+      <div class="marquee-row reverse">
+        <div class="app-pill"><span>OBS Studio + PipeWire</span><span class="tag">xdg-desktop-portal</span></div>
+        <div class="app-pill"><span>Discord / Vesktop / Slack</span><span class="tag">Wayland PipeWire</span></div>
+        <div class="app-pill"><span>Blender / GIMP / Inkscape</span><span class="tag">GTK / Vulkan</span></div>
+        <div class="app-pill"><span>Thunar + Polkit Agent</span><span class="tag">GVFS + Admin</span></div>
+        <div class="app-pill"><span>Spotify + Spicetify</span><span class="tag">Monochrome Theme</span></div>
+        <div class="app-pill"><span>mpv + imv + Zathura</span><span class="tag">MIME Router</span></div>
+        <div class="app-pill"><span>Wine / Bottles / Lutris</span><span class="tag">Zero-Scale Blur</span></div>
+        <!-- Duplicate -->
+        <div class="app-pill"><span>OBS Studio + PipeWire</span><span class="tag">xdg-desktop-portal</span></div>
+        <div class="app-pill"><span>Discord / Vesktop / Slack</span><span class="tag">Wayland PipeWire</span></div>
+        <div class="app-pill"><span>Blender / GIMP / Inkscape</span><span class="tag">GTK / Vulkan</span></div>
+        <div class="app-pill"><span>Thunar + Polkit Agent</span><span class="tag">GVFS + Admin</span></div>
+        <div class="app-pill"><span>Spotify + Spicetify</span><span class="tag">Monochrome Theme</span></div>
+        <div class="app-pill"><span>mpv + imv + Zathura</span><span class="tag">MIME Router</span></div>
+        <div class="app-pill"><span>Wine / Bottles / Lutris</span><span class="tag">Zero-Scale Blur</span></div>
+      </div>
+    </div>
+
+    <div class="app-cards">
+      <div class="spot-card app-card">
+        <div class="card-head">
+          <span class="card-icon-box" aria-hidden="true">
+            <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="12" height="10" rx="2" />
+              <path d="M5 7L7 8.5L5 10M8.5 10H11" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <h4>mono-open Dispatcher</h4>
+        </div>
+        <p>Unified launcher for desktop entries, Flatpak IDs, executable AppImages (automatically falling back to <code>--appimage-extract-and-run</code> when FUSE is absent), URLs, and local files.</p>
+      </div>
+      <div class="spot-card app-card">
+        <div class="card-head">
+          <span class="card-icon-box" aria-hidden="true">
+            <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M8 2L13.5 5V11L8 14L2.5 11V5L8 2Z" stroke-linejoin="round" />
+              <path d="M2.5 5L8 8L13.5 5M8 8V14" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <h4>Toolkit &amp; Java Fixes</h4>
+        </div>
+        <p>Configures <code>ELECTRON_OZONE_PLATFORM_HINT=auto</code>, <code>_JAVA_AWT_WM_NONEREPARENTING=1</code>, <code>QT_QPA_PLATFORM="wayland;xcb"</code>, and unblurred XWayland scaling out of the box.</p>
+      </div>
+      <div class="spot-card app-card">
+        <div class="card-head">
+          <span class="card-icon-box" aria-hidden="true">
+            <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="7" width="10" height="7" rx="1.5" />
+              <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke-linecap="round" />
+            </svg>
+          </span>
+          <h4>XDG Portals &amp; Polkit</h4>
+        </div>
+        <p>Auto-starts <code>xdg-desktop-portal-hyprland</code>, GTK file chooser fallback, GNOME Keyring, and a graphical Polkit agent so privileged prompts and screen sharing work reliably.</p>
+      </div>
+      <div class="spot-card app-card">
+        <div class="card-head">
+          <span class="card-icon-box" aria-hidden="true">
+            <svg class="ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 4.5H13M3 8H13M3 11.5H9" stroke-linecap="round" />
+            </svg>
+          </span>
+          <h4>Fallback Application Chain</h4>
+        </div>
+        <p><code>mono-default-app</code> resolves your preferred browser, terminal, editor, or file manager dynamically with graceful multi-candidate fallback across freshly installed machines.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05. PROCEDURAL C++20 WALLPAPER STUDIO -->
+  <section class="section reveal" id="wallpapers">
+    <div class="sec-kicker">05 / Procedural C++20 Wallpaper Studio</div>
+    <h2 class="sec-title">20 algorithmic 1080p monochrome compositions.</h2>
+    <p class="sec-desc">
+      Synthesized in parallel C++20 with zero external image dependencies, paired with 4 animated
+      kinetic loops. Click <strong>Apply to Desktop</strong> on any composition to load it into the
+      live simulator above, or click the image to inspect at full 1920x1080 resolution.
+    </p>
+
+    <div class="wall-filters" id="wall-filters">
+      <button type="button" class="sbtn on" data-wcat="all">All (24)</button>
+      <button type="button" class="sbtn" data-wcat="live">Animated Loops (4)</button>
+      <button type="button" class="sbtn" data-wcat="geo">Architectural &amp; Grid</button>
+      <button type="button" class="sbtn" data-wcat="field">Flow &amp; Topo Fields</button>
+      <button type="button" class="sbtn" data-wcat="minimal">OLED &amp; Film Noir</button>
+    </div>
+
+    <div class="wall-grid" id="wall-grid"></div>
+  </section>
+
+  <!-- 06. RECORDED COMPOSITOR FOOTAGE -->
+  <section class="section reveal" id="footage">
+    <div class="sec-kicker">06 / Captured Compositor Sessions</div>
+    <h2 class="sec-title">Recorded directly inside the Wayland session.</h2>
+    <p class="sec-desc">
+      Real-time session recordings demonstrating workspace transitions, Waybar luminance telemetry,
+      shader hot-switching, and live desktop workflows.
+    </p>
+
+    <div class="video-grid">
+      <div class="spot-card video-card">
+        <video controls preload="metadata" playsinline loop muted src="media/desktop-demo.mp4"></video>
+        <div style="display:flex;justify-content:space-between;padding:12px 4px 2px;font-family:var(--mono);font-size:12px">
+          <span style="color:var(--pure);font-weight:700">desktop-demo.mp4 : Live Compositor Tour</span>
+          <span style="color:var(--ink-muted)">H.264 / 60 FPS</span>
         </div>
       </div>
 
-      <div style="padding-top:8px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink-2)">
-        Also includes automatic laptop lid-close lock (<code>switch:on:Lid Switch</code>),
-        HiDPI zero-blur XWayland scaling, and <code>Super + I</code> live power-profile switching.
+      <div class="spot-card video-card">
+        <video controls preload="metadata" playsinline loop muted src="media/test-run.mp4"></video>
+        <div style="display:flex;justify-content:space-between;padding:12px 4px 2px;font-family:var(--mono);font-size:12px">
+          <span style="color:var(--pure);font-weight:700">test-run.mp4 : Automated Build &amp; Verification</span>
+          <span style="color:var(--ink-muted)">C++20 / Lua 5.4</span>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="spot-card pc-output">
-      <div style="display:flex;justify-content:space-between;color:var(--ink-muted)">
-        <span id="pc-probe-title">sysfs probe → vendor 0x10de (NVIDIA)</span>
-        <span style="color:#fff">0 subprocesses</span>
+  <!-- 07. LIVE 172-KEYBIND EXPLORER -->
+  <section class="section reveal" id="keybinds">
+    <div class="sec-kicker">07 / Ergonomic Shortcut Reference</div>
+    <h2 class="sec-title">172 keyboard shortcuts, searchable in real time.</h2>
+    <p class="sec-desc">
+      Generated directly from <code>.config/hypr/lua/binds.lua</code> by our C++20 keybind parser so
+      documentation and live compositor bindings never drift apart.
+    </p>
+
+    <div class="kb-controls">
+      <input type="search" class="kb-search" id="kb-search" placeholder="Filter 172 keybinds (e.g. browser, record, shader, scratchpad, workspace, lock)..." aria-label="Search keybinds" />
+      <div class="sim-group" id="kb-cats"></div>
+    </div>
+
+    <div class="kb-table-wrap">
+      <table class="kb-table">
+        <thead>
+          <tr>
+            <th style="width:26%">Shortcut</th>
+            <th style="width:22%">Category</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="kb-tbody">
+          <tr><td colspan="3" style="color:var(--ink-muted)">Loading 172 keybinds...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div>
+      <div style="color:var(--pure);font-weight:700">hyprland-monochrome v5.2.0</div>
+      <div style="margin-top:4px">MIT License  /  C++20 + Lua 5.4 + POSIX Shell  /  Built for Wayland</div>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/esoexe/hyprland-monochrome" target="_blank" rel="noopener">GitHub Repository</a>
+      <a href="https://github.com/esoexe/hyprland-monochrome/releases/tag/v5.2.0" target="_blank" rel="noopener">v5.2.0 Release</a>
+      <a href="newtab.html" target="_blank" rel="noopener">Browser Startpage</a>
+      <a href="keybinds.json" target="_blank" rel="noopener">keybinds.json</a>
+    </div>
+  </footer>
+
+  <!-- GLOBAL COMMAND PALETTE (Ctrl+K) -->
+  <div class="modal-backdrop" id="cmdk-modal" role="dialog" aria-modal="true" aria-label="Command Palette">
+    <div class="palette-dialog" id="cmdk-dialog">
+      <div class="pal-head">
+        <span style="color:#7f7a7a">&gt;</span>
+        <input type="text" class="pal-input" id="pal-input" placeholder="Run action, jump to section, search keybinds, or type math (e.g. 256*1440)..." autocomplete="off" />
+        <kbd style="color:#7f7a7a;font-size:11px">ESC</kbd>
       </div>
-      <pre class="pc-code" id="pc-probe-code"></pre>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ 04. OPENS ANY APP MARQUEE & CARDS ══════════════════ -->
-<section class="section reveal" id="any-app">
-  <div class="sec-kicker">04 // Universal Application &amp; File Compatibility</div>
-  <h2 class="sec-title">Every Linux &amp; Windows app format. Ready on day one.</h2>
-  <p class="sec-desc">
-    From native Wayland and XWayland games to Flatpaks, FUSE-less AppImages, JetBrains Java IDEs,
-    and Windows <code>.exe</code> binaries — everything appears in Rofi and opens cleanly.
-  </p>
-
-  <div class="marquee-wrap">
-    <div class="marquee-row">
-      <div class="app-pill"><b>Wayland Native</b><span class="tag">0-frame async</span></div>
-      <div class="app-pill"><b>XWayland HiDPI</b><span class="tag">force_zero_scaling</span></div>
-      <div class="app-pill"><b>Flatpak / Flathub</b><span class="tag">XDG_DATA_DIRS</span></div>
-      <div class="app-pill"><b>.AppImage Auto-Indexer</b><span class="tag">FUSE-less fallback</span></div>
-      <div class="app-pill"><b>Electron Ozone</b><span class="tag">VS Code · Discord · Obsidian</span></div>
-      <div class="app-pill"><b>Java / JetBrains Fix</b><span class="tag">NONEREPARENTING=1</span></div>
-      <div class="app-pill"><b>Wayland Native</b><span class="tag">0-frame async</span></div>
-      <div class="app-pill"><b>XWayland HiDPI</b><span class="tag">force_zero_scaling</span></div>
-      <div class="app-pill"><b>Flatpak / Flathub</b><span class="tag">XDG_DATA_DIRS</span></div>
-      <div class="app-pill"><b>.AppImage Auto-Indexer</b><span class="tag">FUSE-less fallback</span></div>
-      <div class="app-pill"><b>Electron Ozone</b><span class="tag">VS Code · Discord · Obsidian</span></div>
-      <div class="app-pill"><b>Java / JetBrains Fix</b><span class="tag">NONEREPARENTING=1</span></div>
-    </div>
-
-    <div class="marquee-row reverse">
-      <div class="app-pill"><b>Windows .exe / .msi</b><span class="tag">umu · Wine · Bottles</span></div>
-      <div class="app-pill"><b>SDL2 Games</b><span class="tag">wayland,x11</span></div>
-      <div class="app-pill"><b>Qt5 &amp; Qt6 Fusion</b><span class="tag">21-slot monochrome</span></div>
-      <div class="app-pill"><b>GTK3 &amp; GTK4</b><span class="tag">pure R==G==B</span></div>
-      <div class="app-pill"><b>Zathura + imv + mpv</b><span class="tag">PDF · Images · GPU Video</span></div>
-      <div class="app-pill"><b>XDG Portals</b><span class="tag">ScreenCast + FileChooser</span></div>
-      <div class="app-pill"><b>Windows .exe / .msi</b><span class="tag">umu · Wine · Bottles</span></div>
-      <div class="app-pill"><b>SDL2 Games</b><span class="tag">wayland,x11</span></div>
-      <div class="app-pill"><b>Qt5 &amp; Qt6 Fusion</b><span class="tag">21-slot monochrome</span></div>
-      <div class="app-pill"><b>GTK3 &amp; GTK4</b><span class="tag">pure R==G==B</span></div>
-      <div class="app-pill"><b>Zathura + imv + mpv</b><span class="tag">PDF · Images · GPU Video</span></div>
-      <div class="app-pill"><b>XDG Portals</b><span class="tag">ScreenCast + FileChooser</span></div>
+      <div class="pal-math-bar" id="pal-math"></div>
+      <ul class="pal-list" id="pal-list"></ul>
     </div>
   </div>
 
-  <div class="app-cards">
-    <div class="spot-card app-card">
-      <h4>󰀻 Self-Healing AppImages</h4>
-      <p>Drops <code>.desktop</code> launchers for <code>~/Applications/*.AppImage</code> automatically and retries with <code>--appimage-extract-and-run</code> when <code>libfuse2</code> isn't installed.</p>
-    </div>
-    <div class="spot-card app-card">
-      <h4>󰖟 Smart Browser &amp; File Fallbacks</h4>
-      <p><code>Super + B</code> and <code>Super + E</code> launch your preferred app in <code>user.lua</code> or automatically fall back across any installed native or Flatpak browser/file manager.</p>
-    </div>
-    <div class="spot-card app-card">
-      <h4>󰈔 Monochrome Everyday Viewers</h4>
-      <p>Ships pre-themed monochrome configs for <code>imv</code> (images), <code>zathura</code> (PDF/EPUB), <code>mpv</code> (GPU video), <code>file-roller</code> (archives), <code>bat</code>, and <code>nvim</code>.</p>
-    </div>
-    <div class="spot-card app-card">
-      <h4>󰘳 Super + Shift + O Opener</h4>
-      <p>One unified Rofi picker across Flatpaks, AppImages, recent documents, URLs, Windows <code>.exe</code> tools, and direct shell commands.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════ 05. 20-WALLPAPER C++20 STUDIO ══════════════════════ -->
-<section class="section reveal" id="studio">
-  <div class="sec-kicker">05 // Zero-Dependency C++20 Wallpaper &amp; Live Loop Studio</div>
-  <h2 class="sec-title">20 procedural monochrome masters — up to 16K.</h2>
-  <p class="sec-desc">
-    Generated from scratch by multi-threaded C++20 math &amp; custom ITU-T T.81 JPEG / GIF89a LZW
-    encoders (<code>wallpapers/generate.cpp</code> &amp; <code>animate.cpp</code>). Click
-    <b>Apply to Live OS</b> on any artwork to preview it inside the simulator above.
-  </p>
-
-  <div class="wall-filters" id="wall-filters">
-    <button type="button" class="hw-chip active" data-wfilter="all">All Artworks (17)</button>
-    <button type="button" class="hw-chip" data-wfilter="live">Animated Live GIFs (3)</button>
-    <button type="button" class="hw-chip" data-wfilter="physics">Relativistic &amp; Optical</button>
-    <button type="button" class="hw-chip" data-wfilter="bauhaus">Architectural &amp; Bauhaus</button>
-  </div>
-
-  <div class="wall-grid" id="wall-grid"></div>
-</section>
-
-<!-- ═══════════════════ 06. REAL RECORDED WAYLAND VIDEO ════════════════════ -->
-<section class="section reveal" id="session-video">
-  <div class="sec-kicker">06 // Captured Live on Wayland</div>
-  <h2 class="sec-title">Watch the real desktop &amp; test suite in motion.</h2>
-  <p class="sec-desc">
-    Recorded directly inside a live 1920×1080 Wayland session with <code>wf-recorder</code> alongside
-    the automated 192-check verification walkthrough.
-  </p>
-
-  <div class="video-grid">
-    <div class="spot-card video-card">
-      <video controls preload="metadata" poster="wallpapers/mono-07.jpg">
-        <source src="media/desktop-demo.mp4" type="video/mp4">
-      </video>
-      <div class="mono" style="margin-top:10px;font-size:12px;display:flex;justify-content:space-between">
-        <span><b>desktop-demo.mp4</b> — Live 1080p Waybar, Rofi, Thunar, Dunst &amp; Wallpapers</span>
-        <span style="color:var(--ink-muted)">1920×1080</span>
-      </div>
-    </div>
-
-    <div class="spot-card video-card">
-      <video controls preload="metadata" poster="wallpapers/mono-14.jpg">
-        <source src="media/test-run.mp4" type="video/mp4">
-      </video>
-      <div class="mono" style="margin-top:10px;font-size:12px;display:flex;justify-content:space-between">
-        <span><b>test-run.mp4</b> — CLI &amp; Smoke Suite</span>
-        <span style="color:var(--ink-muted)">Verified</span>
+  <!-- WALLPAPER FULL-RESOLUTION LIGHTBOX -->
+  <div class="modal-backdrop" id="lightbox-modal" role="dialog" aria-modal="true" aria-label="Wallpaper preview" style="align-items:center;padding:24px">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <img src="wallpapers/mono-11.jpg" alt="Full resolution monochrome wallpaper" class="lightbox-img" id="lightbox-img" />
+      <div style="display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:12.5px">
+        <span id="lightbox-caption" style="color:var(--pure)"></span>
+        <button type="button" class="copy-btn" id="lightbox-apply">Apply to Desktop Simulator</button>
+        <button type="button" class="sbtn" id="lightbox-close" style="border-color:var(--line-strong)">Close (ESC)</button>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ═══════════════════ 07. LIVE 172-KEYBIND EXPLORER ══════════════════════ -->
-<section class="section reveal" id="keybinds">
-  <div class="sec-kicker">07 // Ergonomic Modal Chords &amp; Shortcuts</div>
-  <h2 class="sec-title">Search all 172 live keybinds.</h2>
-  <p class="sec-desc">
-    Synced directly from <code>.config/hypr/modules/binds.lua</code> by our C++20 parser. On the desktop,
-    press <kbd class="keycap">Super + /</kbd> anytime to search and trigger shortcuts interactively.
-  </p>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <div class="kb-controls">
-    <input type="search" id="kb-search" class="kb-search" placeholder="Filter 172 shortcuts (try: opencode, appimage, shader, turbo, ocr, group, resize)…">
-    <span class="mono" id="kb-count" style="font-size:12px;color:var(--ink-muted)">172 shortcuts</span>
-  </div>
-
-  <div class="kb-table-wrap">
-    <table class="kb-table">
-      <thead>
-        <tr>
-          <th style="width:34%">Shortcut</th>
-          <th style="width:16%">Mode</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="kb-tbody"></tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ═════════════════════════════ FOOTER ═══════════════════════════════════ -->
-<footer class="site-footer">
-  <div>
-    <b style="color:var(--pure)">◆ hyprland-monochrome v5.2.0</b> · MIT Licensed · Zero Python (100% C++20 + Lua + Bash)
-  </div>
-  <div style="display:flex;gap:18px">
-    <a href="https://github.com/esoexe/hyprland-monochrome" target="_blank" rel="noopener">GitHub Repo ↗</a>
-    <a href="https://github.com/esoexe/hyprland-monochrome/releases/tag/v5.2.0" target="_blank" rel="noopener">v5.2.0 Release ↗</a>
-    <a href="startpage.html" target="_blank" rel="noopener">OpenCode Startpage ↗</a>
-    <a href="preview.html" target="_blank" rel="noopener">Config Spec ↗</a>
-  </div>
-</footer>
-
-<!-- ═══════════════════ GLOBAL ⌘K COMMAND PALETTE MODAL ════════════════════ -->
-<div class="modal-backdrop" id="cmdk-modal">
-  <div class="palette-dialog" role="dialog" aria-label="Command Palette">
-    <div class="pal-head">
-      <span style="color:#fff;font-weight:800">⌘</span>
-      <input type="text" class="pal-input" id="pal-input" placeholder="Jump to section, switch shader/wallpaper, or type '= 3840*2160'…" autocomplete="off">
-      <span class="keycap" style="font-size:10.5px">ESC</span>
-    </div>
-    <div class="pal-math-bar" id="pal-math-bar"></div>
-    <ul class="pal-list" id="pal-list"></ul>
-  </div>
-</div>
-
-<!-- ═══════════════════ WALLPAPER LIGHTBOX MODAL ═══════════════════════════ -->
-<div class="modal-backdrop" id="lightbox-modal" style="align-items:center;padding:24px">
-  <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-    <img class="lightbox-img" id="lightbox-img" src="wallpapers/mono-11.jpg" alt="Full artwork preview">
-    <div class="mono" style="font-size:12.5px;color:#fff;display:flex;gap:16px;align-items:center">
-      <span id="lightbox-caption">mono-11.jpg</span>
-      <button type="button" class="copy-btn" id="lightbox-apply">Apply to Live Desktop</button>
-      <button type="button" class="hw-chip" id="lightbox-close">Close (Esc)</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast">Copied to clipboard</div>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

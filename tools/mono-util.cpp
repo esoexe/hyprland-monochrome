@@ -87,14 +87,31 @@ int cmd_check_greyscale(const fs::path& repo) {
 
 int cmd_keybinds_json(const fs::path& md_path, const fs::path& json_out) {
     std::string md = mono_cfg::read_text(md_path);
+    std::regex h2_re(R"(^##\s+(.+)$)");
     std::regex row_re(R"(^\|\s*`([^`]+)`\s*\|\s*([^|]+?)\s*\|)");
     JsonVal::Array out;
+    std::string current_cat = "General";
 
     for (const auto& line : mono_cfg::split_lines(md)) {
+        std::smatch hm;
+        if (std::regex_search(line, hm, h2_re)) {
+            std::string heading = mono_cfg::trim(hm[1].str());
+            if (heading != "Contents" && !heading.empty()) {
+                replace_all(heading, "\xE2\x80\x94", ":");
+                replace_all(heading, "\xE2\x80\x93", ":");
+                current_cat = heading;
+            }
+            continue;
+        }
         std::smatch m;
         if (!std::regex_search(line, m, row_re)) continue;
-        std::string combo = mono_cfg::trim(m[1].str());
+        std::string raw_combo = mono_cfg::trim(m[1].str());
+        std::string combo = raw_combo;
         std::string desc = mono_cfg::trim(m[2].str());
+        replace_all(desc, "OpenCode", "Monochrome");
+        replace_all(desc, "opencode", "monochrome");
+        replace_all(desc, "\xE2\x80\x94", ":");
+        replace_all(desc, "\xE2\x80\x93", ":");
         std::string submap;
         if (!combo.empty() && combo[0] == '[') {
             size_t close = combo.find("] ");
@@ -123,6 +140,8 @@ int cmd_keybinds_json(const fs::path& md_path, const fs::path& json_out) {
             else if (u == "SHIFT") mask |= 1;
         }
         out.push_back(JsonVal(JsonVal::Object{
+            {"shortcut", raw_combo},
+            {"category", current_cat},
             {"key", key},
             {"keycode", 0},
             {"modmask", mask},

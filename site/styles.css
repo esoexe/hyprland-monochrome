@@ -1,20 +1,20 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   hyprland-monochrome — Live Animated Website Design System
-   Aesthetic: Monochrome Luminance + OpenCode Terminal-Grid Brutalism
-   Motion:    Damped spring cubic-bezier(0.16, 1, 0.3, 1) · 60 FPS GPU layers
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* ===========================================================================
+   hyprland-monochrome : Live Animated Product Website
+   Palette: Monochrome Luminance + Terminal-Grid Structural Geometry
+   Motion:  Damped spring cubic-bezier(0.16, 1, 0.3, 1), 60 FPS GPU layers
+   =========================================================================== */
 
 :root {
   --void: #060606;
   --canvas: #0b0a0a;
-  --oc-canvas: #131010;
+  --grid-canvas: #131010;
   --surface: #141212;
   --surface-2: #1b1818;
   --surface-3: #221f1f;
-  --oc-elevated: #201d1d;
+  --elevated: #201d1d;
   --line: rgba(255, 255, 255, 0.09);
   --line-strong: rgba(255, 255, 255, 0.20);
-  --oc-border: #3d3838;
+  --grid-border: #3d3838;
   --ink: #fdfcfc;
   --ink-2: #c9c4c4;
   --ink-muted: #7f7a7a;
@@ -22,7 +22,7 @@
   --pure: #ffffff;
   --spring: cubic-bezier(0.16, 1, 0.3, 1);
   --snappy: cubic-bezier(0.2, 0, 0, 1);
-  --mono: "JetBrainsMono Nerd Font", "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -57,7 +57,24 @@ a {
   text-decoration: none;
 }
 
-/* ── Top 1px Scroll Luminance Progress Bar ───────────────────────────────── */
+/* Vector SVG Icon System */
+.ico {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  vertical-align: -2.5px;
+  flex-shrink: 0;
+}
+
+.ico-sm {
+  width: 12.5px;
+  height: 12.5px;
+  display: inline-block;
+  vertical-align: -1.5px;
+  flex-shrink: 0;
+}
+
+/* Top 1px Scroll Luminance Progress Bar */
 .scroll-progress {
   position: fixed;
   top: 0;
@@ -71,7 +88,7 @@ a {
   pointer-events: none;
 }
 
-/* ── Sticky Waybar-Inspired Navigation Pill ──────────────────────────────── */
+/* Sticky Waybar Navigation Pill */
 .site-nav-wrap {
   position: fixed;
   top: 12px;
@@ -111,21 +128,20 @@ a {
   white-space: nowrap;
 }
 
-.brand-diamond {
-  display: inline-flex;
+.brand-mark-svg {
   width: 20px;
   height: 20px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--pure);
   color: var(--void);
   border-radius: 5px;
-  font-size: 11px;
   transition: transform 380ms var(--spring);
 }
 
-.nav-brand:hover .brand-diamond {
-  transform: rotate(45deg) scale(1.08);
+.nav-brand:hover .brand-mark-svg {
+  transform: rotate(45deg) scale(1.06);
 }
 
 .nav-links {
@@ -196,6 +212,9 @@ a {
 }
 
 .nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 6px 13px;
   border-radius: 8px;
   background: var(--pure);
@@ -218,7 +237,7 @@ a {
   .nav-links { display: none; }
 }
 
-/* ── Hero Stage with Interactive 60 FPS Generative Canvas ────────────────── */
+/* Hero Stage with Interactive 60 FPS Generative Canvas */
 .hero {
   position: relative;
   min-height: 96vh;
@@ -291,9 +310,9 @@ a {
 }
 
 .hero-title {
-  font-size: clamp(38px, 6.4vw, 76px);
+  font-size: clamp(38px, 6.2vw, 74px);
   font-weight: 800;
-  line-height: 1.04;
+  line-height: 1.05;
   letter-spacing: -0.04em;
   color: var(--pure);
   animation: springUp 850ms 80ms var(--spring) both;
@@ -307,8 +326,8 @@ a {
 }
 
 .hero-sub {
-  max-width: 68ch;
-  font-size: clamp(15.5px, 1.8vw, 18.5px);
+  max-width: 64ch;
+  font-size: clamp(15.5px, 1.75vw, 18px);
   color: var(--ink-2);
   line-height: 1.65;
   animation: springUp 900ms 150ms var(--spring) both;
@@ -328,7 +347,7 @@ a {
   padding: 10px 12px 10px 18px;
   background: rgba(20, 18, 18, 0.88);
   backdrop-filter: blur(14px);
-  border: 1px solid var(--oc-border);
+  border: 1px solid var(--grid-border);
   border-radius: 8px;
   font-family: var(--mono);
   font-size: 13px;
@@ -356,7 +375,7 @@ a {
 .copy-btn {
   padding: 7px 13px;
   border-radius: 5px;
-  border: 1px solid var(--oc-border);
+  border: 1px solid var(--grid-border);
   background: var(--pure);
   color: var(--void);
   font-family: var(--mono);
@@ -421,8 +440,8 @@ a {
   margin-top: 14px;
   display: grid;
   grid-template-columns: repeat(4, minmax(130px, 1fr));
-  border-top: 1px solid var(--oc-border);
-  border-left: 1px solid var(--oc-border);
+  border-top: 1px solid var(--grid-border);
+  border-left: 1px solid var(--grid-border);
   width: 100%;
   max-width: 820px;
   background: rgba(16, 14, 14, 0.80);
@@ -436,8 +455,8 @@ a {
 
 .metric-cell {
   padding: 14px 16px;
-  border-right: 1px solid var(--oc-border);
-  border-bottom: 1px solid var(--oc-border);
+  border-right: 1px solid var(--grid-border);
+  border-bottom: 1px solid var(--grid-border);
   text-align: left;
 }
 
@@ -456,7 +475,6 @@ a {
   margin-top: 2px;
 }
 
-/* Hero Canvas Mode Switcher */
 .canvas-switcher {
   display: inline-flex;
   gap: 4px;
@@ -486,7 +504,7 @@ a {
   font-weight: 700;
 }
 
-/* ── Shared Container & Scroll-Reveal Choreography ───────────────────────── */
+/* Shared Container & Scroll-Reveal Choreography */
 .section {
   max-width: 1240px;
   margin: 0 auto;
@@ -515,15 +533,15 @@ a {
 }
 
 .sec-title {
-  font-size: clamp(28px, 3.8vw, 44px);
+  font-size: clamp(28px, 3.6vw, 42px);
   font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1.12;
+  line-height: 1.14;
   color: var(--pure);
 }
 
 .sec-desc {
-  max-width: 68ch;
+  max-width: 66ch;
   color: var(--ink-2);
   margin-top: 12px;
   font-size: 16px;
@@ -557,7 +575,7 @@ a {
   border-color: var(--line-strong);
 }
 
-/* ── 01. Interactive Live Hyprland 0.56 Desktop Simulator ────────────────── */
+/* 01. Interactive Live Hyprland 0.56 Desktop Simulator */
 .sim-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -589,6 +607,9 @@ a {
 
 .sbtn {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   background: transparent;
   border: 1px solid transparent;
   color: var(--ink-2);
@@ -638,7 +659,6 @@ a {
 .os-stage.turbo { --wgap: 0px; --wpad: 40px 0 0 0; --wrad: 0px; }
 .os-stage.zen { --wpad: 22px 32px 22px 32px; --wgap: 20px; }
 
-/* Shaders */
 .os-stage.sh-noir { filter: grayscale(1) contrast(1.14); }
 .os-stage.sh-grain { filter: grayscale(0.95) contrast(1.09) brightness(0.96); }
 .os-stage.sh-crt { filter: grayscale(1) contrast(1.18) brightness(1.04); }
@@ -714,7 +734,7 @@ a {
 .wb-left, .wb-center, .wb-right {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
 }
 
 .wb-ws {
@@ -739,6 +759,9 @@ a {
 }
 
 .wb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 2px 8px;
   border-radius: 6px;
   background: #eaeaea;
@@ -746,6 +769,13 @@ a {
   font-weight: 700;
   font-size: 10.5px;
   cursor: pointer;
+}
+
+.wb-spark-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #e6e6e6;
 }
 
 /* Sliding Workspace Track */
@@ -854,7 +884,6 @@ a {
   white-space: pre;
 }
 
-/* Interactive Kitty Terminal inside Simulator */
 .kitty-out {
   flex: 1;
   overflow-y: auto;
@@ -885,7 +914,55 @@ a {
   font-size: 12px;
 }
 
-/* Quake Dropdown & In-Stage Rofi Overlays */
+/* App Picker Rows inside WS3 */
+.app-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  font-size: 11.5px;
+}
+
+.app-row.selected {
+  background: #eaeaea;
+  color: #080808;
+  border-color: #eaeaea;
+  font-weight: 700;
+}
+
+.app-row-tag {
+  font-size: 10px;
+  opacity: 0.72;
+}
+
+/* Smooth CSS Core Meter Bars inside WS4 */
+.core-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11.5px;
+}
+
+.core-track {
+  flex: 1;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.core-fill {
+  height: 100%;
+  background: #eaeaea;
+  border-radius: 3px;
+  transition: width 650ms var(--spring);
+}
+
+/* Quake Dropdown Overlay */
 .os-quake {
   position: absolute;
   top: 44px;
@@ -910,7 +987,7 @@ a {
   opacity: 1;
 }
 
-/* ── 02. OpenCode Browser Design System Section ──────────────────────────── */
+/* 02. Terminal-Grid Browser Chrome Section */
 .oc-showcase {
   margin-top: 32px;
   display: grid;
@@ -965,6 +1042,13 @@ a {
   font-size: 12px;
 }
 
+.oc-nav-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #7f7a7a;
+}
+
 .oc-url-pill {
   flex: 1;
   padding: 4px 10px;
@@ -1015,7 +1099,7 @@ a {
   margin-bottom: 8px;
 }
 
-/* ── 03. "Works on Any PC" Interactive Configurator ──────────────────────── */
+/* 03. Hardware & Distro Matrix */
 .pc-lab {
   margin-top: 32px;
   display: grid;
@@ -1078,7 +1162,7 @@ a {
 .pc-code {
   padding: 14px;
   background: #141212;
-  border: 1px solid var(--oc-border);
+  border: 1px solid var(--grid-border);
   border-radius: 8px;
   color: #e8e8e8;
   overflow-x: auto;
@@ -1086,7 +1170,7 @@ a {
   line-height: 1.65;
 }
 
-/* ── 04. "Opens Any App" Infinite GPU Marquee ────────────────────────────── */
+/* 04. Infinite GPU Marquee & Feature Cards */
 .marquee-wrap {
   margin-top: 28px;
   overflow: hidden;
@@ -1151,14 +1235,33 @@ a {
 }
 
 .app-card {
-  padding: 20px;
+  padding: 22px;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.card-icon-box {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pure);
+  flex-shrink: 0;
 }
 
 .app-card h4 {
   font-family: var(--mono);
   font-size: 14px;
   color: var(--pure);
-  margin-bottom: 6px;
 }
 
 .app-card p {
@@ -1166,7 +1269,7 @@ a {
   color: var(--ink-2);
 }
 
-/* ── 05. 20-Wallpaper Procedural Studio & Recorded Video ─────────────────── */
+/* 05. 20-Wallpaper Studio & Recorded Video */
 .wall-filters {
   margin: 24px 0 18px;
   display: flex;
@@ -1251,7 +1354,7 @@ a {
 
 .wall-apply {
   appearance: none;
-  padding: 5px 9px;
+  padding: 5px 10px;
   border-radius: 6px;
   border: 1px solid var(--line-strong);
   background: var(--surface-2);
@@ -1292,7 +1395,7 @@ a {
   border: 1px solid var(--line);
 }
 
-/* ── 06. Searchable 172-Keybind Explorer ─────────────────────────────────── */
+/* 07. Searchable 172-Keybind Explorer */
 .kb-controls {
   margin: 24px 0 16px;
   display: flex;
@@ -1305,8 +1408,8 @@ a {
   flex: 1;
   min-width: 260px;
   padding: 12px 16px;
-  background: var(--oc-elevated);
-  border: 1px solid var(--oc-border);
+  background: var(--elevated);
+  border: 1px solid var(--grid-border);
   border-radius: 8px;
   color: var(--pure);
   font-family: var(--mono);
@@ -1356,15 +1459,15 @@ a {
 .keycap {
   display: inline-block;
   padding: 2px 8px;
-  background: var(--oc-elevated);
-  border: 1px solid var(--oc-border);
+  background: var(--elevated);
+  border: 1px solid var(--grid-border);
   border-radius: 5px;
   color: var(--pure);
   font-size: 11.5px;
   font-weight: 600;
 }
 
-/* ── Global Command Palette Modal (`⌘K`) & Lightbox ──────────────────────── */
+/* Global Command Palette Modal & Lightbox */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -1493,6 +1596,16 @@ a {
   font-family: var(--mono);
   font-size: 12.5px;
   color: var(--ink-muted);
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-links a:hover {
+  color: var(--pure);
 }
 
 @media (prefers-reduced-motion: reduce) {

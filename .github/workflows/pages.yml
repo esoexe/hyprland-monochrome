@@ -31,7 +31,7 @@ jobs:
           cp -a wallpapers/*.jpg wallpapers/*.gif _pages/wallpapers/
           cp -a docs/desktop-demo.mp4 docs/test-run.mp4 _pages/media/
           cp -a docs/preview.html _pages/preview.html
-          cp -a .config/browser/opencode/startpage.html _pages/startpage.html
+          cp -a site/newtab.html _pages/startpage.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
