@@ -1,0 +1,430 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" role="img" aria-label="Live animated Hyprland 0.56 compositor workspace showcase">
+  <defs>
+    <radialGradient id="singularityBg" cx="50%" cy="54%" r="55%">
+      <stop offset="0%" stop-color="#030303" />
+      <stop offset="34%" stop-color="#050505" />
+      <stop offset="38%" stop-color="#2a2828" />
+      <stop offset="42%" stop-color="#0e0d0d" />
+      <stop offset="100%" stop-color="#060606" />
+    </radialGradient>
+    <clipPath id="stageClip">
+      <rect x="1" y="1" width="1198" height="658" rx="16" />
+    </clipPath>
+    <clipPath id="kittyTypeClip">
+      <rect x="652" y="316" width="490" height="26">
+        <animate attributeName="width" values="0;490;490;0" keyTimes="0;0.18;0.92;1" dur="4s" repeatCount="indefinite" />
+      </rect>
+    </clipPath>
+    <clipPath id="browserTypeClip">
+      <rect x="292" y="304" width="540" height="28">
+        <animate attributeName="width" values="0;540;540;0" keyTimes="0;0.35;0.90;1" dur="4s" repeatCount="indefinite" />
+      </rect>
+    </clipPath>
+    <style>
+      .mono { font-family: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      @keyframes wsTrack {
+        0%, 20%   { transform: translate3d(0px, 0, 0); }
+        25%, 45%  { transform: translate3d(-1200px, 0, 0); }
+        50%, 70%  { transform: translate3d(-2400px, 0, 0); }
+        75%, 95%  { transform: translate3d(-3600px, 0, 0); }
+        100%      { transform: translate3d(0px, 0, 0); }
+      }
+      @keyframes wbPillSlide {
+        0%, 20%   { transform: translate3d(0px, 0, 0); }
+        25%, 45%  { transform: translate3d(34px, 0, 0); }
+        50%, 70%  { transform: translate3d(68px, 0, 0); }
+        75%, 95%  { transform: translate3d(102px, 0, 0); }
+        100%      { transform: translate3d(0px, 0, 0); }
+      }
+      @keyframes title1 { 0%,20%{opacity:1} 23%,97%{opacity:0} 100%{opacity:1} }
+      @keyframes title2 { 0%,22%{opacity:0} 25%,45%{opacity:1} 48%,100%{opacity:0} }
+      @keyframes title3 { 0%,47%{opacity:0} 50%,70%{opacity:1} 73%,100%{opacity:0} }
+      @keyframes title4 { 0%,72%{opacity:0} 75%,95%{opacity:1} 98%,100%{opacity:0} }
+      @keyframes rofiStep {
+        0%, 22%  { transform: translate3d(0, 0px, 0); }
+        25%, 47% { transform: translate3d(0, 48px, 0); }
+        50%, 72% { transform: translate3d(0, 96px, 0); }
+        75%, 96% { transform: translate3d(0, 144px, 0); }
+        100%     { transform: translate3d(0, 0px, 0); }
+      }
+      @keyframes focusPulse {
+        0%, 100% { stroke: #ffffff; stroke-opacity: 0.88; }
+        50%      { stroke: #8a8585; stroke-opacity: 0.55; }
+      }
+      @keyframes blink {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+      }
+      .track {
+        animation: wsTrack 16s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      }
+      .wb-active-pill {
+        animation: wbPillSlide 16s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      }
+      .t1 { animation: title1 16s ease infinite; }
+      .t2 { animation: title2 16s ease infinite; }
+      .t3 { animation: title3 16s ease infinite; }
+      .t4 { animation: title4 16s ease infinite; }
+      .rofi-sel { animation: rofiStep 5.2s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+      .focus-win { animation: focusPulse 3s ease-in-out infinite; }
+      .cur { animation: blink 1s steps(1) infinite; }
+      @media (prefers-reduced-motion: reduce) {
+        .track, .wb-active-pill, .t1, .t2, .t3, .t4, .rofi-sel, .focus-win, .cur {
+          animation: none !important;
+        }
+      }
+    </style>
+  </defs>
+
+  <g clip-path="url(#stageClip)">
+    <!-- Compositor Procedural Singularity Wallpaper Background -->
+    <rect width="1200" height="660" fill="url(#singularityBg)" />
+    <ellipse cx="600" cy="360" rx="340" ry="74" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1.4" transform="rotate(-11 600 360)" />
+    <circle cx="600" cy="360" r="118" fill="#040404" stroke="#ffffff" stroke-opacity="0.22" stroke-width="1.2" />
+
+    <!-- =====================================================================
+         TOP WAYBAR (Persistent Across All 4 Workspaces)
+         ===================================================================== -->
+    <g transform="translate(18, 14)">
+      <rect width="1164" height="36" rx="10" fill="#0c0b0b" fill-opacity="0.92" stroke="#383434" />
+      <!-- Brand Diamond -->
+      <path d="M 20 12 L 26 18 L 20 24 L 14 18 Z" fill="#ffffff" />
+
+      <!-- Workspace Slots & Sliding Dynamic-Island Pill -->
+      <g transform="translate(38, 6)">
+        <rect class="wb-active-pill" x="0" y="0" width="30" height="24" rx="6" fill="#eaeaea" />
+        <text x="15" y="16" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#6e6a6a">1</text>
+        <text x="49" y="16" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#6e6a6a">2</text>
+        <text x="83" y="16" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#6e6a6a">3</text>
+        <text x="117" y="16" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#6e6a6a">4</text>
+      </g>
+
+      <!-- Active Window Title (Crossfades per Workspace) -->
+      <g transform="translate(186, 22)" class="mono" font-size="11.5" fill="#9e9999">
+        <text class="t1" opacity="1">nvim : ~/.config/hypr/hyprland.lua</text>
+        <text class="t2" opacity="0">monochrome // newtab : 1px structural grid</text>
+        <text class="t3" opacity="0">rofi-wayland + mono-calc (C++20)</text>
+        <text class="t4" opacity="0">btop++ + mono-record (60fps replay)</text>
+      </g>
+
+      <!-- Center Clock -->
+      <text x="582" y="22.5" text-anchor="middle" class="mono" font-size="12" font-weight="700" fill="#ffffff">14:32:08</text>
+
+      <!-- Right Telemetry: Shader Pill + Animated 6-Bar CPU Sparkline + Memory + Battery -->
+      <g transform="translate(812, 7)">
+        <rect x="0" y="0" width="96" height="22" rx="6" fill="#eaeaea" />
+        <text x="48" y="15" text-anchor="middle" class="mono" font-size="10.5" font-weight="800" fill="#080808">SHADER: NOIR</text>
+
+        <text x="112" y="15" class="mono" font-size="11" fill="#c9c4c4">CPU</text>
+        <!-- Live Undulating SVG Sparkline -->
+        <g transform="translate(140, 4)" fill="#eaeaea">
+          <rect x="0" y="6" width="4" height="8" rx="1">
+            <animate attributeName="y" values="6;2;9;4;6" dur="2.1s" repeatCount="indefinite" />
+            <animate attributeName="height" values="8;12;5;10;8" dur="2.1s" repeatCount="indefinite" />
+          </rect>
+          <rect x="6" y="4" width="4" height="10" rx="1">
+            <animate attributeName="y" values="4;8;2;6;4" dur="1.8s" repeatCount="indefinite" />
+            <animate attributeName="height" values="10;6;12;8;10" dur="1.8s" repeatCount="indefinite" />
+          </rect>
+          <rect x="12" y="2" width="4" height="12" rx="1">
+            <animate attributeName="y" values="2;7;3;9;2" dur="2.4s" repeatCount="indefinite" />
+            <animate attributeName="height" values="12;7;11;5;12" dur="2.4s" repeatCount="indefinite" />
+          </rect>
+          <rect x="18" y="7" width="4" height="7" rx="1">
+            <animate attributeName="y" values="7;3;8;2;7" dur="1.9s" repeatCount="indefinite" />
+            <animate attributeName="height" values="7;11;6;12;7" dur="1.9s" repeatCount="indefinite" />
+          </rect>
+          <rect x="24" y="5" width="4" height="9" rx="1">
+            <animate attributeName="y" values="5;1;6;4;5" dur="2.2s" repeatCount="indefinite" />
+            <animate attributeName="height" values="9;13;8;10;9" dur="2.2s" repeatCount="indefinite" />
+          </rect>
+          <rect x="30" y="3" width="4" height="11" rx="1">
+            <animate attributeName="y" values="3;8;4;1;3" dur="1.7s" repeatCount="indefinite" />
+            <animate attributeName="height" values="11;6;10;13;11" dur="1.7s" repeatCount="indefinite" />
+          </rect>
+        </g>
+
+        <text x="190" y="15" class="mono" font-size="11" fill="#a8a2a2">MEM 2.1G</text>
+        <text x="262" y="15" class="mono" font-size="11" font-weight="700" fill="#ffffff">BAT 96%</text>
+      </g>
+    </g>
+
+    <!-- =====================================================================
+         4-WORKSPACE SPRING-PHYSICS SLIDING TRACK (width = 4800)
+         ===================================================================== -->
+    <g class="track">
+      <!-- ==================== WORKSPACE 1 (x = 0) : CODE + KITTY ==================== -->
+      <g transform="translate(0, 0)">
+        <!-- Left Window: Neovim Lua Config -->
+        <rect class="focus-win" x="18" y="64" width="586" height="576" rx="14" fill="#0d0c0c" fill-opacity="0.90" stroke="#ffffff" stroke-width="1.6" />
+        <line x1="36" y1="104" x2="586" y2="104" stroke="#262323" />
+        <text x="38" y="90" class="mono" font-size="11.5" fill="#9c9696">nvim : ~/.config/hypr/hyprland.lua</text>
+        <rect x="468" y="74" width="116" height="22" rx="5" fill="#eaeaea" />
+        <text x="526" y="89" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#080808">Lua 0.56 Engine</text>
+
+        <g transform="translate(38, 134)" class="mono" font-size="12.5">
+          <text x="0" y="0"   fill="#6f6a6a">-- ~/.config/hypr/hyprland.lua</text>
+          <text x="0" y="28"  fill="#fdfcfc">local user = require(<tspan fill="#b8b2b2">"modules.user"</tspan>)</text>
+          <text x="0" y="56"  fill="#dcd8d8">require(<tspan fill="#9e9999">"modules.hardware"</tspan>)   <tspan fill="#6f6a6a">-- GPU + HiDPI auto-tune</tspan></text>
+          <text x="0" y="84"  fill="#dcd8d8">require(<tspan fill="#9e9999">"modules.monitors"</tspan>)   <tspan fill="#6f6a6a">-- Any display / VRR</tspan></text>
+          <text x="0" y="112" fill="#dcd8d8">require(<tspan fill="#9e9999">"modules.appearance"</tspan>) <tspan fill="#6f6a6a">-- G2 squircle + glass</tspan></text>
+          <text x="0" y="140" fill="#dcd8d8">require(<tspan fill="#9e9999">"modules.animations"</tspan>) <tspan fill="#6f6a6a">-- 3 damped springs</tspan></text>
+          <text x="0" y="168" fill="#dcd8d8">require(<tspan fill="#9e9999">"modules.rules"</tspan>)      <tspan fill="#6f6a6a">-- Wayland / X11 / Java</tspan></text>
+          <text x="0" y="196" fill="#dcd8d8">require(<tspan fill="#9e9999">"modules.binds"</tspan>)      <tspan fill="#6f6a6a">-- 172 synced keybinds</tspan></text>
+          <text x="0" y="224" fill="#dcd8d8">require(<tspan fill="#9e9999">"modules.smart"</tspan>)      <tspan fill="#6f6a6a">-- Reactive hl.on hooks</tspan></text>
+
+          <rect x="0" y="256" width="546" height="1" fill="#242121" />
+          <text x="0" y="288" fill="#6f6a6a">-- Active compositor invariants</text>
+          <text x="0" y="316" fill="#fdfcfc">rounding_power     = <tspan fill="#ffffff" font-weight="700">4.0</tspan></text>
+          <text x="0" y="344" fill="#fdfcfc">direct_scanout     = <tspan fill="#ffffff" font-weight="700">2</tspan></text>
+          <text x="0" y="372" fill="#fdfcfc">force_zero_scaling = <tspan fill="#ffffff" font-weight="700">true</tspan></text>
+          <text x="0" y="400" fill="#fdfcfc">no_hardware_cursors = <tspan fill="#ffffff" font-weight="700">2</tspan> <tspan fill="#6f6a6a">-- auto-safe on NVIDIA</tspan></text>
+        </g>
+
+        <!-- Right Window: Kitty Terminal -->
+        <rect x="618" y="64" width="564" height="576" rx="14" fill="#0d0c0c" fill-opacity="0.90" stroke="#343030" stroke-width="1.4" />
+        <line x1="636" y1="104" x2="1164" y2="104" stroke="#262323" />
+        <text x="638" y="90" class="mono" font-size="11.5" fill="#9c9696">kitty : zsh + starship (1ms GPU cursor trail)</text>
+
+        <g transform="translate(638, 134)" class="mono" font-size="12.5">
+          <text x="0" y="0" fill="#ffffff" font-weight="700">mono@arch <tspan fill="#777272">~/hyprland-monochrome</tspan> &gt; <tspan fill="#dcd8d8">fastfetch</tspan></text>
+          <text x="0" y="30" fill="#b8b2b2">OS       Arch Linux x86_64 (Endeavour / Cachy / Manjaro)</text>
+          <text x="0" y="54" fill="#b8b2b2">WM       Hyprland 0.56 (Lua Native Config)</text>
+          <text x="0" y="78" fill="#b8b2b2">Shell    zsh 5.9 + starship (&lt;15ms prompt)</text>
+          <text x="0" y="102" fill="#b8b2b2">Toolkits 7/7 Monochrome (GTK3/4, Qt5/6, Nvim, Kitty, Rofi)</text>
+          <text x="0" y="126" fill="#b8b2b2">Shaders  noir | cinema-grain | p4-crt | e-ink | oled</text>
+
+          <!-- Greyscale Swatch Bar -->
+          <g transform="translate(0, 146)">
+            <rect x="0"   y="0" width="28" height="14" fill="#0c0c0c" stroke="#3d3838" />
+            <rect x="32"  y="0" width="28" height="14" fill="#262626" />
+            <rect x="64"  y="0" width="28" height="14" fill="#484848" />
+            <rect x="96"  y="0" width="28" height="14" fill="#707070" />
+            <rect x="128" y="0" width="28" height="14" fill="#9e9e9e" />
+            <rect x="160" y="0" width="28" height="14" fill="#cfcfcf" />
+            <rect x="192" y="0" width="28" height="14" fill="#ffffff" />
+          </g>
+        </g>
+
+        <!-- Live Animated Command Typing inside Kitty -->
+        <text x="638" y="334" class="mono" font-size="12.5" fill="#ffffff" font-weight="700">&gt;</text>
+        <g clip-path="url(#kittyTypeClip)">
+          <text x="656" y="334" class="mono" font-size="12.5" fill="#fdfcfc">~/.config/hypr/scripts/doctor.sh --verify</text>
+        </g>
+        <text x="638" y="366" class="mono" font-size="12" fill="#a8a2a2">[ok] Lua 0.56 modules  [ok] 5 GLSL shaders  [ok] 7/7 toolkits</text>
+        <text x="638" y="392" class="mono" font-size="12" fill="#a8a2a2">[ok] Browser chrome    [ok] XWayland HiDPI  [ok] PipeWire capture</text>
+        <text x="638" y="432" class="mono" font-size="12.5" fill="#ffffff" font-weight="700">mono@arch <tspan fill="#777272">~</tspan> &gt;</text>
+        <rect class="cur" x="746" y="419" width="8" height="16" fill="#ffffff" />
+      </g>
+
+      <!-- ==================== WORKSPACE 2 (x = 1200) : MONOCHROME BROWSER ==================== -->
+      <g transform="translate(1200, 0)">
+        <rect x="22" y="64" width="1156" height="576" rx="4" fill="#131010" stroke="#646262" stroke-width="1.2" />
+        <!-- Tab Strip -->
+        <rect x="23" y="65" width="1154" height="36" fill="#0d0b0b" />
+        <line x1="22" y1="101" x2="1178" y2="101" stroke="#3d3838" />
+        <rect x="34" y="71" width="196" height="30" rx="3" fill="#201d1d" stroke="#3d3838" />
+        <line x1="34" y1="100" x2="230" y2="100" stroke="#ffffff" stroke-width="2" />
+        <text x="50" y="90" class="mono" font-size="11.5" font-weight="700" fill="#fdfcfc">monochrome // newtab</text>
+        <text x="252" y="90" class="mono" font-size="11.5" fill="#7f7a7a">hyprland.wiki</text>
+        <text x="382" y="90" class="mono" font-size="11.5" fill="#7f7a7a">github.com/esoexe</text>
+
+        <!-- URL Bar -->
+        <rect x="23" y="102" width="1154" height="40" fill="#1b1818" />
+        <line x1="22" y1="142" x2="1178" y2="142" stroke="#3d3838" />
+        <rect x="92" y="109" width="1064" height="26" rx="3" fill="#131010" stroke="#3d3838" />
+        <text x="108" y="126" class="mono" font-size="11.5" fill="#b8b2b2">file://~/.config/browser/monochrome/startpage.html</text>
+
+        <!-- Centered Structural Grid Startpage -->
+        <text x="260" y="252" class="mono" font-size="26" font-weight="800" fill="#fdfcfc">monochrome // workspace</text>
+        <text x="940" y="252" text-anchor="end" class="mono" font-size="12" fill="#7f7a7a">4px radius  /  1px #3d3838 rules</text>
+        <line x1="260" y1="268" x2="940" y2="268" stroke="#3d3838" />
+
+        <!-- Search Box with Live Typing -->
+        <rect x="260" y="294" width="680" height="48" rx="4" fill="#201d1d" stroke="#646262" />
+        <text x="276" y="323" class="mono" font-size="13" fill="#7f7a7a">/</text>
+        <g clip-path="url(#browserTypeClip)">
+          <text x="296" y="323" class="mono" font-size="13" fill="#fdfcfc">!gh esoexe/hyprland-monochrome</text>
+        </g>
+
+        <!-- 4x2 Structural 1px Grid Bookmarks -->
+        <g transform="translate(260, 368)">
+          <rect width="680" height="156" fill="#1b1818" stroke="#3d3838" />
+          <line x1="170" y1="0" x2="170" y2="156" stroke="#3d3838" />
+          <line x1="340" y1="0" x2="340" y2="156" stroke="#3d3838" />
+          <line x1="510" y1="0" x2="510" y2="156" stroke="#3d3838" />
+          <line x1="0" y1="78" x2="680" y2="78" stroke="#3d3838" />
+
+          <text x="18" y="28" class="mono" font-size="10.5" fill="#7f7a7a">[1]</text>
+          <text x="18" y="52" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">GitHub</text>
+
+          <text x="188" y="28" class="mono" font-size="10.5" fill="#7f7a7a">[2]</text>
+          <text x="188" y="52" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">Hyprland Wiki</text>
+
+          <text x="358" y="28" class="mono" font-size="10.5" fill="#7f7a7a">[3]</text>
+          <text x="358" y="52" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">ArchWiki</text>
+
+          <text x="528" y="28" class="mono" font-size="10.5" fill="#7f7a7a">[4]</text>
+          <text x="528" y="52" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">AUR Packages</text>
+
+          <text x="18" y="106" class="mono" font-size="10.5" fill="#7f7a7a">[5]</text>
+          <text x="18" y="130" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">Localhost :8080</text>
+
+          <text x="188" y="106" class="mono" font-size="10.5" fill="#7f7a7a">[6]</text>
+          <text x="188" y="130" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">Documentation</text>
+
+          <text x="358" y="106" class="mono" font-size="10.5" fill="#7f7a7a">[7]</text>
+          <text x="358" y="130" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">Pull Requests</text>
+
+          <text x="528" y="106" class="mono" font-size="10.5" fill="#7f7a7a">[8]</text>
+          <text x="528" y="130" class="mono" font-size="13" font-weight="700" fill="#fdfcfc">Releases</text>
+        </g>
+      </g>
+
+      <!-- ==================== WORKSPACE 3 (x = 2400) : LAUNCHER + MONO-CALC ==================== -->
+      <g transform="translate(2400, 0)">
+        <!-- Left Window: Rofi Universal Launcher -->
+        <rect x="18" y="64" width="586" height="576" rx="14" fill="#0d0c0c" fill-opacity="0.92" stroke="#ffffff" stroke-width="1.5" />
+        <line x1="36" y1="104" x2="586" y2="104" stroke="#262323" />
+        <text x="38" y="90" class="mono" font-size="11.5" fill="#fdfcfc">rofi-wayland + open-app.sh (Super + D)</text>
+
+        <g transform="translate(38, 128)">
+          <!-- Animated Gliding Selection Highlight -->
+          <rect class="rofi-sel" x="0" y="0" width="546" height="40" rx="7" fill="#ffffff" fill-opacity="0.14" stroke="#ffffff" stroke-width="1.2" />
+
+          <g class="mono" font-size="12.5">
+            <text x="16" y="25" fill="#ffffff" font-weight="700">1. Kitty Terminal</text>
+            <text x="530" y="25" text-anchor="end" font-size="11" fill="#9c9696">native wayland</text>
+
+            <text x="16" y="73" fill="#e6e2e2">2. Zen / Firefox Browser</text>
+            <text x="530" y="73" text-anchor="end" font-size="11" fill="#9c9696">MOZ_ENABLE_WAYLAND</text>
+
+            <text x="16" y="121" fill="#e6e2e2">3. JetBrains IDEA / Studio</text>
+            <text x="530" y="121" text-anchor="end" font-size="11" fill="#9c9696">_JAVA_AWT_WM fix</text>
+
+            <text x="16" y="169" fill="#e6e2e2">4. Obsidian.AppImage</text>
+            <text x="530" y="169" text-anchor="end" font-size="11" fill="#9c9696">auto-indexed + FUSE fallback</text>
+
+            <text x="16" y="217" fill="#e6e2e2">5. Steam / Proton / Gamescope</text>
+            <text x="530" y="217" text-anchor="end" font-size="11" fill="#9c9696">xwayland zero-scale + VRR</text>
+
+            <text x="16" y="265" fill="#e6e2e2">6. OBS Studio + PipeWire</text>
+            <text x="530" y="265" text-anchor="end" font-size="11" fill="#9c9696">xdg-desktop-portal-hyprland</text>
+          </g>
+        </g>
+
+        <!-- Right Window: Command Palette & C++20 mono-calc -->
+        <rect x="618" y="64" width="564" height="576" rx="14" fill="#0d0c0c" fill-opacity="0.92" stroke="#343030" stroke-width="1.4" />
+        <line x1="636" y1="104" x2="1164" y2="104" stroke="#262323" />
+        <text x="638" y="90" class="mono" font-size="11.5" fill="#9c9696">mono-calc : C++20 Recursive-Descent Engine (Super + Shift + P)</text>
+
+        <g transform="translate(638, 134)" class="mono">
+          <rect x="0" y="0" width="524" height="44" rx="7" fill="#1b1818" stroke="#3d3838" />
+          <text x="16" y="27" font-size="13" fill="#fdfcfc">= sqrt(3840^2 + 2160^2) / 27</text>
+
+          <rect x="0" y="60" width="524" height="68" rx="7" fill="#141212" stroke="#3d3838" />
+          <text x="18" y="99" font-size="12" fill="#8d8888">Display Density (PPI)</text>
+          <text x="504" y="102" text-anchor="end" font-size="26" font-weight="800" fill="#ffffff">163.18</text>
+
+          <text x="0" y="170" font-size="11.5" fill="#7f7a7a">QUICK ACTIONS</text>
+          <text x="0" y="202" font-size="12.5" fill="#dcd8d8">[fx]     Cycle GLSL screen shader (Noir / CRT / E-Ink / OLED)</text>
+          <text x="0" y="232" font-size="12.5" fill="#dcd8d8">[motion] Switch spring physics (Fluid / Snappy / Cinematic)</text>
+          <text x="0" y="262" font-size="12.5" fill="#dcd8d8">[zen]    Toggle distraction-free 28px framed workspace</text>
+          <text x="0" y="292" font-size="12.5" fill="#dcd8d8">[save]   Snapshot active workspace layout to JSON</text>
+        </g>
+      </g>
+
+      <!-- ==================== WORKSPACE 4 (x = 3600) : BTOP++ + CAPTURE ==================== -->
+      <g transform="translate(3600, 0)">
+        <!-- Left Window: btop++ 8-Core Animated Luminance Meters -->
+        <rect x="18" y="64" width="586" height="576" rx="14" fill="#0d0c0c" fill-opacity="0.92" stroke="#ffffff" stroke-width="1.5" />
+        <line x1="36" y1="104" x2="586" y2="104" stroke="#262323" />
+        <text x="38" y="90" class="mono" font-size="11.5" fill="#fdfcfc">btop++ : Monochrome System Telemetry (Super + Shift + B)</text>
+
+        <g transform="translate(38, 136)" class="mono" font-size="12">
+          <g transform="translate(0, 0)">
+            <text x="0" y="12" fill="#9c9696">Core 0</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="280" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="280;360;190;310;280" dur="3.4s" repeatCount="indefinite" />
+            </rect>
+          </g>
+          <g transform="translate(0, 38)">
+            <text x="0" y="12" fill="#9c9696">Core 1</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="210" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="210;150;330;240;210" dur="2.9s" repeatCount="indefinite" />
+            </rect>
+          </g>
+          <g transform="translate(0, 76)">
+            <text x="0" y="12" fill="#9c9696">Core 2</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="340" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="340;220;390;260;340" dur="3.8s" repeatCount="indefinite" />
+            </rect>
+          </g>
+          <g transform="translate(0, 114)">
+            <text x="0" y="12" fill="#9c9696">Core 3</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="165" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="165;295;140;230;165" dur="3.1s" repeatCount="indefinite" />
+            </rect>
+          </g>
+          <g transform="translate(0, 152)">
+            <text x="0" y="12" fill="#9c9696">Core 4</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="255" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="255;370;205;315;255" dur="2.7s" repeatCount="indefinite" />
+            </rect>
+          </g>
+          <g transform="translate(0, 190)">
+            <text x="0" y="12" fill="#9c9696">Core 5</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="190" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="190;130;285;220;190" dur="3.5s" repeatCount="indefinite" />
+            </rect>
+          </g>
+          <g transform="translate(0, 228)">
+            <text x="0" y="12" fill="#9c9696">Core 6</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="310" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="310;240;365;195;310" dur="3.2s" repeatCount="indefinite" />
+            </rect>
+          </g>
+          <g transform="translate(0, 266)">
+            <text x="0" y="12" fill="#9c9696">Core 7</text>
+            <rect x="68" y="2" width="440" height="10" rx="3" fill="#1e1c1c" />
+            <rect x="68" y="2" width="225" height="10" rx="3" fill="#eaeaea">
+              <animate attributeName="width" values="225;325;175;265;225" dur="2.8s" repeatCount="indefinite" />
+            </rect>
+          </g>
+        </g>
+
+        <!-- Right Window: Capture & Replay Studio -->
+        <rect x="618" y="64" width="564" height="576" rx="14" fill="#0d0c0c" fill-opacity="0.92" stroke="#343030" stroke-width="1.4" />
+        <line x1="636" y1="104" x2="1164" y2="104" stroke="#262323" />
+        <text x="638" y="90" class="mono" font-size="11.5" fill="#9c9696">record.sh + screenshot.sh (Super + C Capture Chord)</text>
+
+        <g transform="translate(638, 134)" class="mono">
+          <rect x="0" y="0" width="524" height="74" rx="8" fill="#151313" stroke="#ffffff" stroke-opacity="0.35" />
+          <circle cx="24" cy="28" r="5" fill="#ffffff">
+            <animate attributeName="opacity" values="1;0.2;1" dur="1.4s" repeatCount="indefinite" />
+          </circle>
+          <text x="40" y="32" font-size="13" font-weight="700" fill="#ffffff">gpu-screen-recorder : 60s Replay Active</text>
+          <text x="40" y="54" font-size="11.5" fill="#9c9696">Zero-copy NVENC / VAAPI capture + automatic wf-recorder fallback</text>
+
+          <rect x="0" y="92" width="524" height="68" rx="8" fill="#141212" stroke="#2c2828" />
+          <text x="20" y="122" font-size="13" font-weight="700" fill="#e6e2e2">grim + slurp + satty / swappy</text>
+          <text x="20" y="144" font-size="11.5" fill="#8d8888">Lossless region, active-window, or full-output PNG annotation</text>
+
+          <rect x="0" y="178" width="524" height="68" rx="8" fill="#141212" stroke="#2c2828" />
+          <text x="20" y="208" font-size="13" font-weight="700" fill="#e6e2e2">Tesseract Screen OCR (Super + C -&gt; O)</text>
+          <text x="20" y="230" font-size="11.5" fill="#8d8888">Extracts text from any screen region directly to wl-clipboard</text>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Outer Crisp Compositor Border -->
+  <rect x="0.75" y="0.75" width="1198.5" height="658.5" rx="16" fill="none" stroke="#3d3838" stroke-width="1.5" />
+</svg>

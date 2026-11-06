@@ -1,64 +1,75 @@
-# hyprland-monochrome
+<div align="center">
+  <a href="https://esoexe.github.io/hyprland-monochrome/">
+    <img src="docs/assets/hero-banner.svg" width="100%" alt="hyprland-monochrome : Pure monochrome Wayland desktop" />
+  </a>
 
-[![CI](https://github.com/esoexe/hyprland-monochrome/actions/workflows/ci.yml/badge.svg)](https://github.com/esoexe/hyprland-monochrome/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/esoexe/hyprland-monochrome?color=1b1818&labelColor=0d0d0d)](https://github.com/esoexe/hyprland-monochrome/releases)
-[![License: MIT](https://img.shields.io/badge/license-MIT-e6e6e6?labelColor=0d0d0d)](LICENSE)
+  <br />
 
-A clean, universal monochrome Hyprland desktop built to **run on any PC** (AMD, Intel, NVIDIA,
-hybrid Optimus laptops, and VMs across **Arch, EndeavourOS, CachyOS, Manjaro**, plus Debian/Ubuntu,
-Fedora, and openSUSE), **open any app or file**, and style your browser in the **OpenCode**
-terminal-grid design system.
+  <p>
+    <a href="https://esoexe.github.io/hyprland-monochrome/"><img src="docs/assets/btn-live-site.svg" height="36" alt="Launch Live Website" /></a>&nbsp;&nbsp;
+    <a href="https://esoexe.github.io/hyprland-monochrome/newtab.html"><img src="docs/assets/btn-startpage.svg" height="36" alt="Open Browser Startpage" /></a>&nbsp;&nbsp;
+    <a href="https://github.com/esoexe/hyprland-monochrome/releases/tag/v5.2.0"><img src="docs/assets/btn-release.svg" height="36" alt="Download Release v5.2.0" /></a>
+  </p>
 
-```
-Hyprland (Lua config) · Waybar · Rofi · awww · hyprlock · hypridle · hyprsunset
-Kitty · Thunar · Zsh + Starship · dunst · cliphist · OpenCode Browser Theme · C++20 Tools
-```
+  <p>
+    <a href="https://github.com/esoexe/hyprland-monochrome/actions/workflows/ci.yml"><img src="https://github.com/esoexe/hyprland-monochrome/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+    <a href="https://esoexe.github.io/hyprland-monochrome/"><img src="https://img.shields.io/badge/live_simulator-online-fdfcfc?style=flat&labelColor=131010&color=e6e6e6" alt="Live Website" /></a>
+    <a href="https://github.com/esoexe/hyprland-monochrome/releases"><img src="https://img.shields.io/github/v/release/esoexe/hyprland-monochrome?color=201d1d&labelColor=0d0d0d" alt="Release" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-e6e6e6?labelColor=0d0d0d" alt="License: MIT" /></a>
+  </p>
+</div>
 
-![hyprland-monochrome](docs/preview.png)
+A minimalist monochrome **Hyprland 0.56** Wayland desktop environment engineered in **C++20**, **Lua 5.4**, and **POSIX Shell**. Built around strict luminance hierarchy, damped physical spring motion, automatic GPU and display profiling across **Arch, EndeavourOS, CachyOS, Manjaro** (plus Debian/Ubuntu, Fedora, and openSUSE), universal application routing, and a cohesive `1px` structural browser suite.
+
+---
+
+## Live Compositor Overview
 
 <p align="center">
-  <em>Black surfaces, white text, greys in between — no accent colour to fight with your wallpapers.</em><br>
-  <small>(<code>docs/preview.svg</code> is a mockup of the layout, not a screenshot — open
-  <code>docs/preview.html</code> for a preview generated from the config itself)</small>
+  <a href="https://esoexe.github.io/hyprland-monochrome/#simulator">
+    <img src="docs/assets/compositor-live.svg" width="100%" alt="Live animated 4-workspace Hyprland 0.56 compositor simulation" />
+  </a>
 </p>
 
 <p align="center">
-  <a href="docs/desktop-demo.mp4">▶ <b>Watch the live 1080p desktop session</b></a> — Waybar, Rofi
-  menus, 16K wallpapers, Thunar, Dunst, <code>record.sh</code> and the full test suite running live ·
-  or <a href="docs/test-run.mp4">watch the terminal-only test run</a>.<br>
-  <small>(real Wayland session captured with <code>wf-recorder</code> via <code>tools/record-desktop.sh</code>)</small>
+  <img src="docs/assets/pipeline-strip.svg" width="100%" alt="Four-stage hardware, compositor, runtime, and browser architecture" />
 </p>
 
 ---
 
-## What you get
+## Recorded Wayland Session &amp; Kinetic Wallpapers
 
-| | |
+<p align="center">
+  <a href="docs/desktop-demo.mp4">
+    <img src="docs/assets/desktop-session.gif" width="100%" alt="Recorded live Wayland desktop session" />
+  </a>
+  <br />
+  <sub>Real Wayland session captured inside the environment. Click the animation above for the full 1080p recording (<a href="docs/desktop-demo.mp4"><code>docs/desktop-demo.mp4</code></a>) or try the interactive browser simulator at <a href="https://esoexe.github.io/hyprland-monochrome/">esoexe.github.io/hyprland-monochrome</a>.</sub>
+</p>
+
+| Orbital Rings (`mono-live-01`) | Harmonic Pulse (`mono-live-02`) | Lissajous Scope (`mono-live-03`) |
+| :---: | :---: | :---: |
+| <img src="wallpapers/mono-live-01-orbital.gif" width="100%" alt="Orbital Rings live loop" /> | <img src="wallpapers/mono-live-02-pulse.gif" width="100%" alt="Harmonic Pulse live loop" /> | <img src="wallpapers/mono-live-03-lissajous.gif" width="100%" alt="Lissajous Scope live loop" /> |
+
+---
+
+## Core Capabilities
+
+| Subsystem | What It Delivers |
 | --- | --- |
-| **Works on Any PC (`hardware.lua` + `hardware.sh`)** | Zero-subprocess `/sys` & `/proc` startup probe (`<0.2ms`) that auto-tunes **AMD Radeon**, **Intel Arc/Iris**, **NVIDIA RTX/GTX** (`nvidia-drm`, `nvidia_anti_flicker`, `no_hardware_cursors = 2`), **Hybrid Dual-GPU Optimus laptops** (`AQ_FORCE_LINEAR_BLIT=0`), **VMs** (QEMU/KVM/VMware/VirtualBox software-renderer fallback), laptop lid/battery/power-profiles, crisp zero-blur HiDPI XWayland scaling, and multi-distro `install.sh` (`pacman`, `apt-get`, `dnf`, `zypper`) |
-| **Opens Any App & File (`open-app.sh`)** | Native Wayland, X11/XWayland, Electron (`electron-flags.conf`), Qt5/6, GTK3/4, SDL2 (`wayland,x11`), Java/JetBrains (`_JAVA_AWT_WM_NONEREPARENTING=1`), **Flatpak**, **Snap**, **Nix**, auto-indexed **`.AppImage`** (with FUSE-less `--appimage-extract-and-run` fallback), **Windows `.exe`/`.msi`** (Wine/Bottles/umu), smart browser/file-manager fallbacks, `Super + Shift + O` Universal Opener, and monochrome viewers (`imv`, `zathura`, `mpv`, `file-roller`, `bat`) |
-| **OpenCode Browser Theme (`browser-theme.sh`)** | Full **OpenCode (`opencode.ai`)** terminal-brutalist browser suite (`#131010` canvas, `#201d1d` elevated prompt, `1px solid #3d3838` structural borders, `4px` corners, 100% monospace chrome): auto-applied **Firefox / LibreWolf / Zen / Floorp** `userChrome.css` + `userContent.css` + `user.js`, **Chromium / Brave / Chrome / Vivaldi / Edge** Manifest V3 theme & New-Tab extensions, offline **`startpage.html`** (`Super + Alt + B`), and matching `~/.config/opencode/` TUI theme |
-| **Velocity & Zero-Fork Engine (`perf.sh`)** | **0-subprocess pure-Bash core** (`mono_var` & Waybar `/proc` `sysgraph.sh` run in ~1 ms with 0 external forks), `<3ms` `kitty --single-instance` shared GPU glyph cache, bytecode-compiled Zsh + cached Starship (`<15ms`), **`Super + F12` Turbo / Game Mode** (0ms latency, `direct_scanout`, tearing, VRR, Waybar `⚡ TURBO` pill), and live `perf.sh bench` |
-| **Squircle & Liquid Glass (`appearance.lua`)** | **Continuous G2 Apple-style squircles (`rounding_power = 4.0`)**, magnetic floating window edge snapping (`general.snap`), `animate_manual_resizes` spring glides, `async_commit` 0-frame cursor, `new_render_scheduling` triple-buffering, and live **Hyprland 0.56 Optical Glass** (`kawase` · fast 1-pass `xray` · monochrome `acrylic` Liquid Glass) |
-| **Kinetic Physics (`animations.lua`)** | **3 native damped physical springs** (`silkSpring`, `drawerSpring`, `snappySpring`) + **29 choreographed animation leaves** across windows, `slidefade` workspace parallax, `slidefadevert` scratchpad drawers, and `popin`/`slide` layers — switchable live via `Super + M` (`fluid` · `snappy` · `cinematic` + orbiting liquid-silver border · `minimal`) |
-| **GLSL Screen Shaders (`shader.sh`)** | **5 real-time GLSL ES 3.00 GPU post-processing shaders** (`Super + ,` or `Super + M → S`): **Noir** (hardware Rec.709 Leica greyscale), **35mm Film** (grain + vignette), **P4 Studio CRT** (scanlines), **Matte E-Ink**, and **OLED Pitch** (true-black pixel-off saver & micro-contrast) |
-| **Hyprland, Groups & 1:1 Gestures** | Lua 0.56 tiling (`dwindle`, `master`, `scrolling` auto-fit), **6 finger-tracked 1:1 trackpad gestures**, modal chords (`RESIZE`, `CAPTURE`, `SCRATCH`, `FX`, and **`GROUP` tab-stack Vim chord `Super + Ctrl + G`**), workspace back-and-forth ping-pong, **PiP 4-corner spring snap (`Super + .`)**, and **`hl.on` reactive hooks (`smart.lua`)** |
-| **Command Palette** | `Super + Shift + P` (or `Super + ;`): Raycast/Linear-style omnibar for jumping to open windows, toggling Turbo Mode & Liquid Glass, switching motion physics & GLSL shaders, toggling named drawers, saving/restoring workspace sessions, running the System Doctor, and live math (`= (15360*8640)/1e6`) |
-| **Named Drawers & Sessions** | `Super + Shift + T` (dropdown terminal), `Super + Shift + B` (floating `btop++` monitor), `Super + '` (instant `~/Documents/scratch.md` in Neovim with yank-flash & smoothscroll), plus `Super + Ctrl + S` (`SCRATCH` chord) and **Workspace Session Snapshots** |
-| **Focus & Zen** | `Super + Z` enters distraction-free **Zen Mode** (slides Waybar away, frames the active window with 28px obsidian margins, mutes Dunst); `Super + Shift + Z` runs Pomodoro sprints with a live inverted Waybar pill (`◎ 24:58`) |
-| **Waybar & Kitty Trail** | Event-driven `RTMIN` signal pills, Dynamic-Island cubic-Bézier morphing workspace pills, **0-fork Unicode CPU micro-sparkline (`▁▂▄▆▃▂ 14%`)**, breathing recording dot, and **Kitty 1ms-latency GPU cursor trail** (`cursor_trail = 1`, `input_delay = 1`, `repaint_delay = 6`) |
-| **Full-Stack Monochrome** | **7/7 toolkits themed strictly greyscale (`R == G == B`)**: GTK3/GTK4 (`gtk.css`), **Qt5 & Qt6 (`qt5ct`/`qt6ct` 21-slot Fusion palette)**, **zero-plugin typographic Neovim (`monochrome.lua`)**, Kitty, Rofi (`dim_around` + `popin`), Waybar, Dunst OSDs, and Swiss-watch `hyprlock` |
-| **Wallpapers & Live Loops** | `Super + W` (120fps `awww` cubic-Bézier transitions) & `Super + Alt + W` (**animated live loops**): **17 static procedural masters** (`mono-01`..`mono-14` up to 16K) + **3 seamless animated live GIFs** (`mono-live-01-orbital.gif`, `mono-live-02-pulse.gif` & `mono-live-03-lissajous.gif` P4 Harmonic Oscilloscope) |
-| **Capture & OCR** | `Super + C` opens the single-chord `CAPTURE` mode (`s` region, `f` full, `w` window, `o` **Tesseract OCR → clipboard**, `e` **Satty/Swappy annotate**, `r` record, `p` 60s instant replay) — plus `Print` keybinds |
-| **Recording** | `Super + Alt + Print` starts/stops screen recording (`gpu-screen-recorder` with 60s replay buffer, automatic `wf-recorder` fallback); live `●` timer in Waybar |
-| **Idle & light** | hypridle (dim → lock → screen off → suspend) and hyprsunset (automatic blue-light filter, `Super + Shift + N` to toggle) |
-| **Shell** | Zsh with Starship (monochrome prompt), autosuggestions, syntax highlighting, fzf history, `eza`/`bat`, useful aliases and functions |
-| **Spotify** | Optional Spicetify theme: greyscale UI, album art is the only colour left in the app |
-| **Windows** | Dual-booter? `windows/` holds a matching GlazeWM config and Windows Terminal scheme, generated from the same palette — [docs/ON-WINDOWS.md](docs/ON-WINDOWS.md) |
+| **Adaptive Hardware Engine (`hardware.lua` + `hardware.sh`)** | Sub-millisecond `/sys` and `/proc` startup inspection that configures **AMD Radeon**, **Intel Iris/Arc**, **NVIDIA RTX/GTX** (`nvidia-drm`, `nvidia_anti_flicker`, `no_hardware_cursors = 2`), **Hybrid Optimus laptops** (`AQ_DRM_DEVICES`, `AQ_FORCE_LINEAR_BLIT=0`), and **Virtual Machines** (QEMU/KVM/VMware/VirtualBox software fallback), alongside crisp zero-blur HiDPI XWayland scaling and multi-distro installation (`pacman`, `apt-get`, `dnf`, `zypper`). |
+| **Universal Application Layer (`open-app.sh`)** | Seamless launch and rendering across native Wayland, X11/XWayland, Electron (`ELECTRON_OZONE_PLATFORM_HINT=auto`), Qt5/6, GTK3/4, SDL2 (`wayland,x11`), Java Swing and JetBrains IDEs (`_JAVA_AWT_WM_NONEREPARENTING=1`), **Flatpak**, **Snap**, **Nix**, auto-indexed **`.AppImage`** binaries (with FUSE-less `--appimage-extract-and-run` fallback), Windows `.exe`/`.msi` via Wine/Bottles, and `Super + Shift + O` universal file/URL dispatch. |
+| **Monochrome Browser Suite (`browser-theme.sh`)** | Cohesive `1px` structural grid browser chrome (`#131010` surface, `#201d1d` elevated prompt, `#3d3838` dividers, `4px` corners, 100% monospace chrome): automated profile setup for **Firefox / Zen / LibreWolf / Floorp** (`userChrome.css`, `userContent.css`, Wayland prefs), **Chromium / Brave / Chrome / Vivaldi** Manifest V3 theme and new-tab extension, **Qutebrowser** palette, and offline **`startpage.html`** (`Alt + B`). |
+| **Spring Physics &amp; Optical Glass (`animations.lua`, `appearance.lua`)** | Three damped physical spring curves (`silkSpring`, `drawerSpring`, `snappySpring`) driving 29 animation targets across windows, workspace parallax, and scratchpad drawers. Continuous G2 squircle geometry (`rounding_power = 4.0`), magnetic edge snapping, `direct_scanout`, and switchable optical glass (`kawase`, `xray`, `acrylic`) plus `Super + F12` low-latency **Direct Scanout / Game Mode**. |
+| **Real-Time GLSL Shaders (`shader.sh`)** | Five GPU post-processing shaders (`Super + ,` or `Super + M` then `S`): **Noir** (Rec.709 hardware luminance), **35mm Film Grain**, **P4 Studio CRT**, **Matte E-Ink**, and **OLED Pitch** (true-black pixel power saving and micro-contrast). |
+| **Command Palette &amp; Native `mono-calc`** | `Super + Shift + P` (or `Super + ;`) opens an omnibar for jumping to active windows, switching motion physics or GLSL shaders, toggling named drawers, managing workspace snapshots, running system diagnostics, and evaluating math expressions via the compiled C++20 `mono-calc` engine. |
+| **Full-Stack Greyscale (`R == G == B`)** | Unified greyscale theming across all 7 desktop toolkits: GTK3/GTK4, Qt5/Qt6 (`qt5ct`/`qt6ct` 21-slot Fusion palette), zero-plugin Neovim (`monochrome.lua`), Kitty (`1ms` GPU cursor trail), Rofi, Waybar, Dunst OSDs, `hyprlock`, and optional Spicetify monochrome chrome. |
+| **Capture, Replay &amp; Screen OCR (`record.sh`, `screenshot.sh`)** | `Super + C` opens the `CAPTURE` chord (`s` region, `f` full screen, `w` active window, `o` Tesseract region OCR to clipboard, `e` Satty/Swappy vector annotation, `r` start/stop recording, `p` save 60s instant replay) powered by `gpu-screen-recorder` with automatic `wf-recorder` fallback. |
+| **Procedural C++20 Wallpapers** | `Super + W` (120 FPS `awww` transitions) and `Alt + W` (live animated loops): 17 procedural C++20 monochrome compositions (up to 4K/16K masters) plus 3 seamless kinetic GIF loops (`Orbital Rings`, `Harmonic Pulse`, `Lissajous Scope`). |
 
 ---
 
-## Install
+## Quick Install
 
 ```bash
 git clone https://github.com/esoexe/hyprland-monochrome.git
@@ -66,227 +77,107 @@ cd hyprland-monochrome
 ./install.sh
 ```
 
-That's it. The installer:
+What `./install.sh` performs:
 
-1. checks it is really talking to an Arch-based system and that Hyprland is new enough,
-2. installs everything in `packages.txt` from the official repos (nothing from the AUR is required),
-3. offers the optional extras in `aur-packages.txt` if you have `paru` or `yay`,
-4. **backs up every file it replaces** — twice (see below),
-5. copies the configuration into `~/.config` (or symlinks it with `--link`),
-6. copies the wallpapers, makes the scripts executable, offers to set Zsh as your shell,
-7. reloads Hyprland and reports any config errors it finds.
-
-Then **log out and back in**, choosing the *Hyprland* session.
+1. Detects your Linux distribution (`Arch`, `EndeavourOS`, `CachyOS`, `Manjaro`, or `Debian`/`Ubuntu`/`Fedora`/`openSUSE`) and verifies compositor prerequisites.
+2. Installs required packages from official repositories (`packages.txt`) and offers optional extras (`aur-packages.txt`) when `paru` or `yay` is present.
+3. **Backs up every existing file before touching anything** (preserving a permanent `pristine/` snapshot of your original setup).
+4. Installs `~/.config` modules (or symlinks them with `--link`), compiles native C++20 utilities, copies wallpapers, applies browser theming, and reloads Hyprland cleanly.
 
 ```text
-./install.sh --help          all options
-./install.sh --yes           no questions (good for a fresh VM)
-./install.sh --no-packages   only install the config files
-./install.sh --link          symlink instead of copy (edit in place, git-friendly)
-./install.sh --dry-run       show what would happen, touch nothing
-./uninstall.sh               remove the config and put your old files back
+./install.sh --help          list all installer flags
+./install.sh --yes           non-interactive install
+./install.sh --no-packages   deploy configuration files only
+./install.sh --link          symlink configs into ~/.config for live git workflow
+./install.sh --dry-run       preview every action without modifying disk
+./uninstall.sh               remove installed configs and restore originals
 ```
 
-### Backups
-
-Two folders are kept, and they mean different things:
+### Backups &amp; Instant Rollback
 
 ```text
-~/.config-backups/pristine/     your files exactly as they were before the FIRST install
-                                (never overwritten, so re-installing cannot bury them)
-~/.config-backups/<timestamp>/  what that particular run replaced, with restore.sh
+~/.config-backups/pristine/     exact snapshot prior to the very first install (never overwritten)
+~/.config-backups/<timestamp>/  incremental backup for each subsequent run with restore.sh
 ```
-
-Restore at any time:
 
 ```bash
-~/.config-backups/pristine/restore.sh     # put your originals back
-./uninstall.sh                            # remove the config, then restore the originals
-./uninstall.sh --list                     # see what is available
+~/.config-backups/pristine/restore.sh     # restore original files directly
+./uninstall.sh                            # full uninstall + automatic restoration
+./uninstall.sh --list                     # list available backup snapshots
 ```
 
-Already have a desktop set up? `--link` is pleasant: the repo stays the source of truth and
-`git pull` updates your desktop.
+---
+
+## Essential Keybinds
+
+`Super` is the primary modifier (configurable in `.config/hypr/modules/user.lua`). Press `Super + /` on the desktop or browse **[docs/KEYBINDS.md](docs/KEYBINDS.md)** (and the [live searchable table](https://esoexe.github.io/hyprland-monochrome/#keybinds)) for all **172** shortcuts.
+
+| Keybind | Action | Keybind | Action |
+| --- | --- | --- | --- |
+| `Super + T` / `Super + Enter` | Kitty terminal | `Super + Shift + P` / `Super + ;` | Command palette &amp; `mono-calc` |
+| `Super + D` | Application launcher | `Super + Shift + O` | Universal file / URL / AppImage opener |
+| `Super + E` | File manager (`Thunar`) | `Super + Z` / `Super + Shift + Z` | Zen mode / Pomodoro focus timer |
+| `Super + B` / `Alt + B` | Browser / Monochrome startpage | `Super + R` | `RESIZE` chord (`h/j/k/l`, `1-3/0` gaps) |
+| `Super + I` | System settings menu | `Super + C` | `CAPTURE` chord (`s/f/w/o/e/r/p/m`) |
+| `Super + W` / `Alt + W` | Wallpaper picker / Live loop | `Super + M` | `FX` chord (spring physics &amp; shaders) |
+| `Super + ,` / `Super + .` | Cycle GLSL shader / PiP snap | `Super + \` / `Super + Shift + \` | Cycle tiling layout / gap presets |
+| `Super + Shift + T` | Quake dropdown terminal | `Super + Shift + B` | Floating `btop++` telemetry drawer |
+| `Super + '` | Scratchpad Markdown notes | `Super + Ctrl + S` | `SCRATCH` &amp; workspace session chord |
+| `Super + V` | Clipboard history (`cliphist`) | `Super + F` / `Super + Space` | Fullscreen / Centered floating |
+| `Super + Shift + W` | Toggle top Waybar | `Super + F12` | Direct Scanout / low-latency mode |
+| `Super + Print` | Region screenshot | `Super + Alt + Print` | Start / stop screen recording |
+| `Super + Tab` | Lock screen (`hyprlock`) | `Super + Escape` | Session power menu |
+
+Window focus uses `Super + H/J/K/L` (or arrow keys), moving uses `Super + Shift + H/J/K/L`, resizing uses `Super + Ctrl + H/J/K/L`, and workspaces switch with `Super + 1..0` or `Super + Scroll`.
 
 ---
 
-## Keybinds
-
-`Super` is the main modifier. The full, always-up-to-date table lives in
-**[docs/KEYBINDS.md](docs/KEYBINDS.md)** — and `Super + /` shows a searchable version of it
-built from your live config.
-
-| Keybind | Action | | Keybind | Action |
-| --- | --- | --- | --- | --- |
-| `Super + T` / `Super + Enter` | Terminal | | `Super + Shift + P` / `Super + ;` | **Command palette & math** |
-| `Super + D` | App launcher | | `Super + Z` / `Super + Shift + Z` | **Zen mode / Pomodoro focus** |
-| `Super + E` | File manager (monochrome GTK) | | `Super + R` | **`RESIZE` chord** (`h/j/k/l`, `1-3/0` gaps) |
-| `Super + B` | Browser | | `Super + C` | **`CAPTURE` chord** (`s/f/w/o/e/r/p/m`) |
-| `Super + I` | Settings menu | | `Super + \` / `Super + Shift + \` | **Cycle layout / gap presets** |
-| `Super + W` / `Super + Alt + W` | Wallpaper studio / **Live loop** | | `Super + M` | **`FX` chord** (Motion physics & GLSL shaders) |
-| `Super + ,` / `Super + .` | **Cycle GLSL shader / PiP corner spring** | | `Super + F` / `Super + Shift + F` | Fullscreen / Maximize |
-| `Super + Shift + B` | **Floating `btop++` drawer** | | `Super + '` | **Scratch Markdown notes (`nvim`)** |
-| `Super + Ctrl + S` | **`SCRATCH` & Session chord** | | `Super + U` | **Jump to urgent window** |
-| `Super + V` | Clipboard history | | `Super + Space` | Floating (centred) |
-| `Super + O` | Cycle window opacity | | `Super + G` / `Super + Alt + G` | Group windows / next tab |
-| `Super + /` | Interactive shortcut launcher | | `Super + 1..0` | Switch workspace |
-| `Super + Shift + W` | Toggle the top bar | | `Super + Shift + 1..0` | Move window to workspace |
-| `Super + Shift + R` | Reload the config | | `Super + S` / `Super + Shift + T` | Scratchpad / Dropdown term |
-| `Super + Print` | Screenshot (area) | | `Super + Ctrl + Shift + Print` | **OCR region to clipboard** |
-| `Super + Alt + Print` | Record screen (again = stop) | | `Super + Tab` / `Super + Escape` | Lock screen / Logout menu |
-
-Focus with `Super + H/J/K/L` (or the arrow keys), move windows with `Super + Shift + H/J/K/L`,
-resize with `Super + Ctrl + H/J/K/L`, drag with `Super + left mouse`, resize with
-`Super + right mouse`, switch workspaces with `Super + scroll`.
-
----
-
-## Layout
+## Repository &amp; Configuration Architecture
 
 ```text
-~/.config/hypr/
-├── hyprland.lua              entry point: loads the modules below
-├── hyprlock.conf             lock screen
-├── hypridle.conf             idle: dim → lock → screen off → suspend
-├── hyprsunset.conf           blue-light filter profiles by time of day
-├── modules/                  ← everything you normally edit
-│   ├── user.lua              your programs, gaps, motion profile, keyboard, toggles
-│   ├── monitors.lua          monitor layout (+ monitors-user.lua from the settings menu)
-│   ├── appearance.lua        borders, blur, rounding, groupbar, input devices
-│   ├── animations.lua        3 damped spring curves + 29-leaf motion choreography
-│   ├── autostart.lua         what starts with the session
-│   ├── binds.lua             every keybind + RESIZE / CAPTURE / SCRATCH / FX chords
-│   ├── rules.lua             window + choreographed layer rules
-│   └── smart.lua             reactive hl.on() event hooks (screenshare DND, hotplug)
-├── shaders/                  GLSL ES 3.00 screen shaders (noir, 35mm, P4 CRT, E-Ink, OLED)
-├── src/                      native C++20 runtime helper (mono-calc expression engine)
-└── scripts/                  0-fork bash powering motion, shaders, drawers, sessions & doctor
+hyprland-monochrome/
+|-- .config/hypr/
+|   |-- hyprland.lua            entry point loading modular Lua configuration
+|   |-- hyprlock.conf           minimal monochrome lock screen
+|   |-- hypridle.conf           dim -> lock -> DPMS off -> suspend pipeline
+|   |-- hyprsunset.conf         scheduled night-light colour temperature
+|   |-- modules/
+|   |   |-- user.lua            single source of truth for apps, gaps, layout & preferences
+|   |   |-- hardware.lua        GPU, DRM, cursor, VRR & XWayland auto-configuration
+|   |   |-- monitors.lua        automatic display scaling & multi-head layout
+|   |   |-- appearance.lua      G2 squircles, borders, optical glass & trackpad gestures
+|   |   |-- animations.lua      3 physical spring curves + 29 animation targets
+|   |   |-- binds.lua           172 shortcuts + RESIZE / CAPTURE / SCRATCH / FX / GROUP chords
+|   |   |-- rules.lua           universal Wayland, X11, Electron, Java & Steam window rules
+|   |   `-- smart.lua           reactive hl.on() hooks (screenshare DND, monitor hotplug)
+|   |-- shaders/                5 GLSL ES 3.00 post-processing shaders
+|   |-- src/mono-calc.cpp       native C++20 expression evaluator
+|   `-- scripts/                compositor runtime scripts (hardware, open-app, record, shader)
+|-- site/                       live 60 FPS interactive website + C++20 HTTP server (serve-site)
+|-- wallpapers/                 C++20 procedural generator + 17 stills + 3 animated GIF loops
+|-- tools/                      C++20 build, keybind sync, verification & static server tools
+`-- windows/                    matching GlazeWM + Windows Terminal dual-boot kit
 ```
-
-Everything else is where you would expect it: `~/.config/waybar`, `~/.config/rofi`,
-`~/.config/kitty`, `~/.config/nvim`, `~/.config/gtk-{3,4}.0`, `~/.config/qt{5,6}ct`,
-`~/.config/dunst`, `~/.config/starship.toml`, `~/.config/btop`, `~/.config/fastfetch`, `~/.zshrc`.
-
-Config files are hot-reloaded when you save them (`hyprctl reload` does it by hand).
-After editing `binds.lua`, refresh the docs with `make docs` (`./bin/keybind-table`).
 
 ---
 
-## Make it yours
+## Customization &amp; Local Development
 
-Start with **`~/.config/hypr/modules/user.lua`** — it is the one file that holds your
-browser, terminal, gaps, keyboard layout, wallpaper paths and a few toggles. The other
-modules read from it, so you rarely need to touch them.
-
-Common edits:
+Edit **`~/.config/hypr/modules/user.lua`** to customize default applications, outer/inner gaps, blur, keyboard layouts, or motion profiles in one place:
 
 ```lua
--- modules/user.lua
-browser  = "brave",            -- Kitty, Thunar, Zsh and Starship are the defaults
-gaps_out = 14,
-blur_enabled = false,          -- noticeably lighter on old GPUs
-kb_layout = "us,ara",          -- Super + X switches between them
+-- ~/.config/hypr/modules/user.lua
+browser      = "zen-browser",   -- auto-falls back across installed browsers if absent
+gaps_out     = 14,
+blur_enabled = true,
+kb_layout    = "us",            -- Super + X switches active layouts
 ```
 
-The palette is deliberately small and repeated in a few places, one comment per file tells
-you what to change:
-
-| What | File | Key |
-| --- | --- | --- |
-| Window borders, blur, opacity | `hypr/modules/appearance.lua` | `col.active_border`, `decoration.blur` |
-| Bar colours | `waybar/style.css` | `.modules-left`, `#workspaces button.active` |
-| Menus (all of them) | `rofi/theme.rasi` | the palette block at the top |
-| Terminal | `kitty/theme.conf` | 16-colour greyscale ramp |
-| Browser (OpenCode design) | `browser/opencode/` | `startpage.html`, `firefox/userChrome.css`, `chromium-theme/` |
-| OpenCode CLI / TUI | `opencode/themes/monochrome.json` | matches browser & desktop surfaces |
-| Prompt | `starship.toml` | `[palettes.mono]` |
-| Notifications | `dunst/dunstrc` | `[global]` colours |
-| btop / fastfetch | `btop/themes/mono.theme`, `fastfetch/config.jsonc` | — |
-
-More recipes — adding keybinds, Waybar modules, a second monitor, a different terminal,
-new Rofi menus, the Spotify theme — are in **[docs/CUSTOMIZE.md](docs/CUSTOMIZE.md)**.
-
----
-
-## Documentation
-
-| File | What is in it |
-| --- | --- |
-| [docs/QUICKSTART.md](docs/QUICKSTART.md) | **start here** — install, first login, first keybinds, updating, uninstalling |
-| [docs/INSTALL.md](docs/INSTALL.md) | requirements, sessions (uwsm/SDDM/GDM/ly), manual install, updates, uninstall |
-| [docs/KEYBINDS.md](docs/KEYBINDS.md) | the complete keybind table (generated from the config) |
-| [docs/preview.html](docs/preview.html) | a preview page generated from the config: bar modules, keybinds, palettes, packages |
-| [docs/CUSTOMIZE.md](docs/CUSTOMIZE.md) | how to change programs, colours, bar modules, menus, monitors, shell |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | the things that actually go wrong, and how to fix them |
-| [docs/ON-WINDOWS.md](docs/ON-WINDOWS.md) | Windows + Linux: what runs where, per-distro install notes, WSL2, and the generated `windows/` kit |
-
-Useful scripts, if you prefer the terminal:
+Build the native C++20 tools, run the verification suite, or launch the interactive website locally:
 
 ```bash
-~/.config/hypr/scripts/settings.sh         # the settings menu
-~/.config/hypr/scripts/wallpaper.sh pick   # wallpaper picker
-~/.config/hypr/scripts/menu.sh keybinds    # keybind cheat sheet
-~/.config/hypr/scripts/screenshot.sh region
-~/.config/hypr/scripts/record.sh toggle     # record; press again to stop
-~/.config/hypr/scripts/record.sh replay     # save the last minute
-~/.config/hypr/scripts/record.sh path       # where the videos live
+make -j"$(nproc)"               # compile all C++20 binaries (-std=c++20 -O3 -Wall -Wextra -Werror)
+make docs                       # sync docs/KEYBINDS.md, site/keybinds.json, windows/* & preview
+make test                       # run full 10-suite verification harness
+make serve                      # serve the live animated website at http://0.0.0.0:8080
 ```
-
----
-
-## Tests
-
-The scripts are tested without a running compositor, so you can hack on them safely:
-
-```bash
-make test                        # C++20 build + everything below, in one go
-./test/smoke-test.sh             # 178 checks: stubs hyprctl/rofi/awww/gpu-screen-recorder/…
-./test/install-sandbox.sh        # installs into a throw-away HOME: backups, --link, uninstall
-./bin/keybind-table --check      # is docs/KEYBINDS.md still accurate?
-./bin/build-preview --check      # is docs/preview.html still accurate?
-make docs                        # rebuild docs/KEYBINDS.md, windows/* & docs/preview.html
-./bin/build-windows-kit --check  # is the Windows kit still in step with the palette?
-```
-
-The smoke test builds a throw-away `$HOME`, stubs every external tool and asserts on what
-each script actually does — it caught real bugs (quoting, jq pipelines, backup order,
-a signal-handling mistake in the recorder) while this setup was being written.
-
-Want to watch instead of read? `docs/desktop-demo.mp4` is a real 1920×1080 Wayland session
-captured by `tools/record-desktop.sh` (`wf-recorder`), and `docs/test-run.mp4` is `tools/demo.sh`
-recorded with [asciinema](https://asciinema.org):
-
-```bash
-bash tools/record-desktop.sh                    # boot a headless Wayland desktop & record it
-bash tools/demo.sh                              # watch the CLI walkthrough in your terminal
-asciinema rec -c "bash tools/demo.sh" demo.cast # or record your own
-```
-
----
-
-## Requirements
-
-Hyprland **0.55 or newer**, because the configuration uses the Lua format that replaced
-hyprlang. Everything else is a normal Arch package — see
-[packages.txt](packages.txt). The only AUR packages are optional
-([aur-packages.txt](aur-packages.txt)): `wlogout`, `papirus-folders`, `bibata-cursor-theme`,
-`spicetify-cli`.
-
-Two notes worth knowing before you start:
-
-* **NVIDIA**: you may need `nvidia_drm.modeset=1` on the kernel command line. See
-  [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
-* **First login**: if the screen looks empty, press `Super + T` and run `hyprctl configerrors`
-  — that prints exactly what is wrong.
-
----
-
-## Credits
-
-Built on the shoulders of the Arch + Hyprland community, and inspired by setups like
-[43PR/dotfiles](https://github.com/43PR/dotfiles), the [Hyprland wiki](https://wiki.hypr.land)
-and [awww](https://codeberg.org/LGFae/awww). This configuration is an independent,
-from-scratch implementation: its own Lua modules, scripts, Rofi theme, Waybar layout,
-wallpapers and installer.
-
-MIT licensed — see [LICENSE](LICENSE). Take it, fork it, make it yours.

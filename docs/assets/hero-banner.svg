@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 410" width="1200" height="410" role="img" aria-label="hyprland-monochrome : Pure monochrome Wayland desktop">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#090808" />
+      <stop offset="55%" stop-color="#060606" />
+      <stop offset="100%" stop-color="#0b0a0a" />
+    </linearGradient>
+    <linearGradient id="silverText" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#7c7777" />
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="44%" r="62%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.05" />
+      <stop offset="65%" stop-color="#060606" stop-opacity="0.0" />
+      <stop offset="100%" stop-color="#060606" stop-opacity="0.88" />
+    </radialGradient>
+    <linearGradient id="scanBeam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+    <clipPath id="cmdReveal">
+      <rect x="198" y="246" width="800" height="40">
+        <animate attributeName="width" values="0;800;800;0" keyTimes="0;0.34;0.88;1" dur="11s" repeatCount="indefinite" />
+      </rect>
+    </clipPath>
+    <style>
+      .mono { font-family: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .sans { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      @keyframes driftA {
+        0%   { transform: translate3d(-40px, 0, 0); opacity: 0; }
+        20%  { opacity: 0.35; }
+        80%  { opacity: 0.35; }
+        100% { transform: translate3d(90px, -18px, 0); opacity: 0; }
+      }
+      @keyframes spinMark {
+        0%, 100% { transform: rotate(0deg) scale(1); }
+        50%      { transform: rotate(90deg) scale(1.06); }
+      }
+      @keyframes blinkCur {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+      }
+      .particle-1 { animation: driftA 7.5s linear infinite; }
+      .particle-2 { animation: driftA 9.2s 1.8s linear infinite; }
+      .particle-3 { animation: driftA 8.4s 3.6s linear infinite; }
+      .brand-diamond { transform-origin: 368px 46px; animation: spinMark 8s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+      .cursor-blk { animation: blinkCur 1s steps(1) infinite; }
+      @media (prefers-reduced-motion: reduce) {
+        .particle-1, .particle-2, .particle-3, .brand-diamond, .cursor-blk { animation: none !important; }
+      }
+    </style>
+  </defs>
+
+  <!-- Canvas & Outer 1px Structural Frame -->
+  <rect x="0.5" y="0.5" width="1199" height="409" rx="14" fill="url(#bgGrad)" stroke="#2c2828" />
+
+  <!-- Subtle Animated Topographic Luminance Waves -->
+  <g fill="none" stroke-width="1">
+    <path stroke="#ffffff" stroke-opacity="0.07" d="M 0 110 Q 300 72 600 112 T 1200 98">
+      <animate attributeName="d" dur="9s" repeatCount="indefinite"
+        values="M 0 110 Q 300 72 600 112 T 1200 98;
+                M 0 98 Q 300 138 600 94 T 1200 118;
+                M 0 110 Q 300 72 600 112 T 1200 98" />
+    </path>
+    <path stroke="#ffffff" stroke-opacity="0.10" d="M 0 165 Q 320 128 620 168 T 1200 152">
+      <animate attributeName="d" dur="11s" repeatCount="indefinite"
+        values="M 0 165 Q 320 128 620 168 T 1200 152;
+                M 0 152 Q 320 198 620 146 T 1200 176;
+                M 0 165 Q 320 128 620 168 T 1200 152" />
+    </path>
+    <path stroke="#ffffff" stroke-opacity="0.08" d="M 0 225 Q 280 260 600 218 T 1200 236">
+      <animate attributeName="d" dur="10s" repeatCount="indefinite"
+        values="M 0 225 Q 280 260 600 218 T 1200 236;
+                M 0 238 Q 280 192 600 242 T 1200 214;
+                M 0 225 Q 280 260 600 218 T 1200 236" />
+    </path>
+    <path stroke="#ffffff" stroke-opacity="0.06" d="M 0 290 Q 340 258 640 295 T 1200 280">
+      <animate attributeName="d" dur="12.5s" repeatCount="indefinite"
+        values="M 0 290 Q 340 258 640 295 T 1200 280;
+                M 0 276 Q 340 318 640 274 T 1200 302;
+                M 0 290 Q 340 258 640 295 T 1200 280" />
+    </path>
+  </g>
+
+  <!-- Drifting Monochrome Flow Vectors -->
+  <g stroke="#ffffff" stroke-width="1.2" stroke-linecap="round">
+    <line class="particle-1" x1="120" y1="86" x2="146" y2="81" />
+    <line class="particle-2" x1="940" y1="104" x2="968" y2="98" />
+    <line class="particle-3" x1="170" y1="224" x2="196" y2="219" />
+    <line class="particle-1" x1="990" y1="218" x2="1018" y2="212" />
+    <line class="particle-2" x1="250" y1="142" x2="272" y2="138" />
+    <line class="particle-3" x1="870" y1="158" x2="894" y2="153" />
+  </g>
+
+  <rect x="1" y="1" width="1198" height="408" rx="13" fill="url(#vignette)" />
+
+  <!-- Eyebrow Pill -->
+  <g>
+    <rect x="358" y="28" width="484" height="34" rx="17" fill="#131010" fill-opacity="0.9" stroke="#3d3838" />
+    <path class="brand-diamond" d="M 380 39 L 387 45 L 380 51 L 373 45 Z" fill="#ffffff" />
+    <circle cx="402" cy="45" r="3.5" fill="#ffffff">
+      <animate attributeName="opacity" values="1;0.28;1" dur="2.2s" repeatCount="indefinite" />
+    </circle>
+    <text x="416" y="49" class="mono" font-size="11.5" fill="#c9c4c4" letter-spacing="0.02em">
+      v5.2.0 Release  /  Hyprland 0.56 Lua  /  C++20 Native Core
+    </text>
+  </g>
+
+  <!-- Headline -->
+  <text x="600" y="124" text-anchor="middle" class="sans" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.8">
+    Pure monochrome.
+  </text>
+  <text x="600" y="182" text-anchor="middle" class="sans" font-size="54" font-weight="800" fill="url(#silverText)" letter-spacing="-1.8">
+    Engineered for focus.
+  </text>
+
+  <!-- Subtitle -->
+  <text x="600" y="220" text-anchor="middle" class="sans" font-size="15.5" fill="#b8b2b2">
+    Adaptive GPU profiling, damped spring physics, GLSL screen shaders, universal app routing, and a 1px structural browser grid.
+  </text>
+
+  <!-- Live Animated Install Terminal Strip -->
+  <g>
+    <rect x="170" y="244" width="860" height="44" rx="7" fill="#141212" stroke="#3d3838" />
+    <text x="188" y="271" class="mono" font-size="12.5" fill="#7f7a7a">$</text>
+    <g clip-path="url(#cmdReveal)">
+      <text x="206" y="271" class="mono" font-size="12.5" fill="#fdfcfc">
+        git clone https://github.com/esoexe/hyprland-monochrome.git &amp;&amp; cd hyprland-monochrome &amp;&amp; ./install.sh
+      </text>
+    </g>
+    <rect class="cursor-blk" x="998" y="257" width="7" height="16" fill="#ffffff">
+      <animate attributeName="x" values="206;998;998;206" keyTimes="0;0.34;0.88;1" dur="11s" repeatCount="indefinite" />
+    </rect>
+  </g>
+
+  <!-- 4-Cell 1px Structural Metrics Grid (#131010 / #3d3838) -->
+  <g transform="translate(170, 308)">
+    <rect x="0" y="0" width="860" height="72" fill="#131010" stroke="#3d3838" />
+    <line x1="215" y1="0" x2="215" y2="72" stroke="#3d3838" />
+    <line x1="430" y1="0" x2="430" y2="72" stroke="#3d3838" />
+    <line x1="645" y1="0" x2="645" y2="72" stroke="#3d3838" />
+
+    <!-- Animated scanning top rule -->
+    <rect x="0" y="0" width="180" height="1.5" fill="url(#scanBeam)">
+      <animate attributeName="x" values="-180;860" dur="5.5s" repeatCount="indefinite" />
+    </rect>
+
+    <text x="24" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">172</text>
+    <text x="24" y="54" class="mono" font-size="11" fill="#7f7a7a">Synced Keybinds</text>
+
+    <text x="239" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">C++20</text>
+    <text x="239" y="54" class="mono" font-size="11" fill="#7f7a7a">Native Core Utilities</text>
+
+    <text x="454" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">20</text>
+    <text x="454" y="54" class="mono" font-size="11" fill="#7f7a7a">Procedural Wallpapers</text>
+
+    <text x="669" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">5 GLSL</text>
+    <text x="669" y="54" class="mono" font-size="11" fill="#7f7a7a">Real-Time Screen Shaders</text>
+  </g>
+</svg>

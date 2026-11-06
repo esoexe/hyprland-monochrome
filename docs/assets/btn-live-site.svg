@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 38" width="248" height="38" role="img" aria-label="Launch Live Interactive Website">
+  <rect x="0.5" y="0.5" width="247" height="37" rx="8" fill="#ffffff" stroke="#ffffff" />
+  <circle cx="20" cy="19" r="3.8" fill="#080808">
+    <animate attributeName="opacity" values="1;0.3;1" dur="1.8s" repeatCount="indefinite" />
+  </circle>
+  <text x="34" y="23.5" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="700" fill="#080808">
+    Launch Live Website
+  </text>
+  <path d="M 222 23 L 230 15 M 224.5 15 H 230 V 20.5" fill="none" stroke="#080808" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

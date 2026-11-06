@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 226 38" width="226" height="38" role="img" aria-label="Open Monochrome Startpage">
+  <rect x="0.5" y="0.5" width="225" height="37" rx="8" fill="#181515" stroke="#3d3838" />
+  <text x="18" y="23.5" font-family="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="600" fill="#fdfcfc">
+    Browser Startpage
+  </text>
+  <path d="M 199 23 L 207 15 M 201.5 15 H 207 V 20.5" fill="none" stroke="#fdfcfc" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
