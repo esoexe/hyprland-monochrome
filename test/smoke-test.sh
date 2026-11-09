@@ -1022,6 +1022,8 @@ contains "website showcases #c11-runtime section" 'id="c11-runtime"' "$(cat "$RE
 contains "website reports all 12 Pure C11 tools" '12 Native C11 Tools' "$(cat "$REPO/site/index.html")"
 contains "website keeps sections visible without JavaScript" 'opacity: 1;' "$(cat "$REPO/site/styles.css")"
 contains "website guards scroll observers for older browsers" '"IntersectionObserver" in window' "$(cat "$REPO/site/app.js")"
+eq "website hides launch-film and captured-footage section" "0" \
+    "$(grep -Eio 'footage|official-trailer[.]mp4|desktop-demo[.]mp4|test-run[.]mp4' "$REPO/site/index.html" | wc -l | tr -d ' ')"
 contains "website app.js drives interactive mono-tui & mono-ipc" '__setMonoIpcQuery' "$(cat "$REPO/site/app.js")"
 eq "website keeps 0 opencode mentions" "0" \
     "$(grep -ri 'opencode' "$REPO/site/index.html" "$REPO/site/styles.css" "$REPO/site/app.js" "$REPO/site/newtab.html" 2>/dev/null | wc -l | tr -d ' ')"

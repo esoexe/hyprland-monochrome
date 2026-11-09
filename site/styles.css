@@ -1397,31 +1397,7 @@ a {
   border-color: var(--pure);
 }
 
-/* Video Grid */
-.video-grid {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: 1.25fr 0.75fr;
-  gap: 18px;
-}
-
-@media (max-width: 900px) {
-  .video-grid { grid-template-columns: 1fr; }
-}
-
-.video-card {
-  padding: 14px;
-}
-
-.video-card video {
-  width: 100%;
-  border-radius: 9px;
-  background: #000;
-  display: block;
-  border: 1px solid var(--line);
-}
-
-/* 07. Searchable 172-Keybind Explorer */
+/* 06. Searchable 176-Keybind Explorer */
 .kb-controls {
   margin: 24px 0 16px;
   display: flex;

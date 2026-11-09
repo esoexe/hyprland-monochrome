@@ -46,7 +46,7 @@
   window.addEventListener("scroll", updateScrollBar, { passive: true });
   updateScrollBar();
 
-  const sections = ["simulator", "browser", "hardware", "apps", "wallpapers", "footage", "keybinds"];
+  const sections = ["simulator", "browser", "hardware", "apps", "wallpapers", "keybinds"];
   if ("IntersectionObserver" in window) {
     const revealObs = new window.IntersectionObserver(
       (entries) => {
