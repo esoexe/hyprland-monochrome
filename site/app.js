@@ -46,37 +46,46 @@
   window.addEventListener("scroll", updateScrollBar, { passive: true });
   updateScrollBar();
 
-  const revealObs = new IntersectionObserver(
-    (entries) => {
-      for (const e of entries) {
-        if (e.isIntersecting) {
-          e.target.classList.add("visible");
-          revealObs.unobserve(e.target);
-        }
-      }
-    },
-    { threshold: 0.08 }
-  );
-  $$(".reveal").forEach((el) => revealObs.observe(el));
-
   const sections = ["simulator", "browser", "hardware", "apps", "wallpapers", "footage", "keybinds"];
-  const navSpy = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          const id = e.target.id;
-          $$(".nav-link").forEach((a) => {
-            a.classList.toggle("active", a.getAttribute("href") === `#${id}`);
-          });
+  if ("IntersectionObserver" in window) {
+    const revealObs = new window.IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.remove("reveal-pending");
+            e.target.classList.add("visible");
+            revealObs.unobserve(e.target);
+          }
         }
-      });
-    },
-    { rootMargin: "-38% 0px -52% 0px" }
-  );
-  sections.forEach((id) => {
-    const sec = document.getElementById(id);
-    if (sec) navSpy.observe(sec);
-  });
+      },
+      { threshold: 0.08 }
+    );
+    $$(".reveal").forEach((el) => {
+      el.classList.add("reveal-pending");
+      revealObs.observe(el);
+    });
+
+    const navSpy = new window.IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const id = e.target.id;
+            $$(".nav-link").forEach((a) => {
+              a.classList.toggle("active", a.getAttribute("href") === `#${id}`);
+            });
+          }
+        });
+      },
+      { rootMargin: "-38% 0px -52% 0px" }
+    );
+    sections.forEach((id) => {
+      const sec = document.getElementById(id);
+      if (sec) navSpy.observe(sec);
+    });
+  } else {
+    // Progressive enhancement: never hide content when observers are unavailable.
+    $$(".reveal").forEach((el) => el.classList.add("visible"));
+  }
 
   /* Spotlight Cards mouse glow coordinates */
   document.addEventListener(
@@ -157,13 +166,15 @@
       });
     }
 
-    const heroVisObs = new IntersectionObserver(
-      (entries) => {
-        heroVisible = entries[0]?.isIntersecting ?? true;
-      },
-      { threshold: 0.02 }
-    );
-    heroVisObs.observe($("#top"));
+    if ("IntersectionObserver" in window) {
+      const heroVisObs = new window.IntersectionObserver(
+        (entries) => {
+          heroVisible = entries[0]?.isIntersecting ?? true;
+        },
+        { threshold: 0.02 }
+      );
+      heroVisObs.observe($("#top"));
+    }
 
     let frames = 0;
     let lastFpsTick = performance.now();

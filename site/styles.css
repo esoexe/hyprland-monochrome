@@ -513,6 +513,13 @@ a {
 }
 
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hide for scroll-reveal only after the observer has been initialized.
+   Without JavaScript or IntersectionObserver, the page remains fully readable. */
+.reveal.reveal-pending:not(.visible) {
   opacity: 0;
   transform: translate3d(0, 28px, 0);
   transition: opacity 720ms var(--spring), transform 720ms var(--spring);
@@ -520,7 +527,8 @@ a {
 
 .reveal.visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  transform: none;
+  transition: opacity 720ms var(--spring), transform 720ms var(--spring);
 }
 
 .sec-kicker {

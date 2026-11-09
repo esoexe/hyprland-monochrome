@@ -1019,6 +1019,9 @@ contains "mono-tui --json emits valid compositor & CPU telemetry" '"cursor_theme
 contains "mono-tui --bench runs CLOCK_MONOTONIC microsecond audit" "telemetry_proc_sys" "$(timeout 5 "$C/tui.sh" --bench)"
 
 contains "website showcases #c11-runtime section" 'id="c11-runtime"' "$(cat "$REPO/site/index.html")"
+contains "website reports all 12 Pure C11 tools" '12 Native C11 Tools' "$(cat "$REPO/site/index.html")"
+contains "website keeps sections visible without JavaScript" 'opacity: 1;' "$(cat "$REPO/site/styles.css")"
+contains "website guards scroll observers for older browsers" '"IntersectionObserver" in window' "$(cat "$REPO/site/app.js")"
 contains "website app.js drives interactive mono-tui & mono-ipc" '__setMonoIpcQuery' "$(cat "$REPO/site/app.js")"
 eq "website keeps 0 opencode mentions" "0" \
     "$(grep -ri 'opencode' "$REPO/site/index.html" "$REPO/site/styles.css" "$REPO/site/app.js" "$REPO/site/newtab.html" 2>/dev/null | wc -l | tr -d ' ')"
