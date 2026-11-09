@@ -2,7 +2,7 @@
 # ═══════════════════════════════════════════════════════════════════════════
 #  Monochrome settings menu (Super + I)
 #
-#    System information · Network · Bluetooth · Monitors · Sound
+#    Account · System information · Network · Bluetooth · Monitors · Sound
 #    Night shift · Wallpaper · Hyprland / config files
 #
 #  Uses nothing but nmcli / bluetoothctl / hyprctl / wpctl / pactl, so it keeps
@@ -513,6 +513,7 @@ capture_menu() {
 
 while :; do
     key="$(choose settings "settings:" \
+        "account$TAB  Account & login settings" \
         "palette$TAB⌘  Command palette & math calculator" \
         "openany$TAB󰀻  Open anything (file, URL, AppImage, Flatpak, .exe)" \
         "keyboard$TAB⌨  Keyboard Type & Layout Studio (ANSI / 60% / Vim / Colemak)" \
@@ -538,6 +539,7 @@ while :; do
         "hyprland$TAB󰒓  Hyprland / config files")" || exit 0
 
     case "$key" in
+        account)    "$SCRIPTS_DIR/account.sh" menu ;;
         palette)    "$SCRIPTS_DIR/palette.sh"; exit 0 ;;
         openany)    "$SCRIPTS_DIR/open-app.sh" picker; exit 0 ;;
         keyboard)   "$SCRIPTS_DIR/keyboard.sh" menu ;;

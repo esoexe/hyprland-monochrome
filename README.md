@@ -108,7 +108,15 @@ What `./install.sh` performs:
 ./uninstall.sh               remove installed configs and restore originals
 ```
 
-### Backups &amp; Instant Rollback
+## First Login, Account Settings &amp; Compatibility
+
+- **[Compatibility and Validation](docs/COMPATIBILITY.md)** distinguishes configuration targets from platforms and hardware actually exercised by tests.
+- **[First Login Guide](docs/FIRST-LOGIN.md)** covers the first Hyprland session, safe account settings, recovery, and the optional SDDM greeter.
+- **[Troubleshooting](docs/TROUBLESHOOTING.md)** gives safe diagnostics and rollback steps for common login, GPU, monitor, and optional-tool issues.
+- Press **Super + I**, then choose **Account &amp; login settings** to view the current Linux user or open `passwd`, `chsh`, and `chfn` safely in a terminal. The tool never creates users or stores passwords.
+- The animated SDDM theme is opt-in: preview it first, and only apply it if this machine already uses SDDM: `sudo ./tools/install-sddm-theme.sh --install`. The script does not install or enable a display manager.
+
+## Backups &amp; Instant Rollback
 
 ```text
 ~/.config-backups/pristine/     exact snapshot prior to the very first install (never overwritten)

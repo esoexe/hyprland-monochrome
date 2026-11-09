@@ -28,6 +28,7 @@ BIN="$WORK/bin"
 CALLS="$WORK/calls.log"
 REPLY="$HOME/.rofi-reply"
 ROFI_STDIN="$WORK/rofi-stdin"
+TAB=$'\t'
 mkdir -p "$BIN" "$HOME/Pictures/Wallpapers" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" \
          "$XDG_CONFIG_HOME/hypr/modules" "$XDG_CONFIG_HOME/hypr/scripts" \
          "$XDG_CONFIG_HOME/rofi" "$XDG_CONFIG_HOME/waybar/scripts"
@@ -355,6 +356,11 @@ timeout 20 "$C/settings.sh" >/dev/null 2>&1
 contains "settings menu renders through rofi"     "settings.rasi" "$(cat "$CALLS")"
 contains "system info collects host details"      "hostnamectl"   "$(cat "$CALLS")"
 contains "copying the report uses the clipboard"  "wl-copy"       "$(cat "$CALLS")"
+
+account_out="$(timeout 5 "$C/account.sh" info 2>/dev/null)"
+contains "account settings reports current Linux user" "Account      $USER" "$account_out"
+contains "account settings reports login shell without exposing secrets" "Login shell" "$account_out"
+contains "settings menu exposes account and login settings" "Account & login settings" "$(cat "$REPO/.config/hypr/scripts/settings.sh")"
 
 : > "$CALLS"; queue "network" "radio"
 timeout 20 "$C/settings.sh" >/dev/null 2>&1
@@ -1024,6 +1030,11 @@ contains "website keeps sections visible without JavaScript" 'opacity: 1;' "$(ca
 contains "website guards scroll observers for older browsers" '"IntersectionObserver" in window' "$(cat "$REPO/site/app.js")"
 eq "website hides launch-film and captured-footage section" "0" \
     "$(grep -Eio 'footage|official-trailer[.]mp4|desktop-demo[.]mp4|test-run[.]mp4' "$REPO/site/index.html" | wc -l | tr -d ' ')"
+contains "SDDM theme submits credentials to the greeter" 'sddm.login(' "$(cat "$REPO/sddm/MonochromeLogin/Main.qml")"
+contains "SDDM theme animates the monochrome orbital field" 'RotationAnimation' "$(cat "$REPO/sddm/MonochromeLogin/Main.qml")"
+contains "compatibility matrix separates tested from intended" 'not a claim' "$(cat "$REPO/docs/COMPATIBILITY.md")"
+contains "first-login guide documents safe SDDM rollback" 'install-sddm-theme.sh --remove' "$(cat "$REPO/docs/FIRST-LOGIN.md")"
+contains "troubleshooting guide explains recovery" 'install-sddm-theme.sh --remove' "$(cat "$REPO/docs/TROUBLESHOOTING.md")"
 contains "website app.js drives interactive mono-tui & mono-ipc" '__setMonoIpcQuery' "$(cat "$REPO/site/app.js")"
 eq "website keeps 0 opencode mentions" "0" \
     "$(grep -ri 'opencode' "$REPO/site/index.html" "$REPO/site/styles.css" "$REPO/site/app.js" "$REPO/site/newtab.html" 2>/dev/null | wc -l | tr -d ' ')"

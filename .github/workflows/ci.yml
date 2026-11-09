@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: Pure C11 Toolchain · ShellCheck · Lua 5.4 · 211 Smoke Checks
+    name: Pure C11, shell, Lua, and installer validation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -25,7 +25,7 @@ jobs:
       - name: Compile Pure C11 tools (-std=c11 -Wall -Wextra -Werror)
         run: make -j"$(nproc)"
 
-      - name: Run full verification suite (10 suites · 207 smoke checks)
+      - name: Run full verification suite
         env:
           LANG: C.UTF-8
           LC_ALL: C.UTF-8

@@ -30,6 +30,26 @@ else
 fi
 
 REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+FAIL=0
+
+assert_file() {
+    if [ -e "$1" ] || [ -L "$1" ]; then
+        printf '       PASS %s\n' "$2"
+    else
+        printf '       FAIL %s\n' "$2"
+        FAIL=$((FAIL + 1))
+    fi
+}
+
+assert_text() {
+    if [ -f "$1" ] && grep -Fq -- "$2" "$1"; then
+        printf '       PASS %s\n' "$3"
+    else
+        printf '       FAIL %s\n' "$3"
+        FAIL=$((FAIL + 1))
+    fi
+}
+
 SANDBOX=$(mktemp -d)
 export HOME="$SANDBOX/home"
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -81,11 +101,21 @@ run_test() {
     # shellcheck disable=SC2086
     out="$(cd "$REPO" && bash install.sh $args </dev/null 2>&1)"
     code=$?
-    if [ "$code" -eq 0 ]; then echo "PASS (exit 0)"; else echo "FAIL (exit $code)"; printf '%s\n' "$out" | tail -12; fi
+    if [ "$code" -eq 0 ]; then
+        echo "PASS (exit 0)"
+    else
+        echo "FAIL (exit $code)"
+        printf '%s\n' "$out" | tail -12
+        FAIL=$((FAIL + 1))
+    fi
 }
 
 echo "── installer sandbox test ───────────────────────────────────"
-run_test "1. full install (--yes)" "--yes"
+run_test "1. clean install (--yes)" "--yes"
+assert_file "$HOME/.config/hypr/hyprland.lua" "clean install writes Hyprland Lua config"
+assert_file "$HOME/.config/hypr/scripts/account.sh" "clean install includes Account settings"
+assert_file "$HOME/.config/waybar/config.jsonc" "clean install writes Waybar config"
+assert_text "$HOME/.config-backups/pristine/.config/hypr/hyprland.conf" "MY OLD HYPRLAND CONFIG" "first install preserves original config in pristine backup"
 echo "     files installed:"
 for f in "$HOME/.config/hypr/hyprland.lua" "$HOME/.config/hypr/modules/binds.lua" \
          "$HOME/.config/rofi/theme.rasi" "$HOME/.config/waybar/config.jsonc" \
@@ -133,12 +163,20 @@ if [ -f "$HOME/.zshrc" ] && grep -q "my shell rc" "$HOME/.zshrc"; then
 fi
 
 echo
-echo "── second run (idempotency, --link, --no-packages) ──────────"
-run_test "2. rerun --yes --no-packages" "--yes --no-packages"
+echo "── upgrade run (preserve user edits, idempotency, --link) ───"
+printf 'USER CUSTOM KITTY CONFIG\n' > "$HOME/.config/kitty/kitty.conf"
+run_test "2. upgrade existing install (--yes --no-packages)" "--yes --no-packages"
+upgrade_backup="$(grep -rlF --include='kitty.conf' 'USER CUSTOM KITTY CONFIG' "$HOME/.config-backups" 2>/dev/null | head -1 || true)"
+assert_text "${upgrade_backup:-/nonexistent}" "USER CUSTOM KITTY CONFIG" "upgrade backs up customized Kitty config before replacing it"
 run_test "3. --dry-run changes nothing" "--dry-run --yes"
 [ -L "$HOME/.config/hypr/modules/user.lua" ] && echo "       (dry-run correctly did not symlink)"
 run_test "4. --link install" "--yes --no-packages --link"
-[ -L "$HOME/.config/hypr/hyprland.lua" ] && printf '       %b %s\n' "$M_OK" "--link created symlinks"
+if [ -L "$HOME/.config/hypr/hyprland.lua" ]; then
+    printf '       %b %s\n' "$M_OK" "--link created symlinks"
+else
+    echo "       FAIL --link did not create the Hyprland config symlink"
+    FAIL=$((FAIL + 1))
+fi
 mv "$BIN/pacman" "$BIN/.pacman-hidden"
 run_test "5. --no-packages without pacman (non-Arch)" "--yes --no-packages --link"
 mv "$BIN/.pacman-hidden" "$BIN/pacman"
@@ -157,7 +195,15 @@ if [ -f "$HOME/.config/kitty/kitty.conf" ] && grep -q "old kitty conf" "$HOME/.c
 else
     printf '       %b %s\n' "$M_BAD" "the original kitty.conf was NOT restored"
     tail -5 "$SANDBOX/uninstall.log" | sed 's/^/         /'
+    FAIL=$((FAIL + 1))
+fi
+
+if [ "$FAIL" -eq 0 ]; then
+    echo "PASS: clean install, upgrade backup, dry-run, symlink, and uninstall checks"
+else
+    echo "FAIL: $FAIL installer sandbox assertion(s) failed"
 fi
 
 echo
 echo "sandbox: $SANDBOX   (delete it when done)"
+exit "$FAIL"

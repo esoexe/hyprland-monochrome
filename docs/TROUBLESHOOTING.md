@@ -259,6 +259,15 @@ bash -x ~/.config/hypr/scripts/settings.sh     # trace what it does
 ./test/smoke-test.sh                            # run the whole suite with stubs
 ```
 
+## SDDM animated greeter or account settings
+
+* **SDDM preview fails**: confirm SDDM is installed and use `./tools/install-sddm-theme.sh --preview`. The helper picks the Qt 5 or Qt 6 greeter and stages the theme assets in a temporary directory. Preview does not write SDDM configuration.
+* **SDDM theme is blank or fails after applying**: switch to a TTY, run `sudo ./tools/install-sddm-theme.sh --remove`, and review `journalctl -b -u sddm`. Keep the existing display manager enabled; the theme installer does not enable or restart it.
+* **The login form rejects a valid password**: check the user name, the selected last-used session, and PAM errors in `journalctl -b -u sddm`. The theme submits credentials to SDDM and does not save them.
+* **Account menu cannot change the password or shell**: the account menu launches the system `passwd`, `chfn`, or `chsh` tool in a terminal. Verify that tool exists and read its terminal output. A shell must appear in `/etc/shells`; the menu never edits account files directly.
+* **No terminal opens from Account settings**: install or configure Kitty, foot, Alacritty, or xterm. The account menu intentionally does not attempt privileged changes without the normal system tool.
+
+
 `scripts/lib.sh` holds the shared helpers (`mono_var`, `notify`, `rofi_menu`). If you edit
 `modules/user.lua` with exotic Lua (function calls, tables), the shell scripts may no longer
 be able to read a value from it — keep those lines as plain `name = value,` assignments.

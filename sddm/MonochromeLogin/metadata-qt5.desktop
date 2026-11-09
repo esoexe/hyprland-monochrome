@@ -1,0 +1,11 @@
+[SddmGreeterTheme]
+Name=Monochrome
+Description=Quiet animated monochrome greeter for Hyprland Monochrome
+Author=esoexe
+License=MIT
+Type=sddm-theme
+Version=1.0
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=hyprland-monochrome
+Theme-API=2.0
