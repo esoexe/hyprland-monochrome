@@ -13,21 +13,14 @@ case "${1:-}" in --*) set -- "${1#--}" "${@:2}" ;; esac
 
 CORNER_STATE="$CACHE_DIR/pip-corner.state"
 
-win_json="$(hyprctl activewindow -j 2>/dev/null || echo '{}')"
-is_float="$(printf '%s' "$win_json" | jq -r '.floating // false')"
-mon_id="$(printf '%s' "$win_json" | jq -r '.monitor // 0')"
-
-IFS=$'\t' read -r mx my mw mh < <(monitor_geometry "$mon_id")
-[ -z "${mw:-}" ] && { mx=0; my=0; mw=1920; mh=1080; }
+IFS=$'\t' read -r is_float mx my mw mh ww wh < <(mono_ipc pip-info 2>/dev/null)
+[ -z "${mw:-}" ] && { is_float="false"; mx=0; my=0; mw=1920; mh=1080; ww=640; wh=360; }
 
 if [ "$is_float" != "true" ]; then
     pw=$(( mw * 34 / 100 ))
     ph=$(( mh * 34 / 100 ))
     hyprctl --batch "dispatch togglefloating ; dispatch resizeactive exact $pw $ph" >/dev/null 2>&1 || true
     ww="$pw"; wh="$ph"
-else
-    ww="$(printf '%s' "$win_json" | jq -r '.size[0] // 640')"
-    wh="$(printf '%s' "$win_json" | jq -r '.size[1] // 360')"
 fi
 
 pad_x=20

@@ -172,9 +172,10 @@ export ROFI_STDIN
 # ── Fake config tree ──────────────────────────────────────────────────────
 cp "$REPO/.config/hypr/hyprland.lua" "$XDG_CONFIG_HOME/hypr/"
 cp "$REPO"/.config/hypr/modules/*.lua "$XDG_CONFIG_HOME/hypr/modules/"
-# Ensure C++20 tools & runtime calculator are built before running isolated tests
-if [ ! -x "$REPO/bin/mono-calc" ] || [ ! -x "$REPO/bin/wallpaper-gen" ] || \
-   [ ! -x "$REPO/bin/wallpaper-anim" ] || [ ! -x "$REPO/bin/mono-util" ]; then
+# Ensure Pure C11 tools & runtime calculator are built before running isolated tests
+if [ ! -x "$REPO/bin/mono-calc" ] || [ ! -x "$REPO/bin/mono-ipc" ] || [ ! -x "$REPO/bin/mono-tui" ] || \
+   [ ! -x "$REPO/bin/wallpaper-gen" ] || [ ! -x "$REPO/bin/wallpaper-anim" ] || \
+   [ ! -x "$REPO/bin/mono-util" ]; then
     make -C "$REPO" -s -j"$(nproc 2>/dev/null || echo 2)"
 fi
 
@@ -185,8 +186,12 @@ mkdir -p "$XDG_CONFIG_HOME/gtk-3.0" "$XDG_CONFIG_HOME/gtk-4.0" \
          "$XDG_CONFIG_HOME/nvim/colors" "$XDG_CONFIG_HOME/kitty" \
          "$XDG_CONFIG_HOME/hypr/shaders" "$XDG_CONFIG_HOME/hypr/src" \
          "$XDG_CONFIG_HOME/hypr/bin"
-cp "$REPO/.config/hypr/src/mono-calc.cpp" "$XDG_CONFIG_HOME/hypr/src/"
+cp "$REPO/.config/hypr/src/mono-calc.c" "$XDG_CONFIG_HOME/hypr/src/"
+cp "$REPO/.config/hypr/src/mono-ipc.c" "$XDG_CONFIG_HOME/hypr/src/"
+cp "$REPO/.config/hypr/src/mono-tui.c" "$XDG_CONFIG_HOME/hypr/src/"
 cp "$REPO/bin/mono-calc" "$XDG_CONFIG_HOME/hypr/bin/"
+cp "$REPO/bin/mono-ipc" "$XDG_CONFIG_HOME/hypr/bin/"
+cp "$REPO/bin/mono-tui" "$XDG_CONFIG_HOME/hypr/bin/"
 cp "$REPO"/.config/hypr/shaders/*.frag "$XDG_CONFIG_HOME/hypr/shaders/"
 cp "$REPO/.config/gtk-3.0/gtk.css" "$XDG_CONFIG_HOME/gtk-3.0/"
 cp "$REPO/.config/gtk-4.0/gtk.css" "$XDG_CONFIG_HOME/gtk-4.0/"
@@ -537,8 +542,8 @@ mv "$BIN/.gsr" "$BIN/gpu-screen-recorder"
 mv "$BIN/.wf"  "$BIN/wf-recorder"
 eq "record.sh path prints the folder" "$REC_DIR" "$(timeout 10 "$C/record.sh" path)"
 
-# ═══════════════════════ 13. wallpaper generator (C++20) ════════════════
-printf '\n\033[1m13. wallpapers/generate.cpp (C++20)\033[0m\n'
+# ═══════════════════════ 13. wallpaper generator (Pure C11) ═════════════
+printf '\n\033[1m13. wallpapers/generate.c (Pure C11)\033[0m\n'
 # run it in the throw-away workspace, so nothing is written into the repo
 GEN_DIR="$WORK/wallpapers"
 mkdir -p "$GEN_DIR"
@@ -713,7 +718,7 @@ PURE_CHECK="$("$REPO/bin/mono-util" check-greyscale "$REPO")"
 eq "Qt5, Qt6 & Neovim palettes are 100% pure greyscale (R==G==B)" "pure" "$PURE_CHECK"
 
 # ═══════════════════════ 21. kinetic motion, shaders & live loops ════════
-printf '\n\033[1m21. motion.sh, shader.sh, pip-corner.sh & animate.cpp (C++20)\033[0m\n'
+printf '\n\033[1m21. motion.sh, shader.sh, pip-corner.sh & animate.c (Pure C11)\033[0m\n'
 : > "$CALLS"
 contains "default motion profile is fluid" "fluid" "$(timeout 10 "$C/motion.sh" status)"
 timeout 10 "$C/motion.sh" cycle >/dev/null 2>&1
@@ -777,9 +782,19 @@ contains "wallpaper.sh live selects animated gif" "mono-live-01-orbital.gif" "$(
 
 cp "$REPO/bin/wallpaper-anim" "$GEN_DIR/"
 timeout 60 "$GEN_DIR/wallpaper-anim" 160 90 --frames 6 --fps 12 --only orbital >/dev/null 2>&1
-eq "animate.cpp renders seamless multi-frame greyscale GIF" "6" "$("$REPO/bin/mono-util" gif-frames "$GEN_DIR/mono-live-01-orbital.gif" 2>/dev/null || echo 0)"
+eq "animate.c renders seamless multi-frame greyscale GIF" "6" "$("$REPO/bin/mono-util" gif-frames "$GEN_DIR/mono-live-01-orbital.gif" 2>/dev/null || echo 0)"
 timeout 60 "$GEN_DIR/wallpaper-anim" 160 90 --frames 6 --fps 12 --only lissajous >/dev/null 2>&1
-eq "animate.cpp renders seamless lissajous oscilloscope GIF" "6" "$("$REPO/bin/mono-util" gif-frames "$GEN_DIR/mono-live-03-lissajous.gif" 2>/dev/null || echo 0)"
+eq "animate.c renders seamless lissajous oscilloscope GIF" "6" "$("$REPO/bin/mono-util" gif-frames "$GEN_DIR/mono-live-03-lissajous.gif" 2>/dev/null || echo 0)"
+timeout 60 "$GEN_DIR/wallpaper-anim" 160 90 --frames 6 --fps 12 --only 7 >/dev/null 2>&1
+eq "animate.c renders numbered design (mono-07.gif) as live loop" "6" "$("$REPO/bin/mono-util" gif-frames "$GEN_DIR/mono-07.gif" 2>/dev/null || echo 0)"
+eq "all 20 bundled wallpapers in wallpapers/ are live .gif loops" "20" "$(find "$REPO/wallpapers" -maxdepth 1 -name '*.gif' | wc -l | tr -d ' ')"
+eq "zero static .jpg/.png wallpapers remain in wallpapers/" "0" "$(find "$REPO/wallpapers" -maxdepth 1 \( -name '*.jpg' -o -name '*.png' \) | wc -l | tr -d ' ')"
+LIVE_VALID=0
+for wf in "$REPO"/wallpapers/*.gif; do
+    fcount="$("$REPO/bin/mono-util" gif-frames "$wf" 2>/dev/null || echo 0)"
+    [ "$fcount" -ge 20 ] && LIVE_VALID=$((LIVE_VALID + 1))
+done
+eq "every bundled wallpaper loop has >= 20 animation frames" "20" "$LIVE_VALID"
 contains "doctor verifies 5 GLSL shaders & kinetic motion" "5 GLSL ES 3.00 shaders ready" "$(timeout 10 "$C/doctor.sh" --plain)"
 
 # ═══════════════════════ 22. Velocity, Turbo & Liquid Glass ═══════════════
@@ -922,6 +937,93 @@ if [ -n "$LUA_BIN" ]; then
     eq "hardware.lua + hyprland.lua enable XWayland zero-scale, Nvidia anti-flicker, Java & Flatpak" \
        "xw_zero=true nv_af=true java=true flatpak=true" "$COMPAT_STATS"
 fi
+
+# ═══════════════ 24. Bespoke Cursor Suite & Keyboard Studio ══════════════
+printf '\n\033[1m24. Bespoke Monochrome Cursor Suite & Keyboard Type Studio\033[0m\n'
+
+mkdir -p "$XDG_CONFIG_HOME/gtk-3.0" "$XDG_CONFIG_HOME/gtk-4.0" "$XDG_CONFIG_HOME/kitty"
+cp "$REPO/.config/gtk-3.0/settings.ini" "$XDG_CONFIG_HOME/gtk-3.0/"
+cp "$REPO/.config/gtk-4.0/settings.ini" "$XDG_CONFIG_HOME/gtk-4.0/"
+
+CUR_GEN_OUT="$HOME/cursor-build"
+"$REPO/bin/cursor-gen" --out-dir "$CUR_GEN_OUT" >/dev/null 2>&1
+[ -f "$CUR_GEN_OUT/Monochrome-Obsidian/manifest.hl" ] \
+    && [ -f "$CUR_GEN_OUT/Monochrome-Ivory/hyprcursors/left_ptr.hlc" ] \
+    && [ -f "$CUR_GEN_OUT/Monochrome-Precision/cursors/left_ptr" ] \
+    && [ -f "$CUR_GEN_OUT/Monochrome-Dot/hyprcursors/watch.hlc" ] \
+    && green "cursor-gen builds all 4 monochrome cursor themes (hyprcursor + Xcursor)" \
+    || red "cursor-gen missing expected theme outputs"
+
+XCUR_MAGIC="$(head -c 4 "$CUR_GEN_OUT/Monochrome-Obsidian/cursors/left_ptr")"
+eq "Xcursor binary carries valid Xcur header" "Xcur" "$XCUR_MAGIC"
+
+HLC_MAGIC="$(head -c 2 "$CUR_GEN_OUT/Monochrome-Obsidian/hyprcursors/left_ptr.hlc")"
+eq "hyprcursor .hlc package carries valid ZIP PK header" "PK" "$HLC_MAGIC"
+
+: > "$CALLS"
+timeout 10 "$C/cursor.sh" theme ivory >/dev/null 2>&1
+contains "cursor.sh theme ivory calls hyprctl setcursor" "setcursor Monochrome-Ivory 24" "$(cat "$CALLS")"
+contains "cursor.sh syncs gtk-3.0 cursor theme" "Monochrome-Ivory" "$(cat "$XDG_CONFIG_HOME/gtk-3.0/settings.ini")"
+[ -f "$XDG_CONFIG_HOME/hypr/modules/cursor-user.lua" ] \
+    && green "cursor.sh writes persistent cursor-user.lua" \
+    || red "cursor-user.lua missing"
+
+timeout 10 "$C/cursor.sh" cycle >/dev/null 2>&1
+contains "cursor.sh cycle advances Ivory -> Precision" "theme=Monochrome-Precision" "$(timeout 10 "$C/cursor.sh" status)"
+
+timeout 10 "$C/cursor.sh" size 32 >/dev/null 2>&1
+contains "cursor.sh size updates pointer size to 32px" "size=32" "$(timeout 10 "$C/cursor.sh" status)"
+
+timeout 10 "$C/cursor.sh" kitty beam >/dev/null 2>&1
+contains "cursor.sh kitty beam updates terminal cursor config" "cursor_shape                 beam" "$(cat "$XDG_CONFIG_HOME/kitty/cursor-user.conf")"
+
+: > "$CALLS"
+timeout 10 "$C/keyboard.sh" type compact60 >/dev/null 2>&1
+contains "keyboard.sh type compact60 applies caps:escape" "keyword input:kb_options caps:escape" "$(cat "$CALLS")"
+
+timeout 10 "$C/keyboard.sh" layout colemak-dh >/dev/null 2>&1
+contains "keyboard.sh layout colemak-dh sets CMK-DH Waybar pill" '"text":"CMK-DH"' "$(timeout 10 "$C/keyboard.sh" status --waybar)"
+
+timeout 10 "$C/keyboard.sh" layout us-ara >/dev/null 2>&1
+contains "keyboard.sh dual layout preserves caps:escape + grp toggle" "caps:escape,grp:alt_shift_toggle" "$(cat "$XDG_CONFIG_HOME/hypr/modules/keyboard-user.lua")"
+timeout 10 "$C/keyboard.sh" next >/dev/null 2>&1
+contains "keyboard.sh next switches active badge US -> ARA" '"text":"ARA"' "$(timeout 10 "$C/keyboard.sh" status --waybar)"
+
+timeout 10 "$C/keyboard.sh" rate rapid >/dev/null 2>&1
+contains "keyboard.sh rate rapid sets 55Hz / 190ms" "rate=rapid(55Hz/190ms)" "$(timeout 10 "$C/keyboard.sh" status)"
+contains "doctor verifies Input & Cursor studio" "Input & Cursor" "$(timeout 10 "$C/doctor.sh" --plain)"
+
+# ═══════════════════════ 25. Pure C11 Hyprland AF_UNIX IPC (mono-ipc) ═════
+printf '\n\033[1m25. mono-ipc.c Pure C11 AF_UNIX .socket.sock / .socket2.sock & telemetry\033[0m\n'
+
+IPC_RT="$WORK/ipc-rt"
+mkdir -p "$IPC_RT"
+"$REPO/bin/mono-ipc" --mock-server "$IPC_RT" "his-c11" >/dev/null 2>&1 &
+IPC_SRV=$!
+sleep 0.1
+eq "mono-ipc queries .socket.sock j/version over AF_UNIX" "v0.56.0-c11-ipc" \
+    "$(XDG_RUNTIME_DIR="$IPC_RT" HYPRLAND_INSTANCE_SIGNATURE="his-c11" timeout 5 "$REPO/bin/mono-ipc" version-tag)"
+eq "mono-ipc queries .socket.sock j/activewindow over AF_UNIX" "kitty-ipc" \
+    "$(XDG_RUNTIME_DIR="$IPC_RT" HYPRLAND_INSTANCE_SIGNATURE="his-c11" timeout 5 "$REPO/bin/mono-ipc" win-class)"
+contains "mono-ipc streams .socket2.sock EVENT>>DATA frame" "activelayout>>" \
+    "$(XDG_RUNTIME_DIR="$IPC_RT" HYPRLAND_INSTANCE_SIGNATURE="his-c11" timeout 5 "$REPO/bin/mono-ipc" watch --once)"
+wait "$IPC_SRV" 2>/dev/null || true
+
+contains "mono-ipc sysgraph emits valid Waybar JSON sparkline" '"tooltip":"CPU ' "$("$REPO/bin/mono-ipc" sysgraph)"
+contains "mono-ipc focus-json encodes Waybar Pomodoro pill" '"class":"on"' "$("$REPO/bin/mono-ipc" focus-json on "24:59" "Deep Work")"
+eq "zero jq calls remain across all .config runtime scripts" "0" \
+    "$(grep -rn '\bjq\b' "$REPO/.config/hypr/scripts/" "$REPO/.config/waybar/scripts/" 2>/dev/null | wc -l | tr -d ' ')"
+
+contains "mono-tui --snapshot renders Pure ISO C11 Control Deck" "Pure ISO C11 Control Deck" "$(timeout 5 "$C/tui.sh" --snapshot)"
+contains "mono-tui --json emits valid compositor & CPU telemetry" '"cursor_theme":' "$(timeout 5 "$C/tui.sh" --json)"
+contains "mono-tui --bench runs CLOCK_MONOTONIC microsecond audit" "telemetry_proc_sys" "$(timeout 5 "$C/tui.sh" --bench)"
+
+contains "website showcases #c11-runtime section" 'id="c11-runtime"' "$(cat "$REPO/site/index.html")"
+contains "website app.js drives interactive mono-tui & mono-ipc" '__setMonoIpcQuery' "$(cat "$REPO/site/app.js")"
+eq "website keeps 0 opencode mentions" "0" \
+    "$(grep -ri 'opencode' "$REPO/site/index.html" "$REPO/site/styles.css" "$REPO/site/app.js" "$REPO/site/newtab.html" 2>/dev/null | wc -l | tr -d ' ')"
+eq "website keeps 0 em-dash characters" "0" \
+    "$(grep -rn '—' "$REPO/site/index.html" "$REPO/site/styles.css" "$REPO/site/app.js" "$REPO/site/newtab.html" 2>/dev/null | wc -l | tr -d ' ')"
 
 # ═══════════════════════ result ══════════════════════════════════════════
 printf '\n\033[2m%s\033[0m\n' "$M_RULE"

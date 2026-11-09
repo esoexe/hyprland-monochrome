@@ -58,51 +58,27 @@ class_to_cmd() {
 }
 
 cmd_save() {
-    local name file clients layout gaps wall
+    local name file layout gaps wall count
     name="$(sanitize_name "${1:-work}")"
     file="$SESS_DIR/${name}.json"
 
-    clients="$(hyprctl clients -j 2>/dev/null || echo '[]')"
     layout="$("$SCRIPTS_DIR/layout.sh" status 2>/dev/null | awk '{print $1}')"
     gaps="$("$SCRIPTS_DIR/layout.sh" status 2>/dev/null | sed -n 's/.*(\(.*\)).*/\1/p')"
     wall="$(cat "$CACHE_DIR/current_wallpaper" 2>/dev/null || true)"
 
-    # Build filtered client array (ignore scratchpads & unmapped helper surfaces)
-    local items="[]"
-    while IFS=$'\t' read -r ws cls floating title; do
-        [ -n "$cls" ] || continue
-        case "$ws" in special:*|-*) continue ;; esac
-        case "$cls" in dropdown-term|mono-btop|mono-notes|mono-files|Rofi|rofi) continue ;; esac
-        local lcmd
-        lcmd="$(class_to_cmd "$cls")"
-        [ -n "$lcmd" ] || continue
-        items="$(jq -cn \
-            --argjson arr "$items" \
-            --arg ws "$ws" \
-            --arg cls "$cls" \
-            --arg cmd "$lcmd" \
-            --arg title "$title" \
-            --argjson fl "${floating:-false}" \
-            '$arr + [{workspace: $ws, class: $cls, command: $cmd, floating: $fl, title: $title}]')"
-    done < <(printf '%s' "$clients" | jq -r '
-        .[]
-        | select((.mapped // true) == true and (.class // "") != "")
-        | [ (.workspace.name // "1" | tostring), .class, (.floating // false | tostring), (.title // "" | gsub("[\t\r\n]"; " ")) ]
-        | @tsv
-    ' 2>/dev/null)
-
-    local count
-    count="$(printf '%s' "$items" | jq 'length')"
-
-    jq -n \
-        --arg name "$name" \
-        --arg saved_at "$(date -Iseconds)" \
-        --arg layout "${layout:-dwindle}" \
-        --arg gaps "${gaps:-default}" \
-        --arg wallpaper "$wall" \
-        --argjson windows "$items" \
-        '{name: $name, saved_at: $saved_at, layout: $layout, gaps: $gaps, wallpaper: $wallpaper, windows: $windows}' \
-        > "$file"
+    # Filter client rows (ignore scratchpads & unmapped helper surfaces) and serialize via Pure C11 mono-ipc
+    count="$(
+        while IFS=$'\t' read -r ws cls floating title; do
+            [ -n "$cls" ] || continue
+            case "$ws" in special:*|-*) continue ;; esac
+            case "$cls" in dropdown-term|mono-btop|mono-notes|mono-files|Rofi|rofi) continue ;; esac
+            lcmd="$(class_to_cmd "$cls")"
+            [ -n "$lcmd" ] || continue
+            printf '%s\t%s\t%s\t%s\t%s\n' "$ws" "$cls" "$lcmd" "${floating:-false}" "$title"
+        done < <(mono_ipc session-clients 2>/dev/null) \
+        | mono_ipc session-write "$file" "$name" "${layout:-dwindle}" "${gaps:-default}" "$wall"
+    )"
+    [ -z "$count" ] && count=0
 
     notify "Session saved · $name" "$count window(s), layout=${layout:-dwindle}, gaps=${gaps:-default}"
     printf 'saved %s (%s windows) -> %s\n' "$name" "$count" "$file"
@@ -119,12 +95,12 @@ cmd_restore() {
     fi
 
     local layout gaps wall count
-    layout="$(jq -r '.layout // "dwindle"' "$file")"
-    gaps="$(jq -r '.gaps // "default"' "$file")"
-    wall="$(jq -r '.wallpaper // ""' "$file")"
-    count="$(jq -r '.windows | length' "$file")"
+    IFS=$'\t' read -r layout gaps wall count < <(mono_ipc session-read "$file" meta 2>/dev/null)
+    [ -z "${layout:-}" ] && layout="dwindle"
+    [ -z "${gaps:-}" ] && gaps="default"
+    [ -z "${count:-}" ] && count="0"
 
-    [ -n "$wall" ] && [ -f "$wall" ] && "$SCRIPTS_DIR/wallpaper.sh" set "$wall" >/dev/null 2>&1 || true
+    [ -n "${wall:-}" ] && [ -f "$wall" ] && "$SCRIPTS_DIR/wallpaper.sh" set "$wall" >/dev/null 2>&1 || true
     [ -n "$layout" ] && "$SCRIPTS_DIR/layout.sh" set "$layout" >/dev/null 2>&1 || true
     [ -n "$gaps" ]   && "$SCRIPTS_DIR/layout.sh" gaps "$gaps" >/dev/null 2>&1 || true
 
@@ -133,20 +109,19 @@ cmd_restore() {
         local rule="[workspace ${ws} silent]"
         [ "$fl" = "true" ] && rule="[workspace ${ws} silent; float]"
         hyprctl dispatch exec "$rule $lcmd" >/dev/null 2>&1 || true
-    done < <(jq -r '.windows[] | [ .workspace, (.floating | tostring), .command ] | @tsv' "$file")
+    done < <(mono_ipc session-read "$file" windows 2>/dev/null)
 
     notify "Session restored · $name" "Launched $count window(s) across workspaces"
     printf 'restored %s (%s windows)\n' "$name" "$count"
 }
 
 cmd_list() {
-    local f base cnt lay
+    local f base lay _g _w cnt
     for f in "$SESS_DIR"/*.json; do
         [ -f "$f" ] || continue
         base="$(basename "$f" .json)"
-        cnt="$(jq -r '.windows | length' "$f" 2>/dev/null || echo 0)"
-        lay="$(jq -r '.layout // "dwindle"' "$f" 2>/dev/null || echo dwindle)"
-        printf '%s\t%s windows · %s\n' "$base" "$cnt" "$lay"
+        IFS=$'\t' read -r lay _g _w cnt < <(mono_ipc session-read "$f" meta 2>/dev/null)
+        printf '%s\t%s windows · %s\n' "$base" "${cnt:-0}" "${lay:-dwindle}"
     done
 }
 
@@ -155,7 +130,7 @@ cmd_show() {
     name="$(sanitize_name "${1:-work}")"
     file="$SESS_DIR/${name}.json"
     [ -f "$file" ] || { echo "session not found: $name" >&2; exit 1; }
-    jq . "$file"
+    mono_ipc session-read "$file" pretty
 }
 
 cmd_delete() {

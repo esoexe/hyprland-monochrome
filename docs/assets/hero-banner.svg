@@ -103,7 +103,7 @@
       <animate attributeName="opacity" values="1;0.28;1" dur="2.2s" repeatCount="indefinite" />
     </circle>
     <text x="416" y="49" class="mono" font-size="11.5" fill="#c9c4c4" letter-spacing="0.02em">
-      v5.2.0 Release  /  Hyprland 0.56 Lua  /  C++20 Native Core
+      v5.3.0 Release  /  Bespoke Cursors  /  Keyboard Type Studio
     </text>
   </g>
 
@@ -146,10 +146,10 @@
       <animate attributeName="x" values="-180;860" dur="5.5s" repeatCount="indefinite" />
     </rect>
 
-    <text x="24" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">172</text>
+    <text x="24" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">176</text>
     <text x="24" y="54" class="mono" font-size="11" fill="#7f7a7a">Synced Keybinds</text>
 
-    <text x="239" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">C++20</text>
+    <text x="239" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">Pure C11</text>
     <text x="239" y="54" class="mono" font-size="11" fill="#7f7a7a">Native Core Utilities</text>
 
     <text x="454" y="34" class="mono" font-size="22" font-weight="800" fill="#ffffff">20</text>

@@ -73,8 +73,8 @@ it with a shim; Hyprland does not). Use WSL for what it is genuinely good at wit
 running the tooling and the test suite:
 
 ```bash
-sudo apt install g++ make shellcheck lua5.4 jq
-make test                 # compiles C++20 tools & runs all 10 verification suites from inside Windows
+sudo apt install gcc make shellcheck lua5.4 jq
+make test                 # compiles Pure C11 tools & runs all 10 verification suites from inside Windows
 ```
 
 ---

@@ -19,9 +19,8 @@ case "${1:-}" in --*) set -- "${1#--}" "${@:2}" ;; esac
 
 has_class() {
     local cls="$1"
-    have hyprctl && have jq || return 1
-    hyprctl clients -j 2>/dev/null \
-        | jq -e --arg c "$cls" '.[] | select(.class == $c)' >/dev/null 2>&1
+    have hyprctl || [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] || return 1
+    mono_ipc has-client "$cls" >/dev/null 2>&1
 }
 
 toggle_drawer() { # toggle_drawer <ws_name> <class> <launch_cmd...>

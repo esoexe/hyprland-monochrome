@@ -1,4 +1,4 @@
-# Compiled C++20 binaries
+# Compiled Pure C11 binaries
 bin/
 .config/hypr/bin/
 

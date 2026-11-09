@@ -2,6 +2,21 @@
 
 Notable changes to this setup. Versions are the dates they landed.
 
+## 2026-09-23 — 5.3.0
+
+100% Pure ISO C11 Toolchain, Bespoke Cursor Suite, Physical Keyboard Studio, 20/20 Live Animated Wallpapers & Official Launch Trailer — complete migration of every native binary and header from C++20 to strict ISO C11 (`-std=c11 -D_POSIX_C_SOURCE=200809L -O3 -Wall -Wextra -Werror -pthread -lm`) with zero Python and zero C++, paired with four dual-format monochrome cursor themes, physical keyboard form-factor & XKB studio, 100% live animated GIF89a wallpapers, and a 1080p60 stereo launch trailer.
+
+- **100% Pure ISO C11 Native Core & Hyprland Socket IPC (`Makefile`, `.config/hypr/src/mono-ipc.c`, `include/*.h`, `wallpapers/*.c`, `tools/*.c`)**:
+  - Replaced all 13 C++20 `.cpp`/`.hpp` files with zero-dependency Pure ISO C11 (`mono-ipc.c`, `mono-calc.c`, `mono-cursor-gen.c`, `mono_image.h`, `mono_config.h`, `keybind_table.h`, `generate.h`, `generate.c`, `animate.c`, `serve-site.c`, `keybind-table.c`, `build-windows-kit.c`, `build-preview.c`, `mono-util.c`) enforced by automated zero-`.py`, zero-`.cpp`/`.hpp`, and zero-`jq`-runtime checks in `test/run-all.sh`
+  - Added `mono-ipc.c` (`<0.08ms` POSIX `AF_UNIX` client for Hyprland's `.socket.sock` and real-time `.socket2.sock` event stream + `/proc` Waybar sparkline telemetry + RFC-8259 JSON session engine), eliminating 100% of `jq` subprocesses across all runtime scripts
+  - Added `mono-tui.c` + `tui.sh` (`Super + Ctrl + M`): zero-dependency POSIX `termios` 6-tab Monochrome Terminal Control Deck (`TELEMETRY`, `VELOCITY`, `SHADERS`, `INPUT+CURSOR`, `WALLPAPERS`, `BENCHMARK`) with `CLOCK_MONOTONIC` microsecond profiling and `--snapshot` / `--json` / `--bench` modes
+- **Bespoke Monochrome Cursor Suite (`.config/hypr/src/mono-cursor-gen.c`, `.config/hypr/scripts/cursor.sh`, `cursors/Monochrome-*`)**:
+  - Compiles **4 architectural monochrome cursor themes** (`Monochrome-Obsidian`, `Monochrome-Ivory`, `Monochrome-Precision` CAD reticle, and `Monochrome-Dot` concentric halo) simultaneously as scalable vector `hyprcursor` `.hlc` packages (incl. 8-frame orbital `watch.hlc`) and 4x4-supersampled `24/32/48px` `Xcursor` binaries synced across Hyprland, GTK3/4, Qt, X11, and Kitty (`Super + Alt + C` / `Super + Ctrl + C`)
+- **Physical Keyboard Type & Keymap Studio (`.config/hypr/scripts/keyboard.sh`, `.config/waybar/config.jsonc`)**:
+  - Live hardware form-factor presets (`ANSI 104`, `ISO 105`, `60% / HHKB`, `Vim`, `Home-Row Control`, `Apple`, `Laptop`), ergonomic & international XKB layouts (`QWERTY`, `Colemak`, `Colemak-DH`, `Dvorak`, `Workman`, `AZERTY`, `QWERTZ`), 3 repeat curves, and live Waybar layout indicator (`Super + X` / `Super + Shift + X`)
+- **20 / 20 Live Animated Wallpapers & 1080p60 Official Trailer (`wallpapers/*.gif`, `docs/official-trailer.mp4`, `docs/desktop-demo.mp4`)**:
+  - Upgraded every bundled wallpaper (`20/20`) to a seamless 24-frame 20fps delta-compressed GIF89a loop streamed at zero idle CPU cost by `awww`, accompanied by the 56s `1920x1080@60fps` stereo Official Launch Trailer (`docs/official-trailer.mp4`) and full Wayland desktop tour (`docs/desktop-demo.mp4`)
+
 ## 2026-11-06 — 5.2.0
 
 Universal PC, Any-App & OpenCode Browser Edition — automatic hardware/GPU/VM adaptation and multi-distro installation so the desktop boots cleanly on any PC, universal application & file compatibility across every Linux/Windows packaging format, and a complete OpenCode (`opencode.ai`) browser theme + startpage suite.

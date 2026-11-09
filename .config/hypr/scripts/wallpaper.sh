@@ -16,7 +16,7 @@ case "${1:-}" in --*) set -- "${1#--}" "${@:2}" ;; esac
 
 WALL_DIR="$(mono_var wallpaper_dir "$HOME/Pictures/Wallpapers")"
 STATE="$CACHE_DIR/wallpaper"
-DEFAULT_WALL="$(mono_var default_wallpaper "$WALL_DIR/mono-01.jpg")"
+DEFAULT_WALL="$(mono_var default_wallpaper "$WALL_DIR/mono-11.gif")"
 THUMBS="$CACHE_DIR/wallpaper-thumbs"
 mkdir -p "$WALL_DIR" "$THUMBS" 2>/dev/null || true
 

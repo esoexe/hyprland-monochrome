@@ -128,6 +128,8 @@ cmd_status() {
     if [ "${1:-}" = "--json" ]; then
         printf '{"chassis":"%s","gpus":"%s","battery":"%s","backlight":"%s","power_profile":"%s","nvidia":%d,"vm":%d}\n' \
             "$HW_CHASSIS" "$HW_GPUS" "$HW_BATTERY" "$HW_BACKLIGHT" "$HW_POWER_PROFILE" "$HW_HAS_NVIDIA" "$HW_IS_VM"
+    elif [ "${1:-}" = "--summary" ]; then
+        printf '%s · %s · profile=%s\n' "$HW_CHASSIS" "$HW_GPUS" "$HW_POWER_PROFILE"
     else
         printf 'Chassis       : %s\n' "$HW_CHASSIS"
         printf 'GPU(s)        : %s\n' "$HW_GPUS"

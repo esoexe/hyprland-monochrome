@@ -110,6 +110,10 @@ if [ "$KEEP_FILES" = "0" ]; then
         for f in "$HOME/.zshrc" "$HOME/.config/starship.toml"; do
             [ -e "$f" ] && rm -f "$f" && ok "removed ${f#$HOME/}"
         done
+        for ctheme in Monochrome-Obsidian Monochrome-Ivory Monochrome-Precision Monochrome-Dot; do
+            cpath="${XDG_DATA_HOME:-$HOME/.local/share}/icons/$ctheme"
+            [ -d "$cpath" ] && rm -rf "$cpath" && ok "removed cursor theme $ctheme"
+        done
     else
         info "Kept the configuration files (restoring backups only)."
     fi

@@ -51,6 +51,8 @@ require("modules/smart")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+hl.env("XCURSOR_THEME", user.cursor_theme or "Monochrome-Obsidian")
+hl.env("HYPRCURSOR_THEME", user.cursor_theme or "Monochrome-Obsidian")
 hl.env("XCURSOR_SIZE", tostring(user.cursor_size or 24))
 hl.env("HYPRCURSOR_SIZE", tostring(user.cursor_size or 24))
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
@@ -94,6 +96,8 @@ hl.config({
 
 -- Auto-tune GPU / Optimus / VM / XWayland / cursor hardware flags for any PC.
 require("modules/hardware")
+pcall(require, "modules/cursor-user")
+pcall(require, "modules/keyboard-user")
 
 -- ──────────────────────────── Permissions ──────────────────────────────────
 -- Uncomment only if you enable `ecosystem.enforce_permissions = true`.

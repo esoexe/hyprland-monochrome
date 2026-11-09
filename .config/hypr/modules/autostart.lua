@@ -30,7 +30,13 @@ hl.on("hyprland.start", function ()
     -- ── Authentication agent (graphical sudo prompts) ─────────────────────
     hl.exec_cmd(scripts .. "polkit.sh")
 
-    -- ── Universal AppImage indexing & OpenCode browser sync ───────────────
+    -- ── Native Pure C11 Hyprland .socket2.sock Event Watcher ──────────────
+    hl.exec_cmd("pkill -x mono-ipc 2>/dev/null; (" .. home .. "/.config/hypr/bin/mono-ipc watch >/dev/null 2>&1 || true)")
+
+    -- ── Universal AppImage indexing, Cursor Suite & OpenCode browser sync ─
+    hl.exec_cmd(scripts .. "cursor.sh ensure --quiet && hyprctl setcursor "
+        .. (user and user.cursor_theme or "Monochrome-Obsidian") .. " "
+        .. tostring(user and user.cursor_size or 24))
     hl.exec_cmd(scripts .. "open-app.sh sync-appimages")
     hl.exec_cmd(scripts .. "browser-theme.sh apply --quiet")
 

@@ -205,8 +205,7 @@ cmd_status() {
             else
                 mmss="$(fmt_mmss "$rem")"
                 if [ "$waybar_json" = "1" ]; then
-                    jq -cn --arg t "◎ $mmss" --arg tip "Focus · $label ($mmss left)\nLeft-click: pause · Right-click: stop" \
-                        '{text: $t, class: "on", tooltip: $tip}'
+                    mono_ipc focus-json on "$mmss" "$label"
                 else
                     printf 'active %s (%s)\n' "$mmss" "$label"
                 fi
@@ -215,8 +214,7 @@ cmd_status() {
         elif [ "$mode" = "paused" ]; then
             mmss="$(fmt_mmss "${rem_secs:-0}")"
             if [ "$waybar_json" = "1" ]; then
-                jq -cn --arg t "◌ $mmss" --arg tip "Paused · $label ($mmss left)\nLeft-click: resume · Right-click: stop" \
-                    '{text: $t, class: "paused", tooltip: $tip}'
+                mono_ipc focus-json paused "$mmss" "$label"
             else
                 printf 'paused %s (%s)\n' "$mmss" "$label"
             fi
@@ -226,7 +224,7 @@ cmd_status() {
 
     if [ -f "$ZEN_STATE" ]; then
         if [ "$waybar_json" = "1" ]; then
-            jq -cn '{text: "◌ ZEN", class: "zen", tooltip: "Zen mode active (Super + Z to exit)"}'
+            mono_ipc focus-json zen
         else
             printf 'zen\n'
         fi

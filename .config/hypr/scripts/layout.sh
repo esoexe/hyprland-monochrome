@@ -21,7 +21,7 @@ current_layout() {
         cur="$(cat "$LAYOUT_STATE" 2>/dev/null)"
     fi
     if [ -z "$cur" ] && have hyprctl; then
-        cur="$(hyprctl getoption general:layout -j 2>/dev/null | jq -r '.str // empty' 2>/dev/null)"
+        cur="$(mono_ipc option-str general:layout 2>/dev/null)"
     fi
     [ -z "$cur" ] && cur="$(mono_var layout dwindle)"
     printf '%s' "$cur"

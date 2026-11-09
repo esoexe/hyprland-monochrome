@@ -103,7 +103,7 @@
       <g transform="translate(186, 22)" class="mono" font-size="11.5" fill="#9e9999">
         <text class="t1" opacity="1">nvim : ~/.config/hypr/hyprland.lua</text>
         <text class="t2" opacity="0">monochrome // newtab : 1px structural grid</text>
-        <text class="t3" opacity="0">rofi-wayland + mono-calc (C++20)</text>
+        <text class="t3" opacity="0">rofi-wayland + mono-calc (Pure C11)</text>
         <text class="t4" opacity="0">btop++ + mono-record (60fps replay)</text>
       </g>
 
@@ -313,10 +313,10 @@
           </g>
         </g>
 
-        <!-- Right Window: Command Palette & C++20 mono-calc -->
+        <!-- Right Window: Command Palette & Pure C11 mono-calc -->
         <rect x="618" y="64" width="564" height="576" rx="14" fill="#0d0c0c" fill-opacity="0.92" stroke="#343030" stroke-width="1.4" />
         <line x1="636" y1="104" x2="1164" y2="104" stroke="#262323" />
-        <text x="638" y="90" class="mono" font-size="11.5" fill="#9c9696">mono-calc : C++20 Recursive-Descent Engine (Super + Shift + P)</text>
+        <text x="638" y="90" class="mono" font-size="11.5" fill="#9c9696">mono-calc : Pure C11 Recursive-Descent Engine (Super + Shift + P)</text>
 
         <g transform="translate(638, 134)" class="mono">
           <rect x="0" y="0" width="524" height="44" rx="7" fill="#1b1818" stroke="#3d3838" />

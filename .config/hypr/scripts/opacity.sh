@@ -14,7 +14,7 @@ next=$(( (current + 1) % ${#STEPS[@]} ))
 value="${STEPS[$next]}"
 echo "$next" > "$STATE"
 
-if [ "$(hyprctl activewindow -j 2>/dev/null | jq -r '.class // "none"' 2>/dev/null)" = "none" ]; then
+if [ "$(mono_ipc win-class --or-none 2>/dev/null || echo none)" = "none" ]; then
     notify "Window opacity" "No window focused"
     exit 0
 fi

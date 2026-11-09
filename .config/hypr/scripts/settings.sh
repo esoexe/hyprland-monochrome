@@ -64,7 +64,7 @@ system_info() {
         "Host         $(hostnamectl --static 2>/dev/null || hostname)" \
         "Kernel       $(uname -r)" \
         "Uptime       $(uptime -p 2>/dev/null | sed 's/^up //')" \
-        "Session      Hyprland $(hyprctl version -j 2>/dev/null | jq -r '.tag // "?"')" \
+        "Session      Hyprland $(mono_ipc version-tag 2>/dev/null || echo '?')" \
         "CPU          $(awk -F': ' '/model name/ {print $2; exit}' /proc/cpuinfo 2>/dev/null)" \
         "GPU          $(lspci 2>/dev/null | awk -F': ' '/VGA|3D controller/ {print $3; exit}')" \
         "Memory       $(free -h | awk '/^Mem:/ {print $3 " / " $2}')" \
@@ -301,9 +301,7 @@ monitor_menu() {
                 local -a modes=("preferred${TAB}preferred (recommended)")
                 while IFS= read -r m; do
                     [ -n "$m" ] && modes+=("$m${TAB}$m")
-                done < <(hyprctl monitors all -j 2>/dev/null |
-                         jq -r --arg n "$name" '.[] | select(.name==$n) | .availableModes[]?' 2>/dev/null |
-                         sed 's/Hz$//' | awk 'NF')
+                done < <(mono_ipc monitor-modes "$name" 2>/dev/null)
                 choice="$(choose settings "mode:" "${modes[@]}")" || continue
                 [ -n "$choice" ] && { mon_set "$name" mode "$choice"; mon_write_config; } ;;
             scale)
@@ -320,7 +318,7 @@ monitor_menu() {
                     "auto-up${TAB}above" "auto-down${TAB}below" "0x0${TAB}0x0 (origin)")" || continue
                 [ -n "$choice" ] && { mon_set "$name" position "$choice"; mon_write_config; } ;;
             toggle)
-                if hyprctl monitors all -j 2>/dev/null | jq -e --arg n "$name" '.[] | select(.name==$n) | (.disabled // false)' >/dev/null 2>&1; then
+                if mono_ipc monitor-disabled "$name" >/dev/null 2>&1; then
                     mon_set "$name" mode preferred; mon_write_config
                 else
                     mon_disable "$name"
@@ -331,8 +329,7 @@ monitor_menu() {
 
 monitors_menu() {
     local line name
-    line="$(hyprctl monitors -j 2>/dev/null |
-            jq -r '.[] | "\(.name)\t\(.width)x\(.height)@\(.refreshRate|floor)Hz · scale \(.scale) · \(.x),\(.y)"' |
+    line="$(mono_ipc monitors-list 2>/dev/null |
             pick settings "monitor:")" || return 0
     name="${line%%$TAB*}"
     [ -n "$name" ] && monitor_menu "$name"
@@ -518,6 +515,8 @@ while :; do
     key="$(choose settings "settings:" \
         "palette$TAB⌘  Command palette & math calculator" \
         "openany$TAB󰀻  Open anything (file, URL, AppImage, Flatpak, .exe)" \
+        "keyboard$TAB⌨  Keyboard Type & Layout Studio (ANSI / 60% / Vim / Colemak)" \
+        "cursor$TAB↖  Cursor Design Studio (Obsidian / Ivory / Precision / Dot)" \
         "browser$TAB󰖟  Browser · OpenCode theme & startpage" \
         "hardware$TAB󰓅  PC hardware, GPU & power profiles" \
         "velocity$TAB⚡  Velocity, Turbo / Game mode, Liquid Glass & benchmark" \
@@ -541,6 +540,8 @@ while :; do
     case "$key" in
         palette)    "$SCRIPTS_DIR/palette.sh"; exit 0 ;;
         openany)    "$SCRIPTS_DIR/open-app.sh" picker; exit 0 ;;
+        keyboard)   "$SCRIPTS_DIR/keyboard.sh" menu ;;
+        cursor)     "$SCRIPTS_DIR/cursor.sh" menu ;;
         browser)    "$SCRIPTS_DIR/browser-theme.sh" menu ;;
         hardware)   "$SCRIPTS_DIR/hardware.sh" menu ;;
         velocity)   "$SCRIPTS_DIR/perf.sh" menu ;;

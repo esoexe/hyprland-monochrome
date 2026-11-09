@@ -7,6 +7,7 @@
 
 # ─────────────────────────────── Hyprland ───────────────────────────────
 hyprland                 # the compositor itself (needs >= 0.55 for the Lua config)
+hyprcursor               # native scalable vector cursor format (.hlc)
 hyprlock                 # lock screen
 hypridle                 # idle daemon (dim / lock / suspend)
 hyprsunset               # native blue-light filter (night shift)
@@ -74,11 +75,11 @@ starship                 # prompt
 eza                      # ls replacement
 bat                      # cat replacement
 fzf                      # fuzzy finder (Ctrl+R history, Ctrl+T files)
-jq                       # JSON parsing for the scripts below
+jq                       # optional CLI JSON utility (desktop runtime uses Pure C11 mono-ipc)
 fastfetch                # system info
 btop                     # resource monitor
 neovim                   # zero-plugin monochrome editor & scratchpad notes
-gcc                      # C++20 compiler (`g++`) for mono-calc & wallpaper studio
+gcc                      # Pure C11 compiler (`cc` / `gcc`) for mono-calc, cursor-gen & wallpaper studio
 make                     # build automation (`make`, `make docs`, `make wallpapers`)
 libnotify                # notify-send
 xdg-utils                # xdg-open

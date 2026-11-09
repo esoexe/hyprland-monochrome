@@ -117,7 +117,7 @@ if [ -d "$WDIR" ]; then
     wcount="$(find "$WDIR" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' \) | wc -l | tr -d ' ')"
 fi
 if [ "$wcount" -gt 0 ]; then
-    record ok "Wallpaper studio" "$wcount monochrome wallpaper(s) (static + live loops) in ${WDIR/#$HOME/\~}"
+    record ok "Wallpaper studio" "$wcount live animated monochrome wallpaper loop(s) in ${WDIR/#$HOME/\~}"
 else
     record warn "Wallpaper studio" "no wallpapers found in ${WDIR/#$HOME/\~}"
 fi
@@ -138,7 +138,7 @@ fi
 
 # 8. Universal PC hardware & OpenCode browser theme
 if [ -x "$SCRIPTS_DIR/hardware.sh" ] && [ -f "$HYPR_DIR/modules/hardware.lua" ]; then
-    hw_summary="$("$SCRIPTS_DIR/hardware.sh" status --json 2>/dev/null | jq -r '"\(.chassis) · \(.gpus) · profile=\(.power_profile)"' 2>/dev/null || echo 'ready')"
+    hw_summary="$("$SCRIPTS_DIR/hardware.sh" status --summary 2>/dev/null || echo 'ready')"
     record ok "PC Hardware" "$hw_summary"
 else
     record warn "PC Hardware" "hardware.lua / hardware.sh missing"
@@ -150,7 +150,16 @@ else
     record warn "OpenCode browser" "missing ~/.config/browser/opencode assets"
 fi
 
-# 9. Pristine backup vault
+# 9. Keyboard Type Studio & Bespoke Monochrome Cursor Suite
+if [ -x "$SCRIPTS_DIR/keyboard.sh" ] && [ -x "$SCRIPTS_DIR/cursor.sh" ]; then
+    kb_stat="$("$SCRIPTS_DIR/keyboard.sh" status 2>/dev/null || echo 'type=ansi layout=us')"
+    cur_stat="$("$SCRIPTS_DIR/cursor.sh" status 2>/dev/null || echo 'theme=Monochrome-Obsidian size=24')"
+    record ok "Input & Cursor" "$kb_stat · $cur_stat"
+else
+    record warn "Input & Cursor" "keyboard.sh or cursor.sh missing in $SCRIPTS_DIR"
+fi
+
+# 10. Pristine backup vault
 if [ -d "$HOME/.config-backups/pristine" ]; then
     record ok "Backup vault" "$HOME/.config-backups/pristine present"
 else

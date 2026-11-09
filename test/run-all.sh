@@ -3,7 +3,7 @@
 #
 #     ./test/run-all.sh
 #
-#   • C++20 toolchain build (`make -Wall -Wextra -Werror`) + zero-Python guard
+#   • Pure C11 toolchain build (`make -std=c11 -Wall -Wextra -Werror`) + zero-Python/C++ guard
 #   • shell syntax + shellcheck (if installed) on every script
 #   • Lua syntax (luac, if installed) on the Hyprland config
 #   • JSON + TOML validity of Waybar, fastfetch, Starship + Windows Terminal
@@ -50,17 +50,29 @@ skip()  {  # skip <tool>  — remembered, so the summary cannot claim a full pas
     SKIPPED=$((SKIPPED + 1)); SKIP_WHAT="$SKIP_WHAT $1"
 }
 
-printf '\n\033[1m0. C++20 tools & zero-Python guard\033[0m\n'
+printf '\n\033[1m0. Pure C11 tools & zero-Python / zero-C++ / zero-jq-runtime guard\033[0m\n'
 if make -s -j"$(nproc 2>/dev/null || echo 2)"; then
-    green "all 7 C++20 tools & mono-calc compiled cleanly (-std=c++20 -Wall -Wextra -Werror)"
+    green "all 12 Pure C11 tools (incl. mono-tui, mono-ipc, trailer-studio, mono-cursor-gen & serve-site) compiled cleanly (-std=c11 -Wall -Wextra -Werror)"
 else
-    red "C++20 compilation failed (run: make)"
+    red "Pure C11 compilation failed (run: make)"
 fi
 PY_FILES="$(find . -name '*.py' -not -path './.git/*' | sort)"
 if [ -z "$PY_FILES" ]; then
-    green "zero .py files in repository (100% C++20 + Lua + Bash)"
+    green "zero .py files in repository (100% Pure C11 + Lua + Bash)"
 else
     red "unexpected .py files present: $PY_FILES"
+fi
+CPP_FILES="$(find . \( -name '*.cpp' -o -name '*.hpp' -o -name '*.cc' -o -name '*.cxx' \) -not -path './.git/*' | sort)"
+if [ -z "$CPP_FILES" ]; then
+    green "zero C++ files (.cpp/.hpp) in repository (100% Pure ISO C11)"
+else
+    red "unexpected C++ files present: $CPP_FILES"
+fi
+JQ_CALLS="$(grep -rn '\bjq\b' .config/hypr/scripts/ .config/waybar/scripts/ 2>/dev/null || true)"
+if [ -z "$JQ_CALLS" ]; then
+    green "zero jq subprocess calls in .config/ runtime scripts (100% Pure C11 mono-ipc)"
+else
+    red "unexpected jq calls in runtime scripts: $JQ_CALLS"
 fi
 
 printf '\n\033[1m1. shell syntax\033[0m\n'
@@ -92,7 +104,7 @@ fi
 
 printf '\n\033[1m4. JSON + TOML configs\033[0m\n'
 if ./bin/mono-util check-configs "$REPO"; then
-    green "waybar, fastfetch, starship + windows-terminal configs parse (C++20)"
+    green "waybar, fastfetch, starship + windows-terminal configs parse (Pure C11)"
 else
     red "config validation failed (./bin/mono-util check-configs)"
 fi

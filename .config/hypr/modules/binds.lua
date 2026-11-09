@@ -57,8 +57,11 @@ sh("V",              S .. "clipboard.sh",     "Clipboard history")
 sh("SHIFT + V",      S .. "clipboard.sh wipe","Clear clipboard history")
 sh("SLASH",          S .. "menu.sh keybinds", "Keyboard shortcut cheat sheet")
 sh("SHIFT + C",      "hyprpicker -a",         "Colour picker (copies hex to clipboard)")
+sh("ALT + C",        S .. "cursor.sh cycle",  "Cycle monochrome cursor design (Obsidian / Ivory / Precision / Dot)")
+sh("CTRL + C",       S .. "cursor.sh menu",   "Cursor Design Studio (pointer theme, size, terminal cursor)")
 sh("N",              "dunstctl history-pop",  "Show the last notification")
-sh("X",              "hyprctl switchxkblayout current next", "Switch keyboard layout")
+sh("X",              S .. "keyboard.sh next", "Switch keyboard layout")
+sh("SHIFT + X",      S .. "keyboard.sh menu", "Keyboard Type & Layout Studio (ANSI / 60% / Vim / Colemak / Intl)")
 
 
 -- ═══════════════════════════ WINDOW MANAGEMENT ════════════════════════════
@@ -142,6 +145,7 @@ act("SHIFT + S",   hl.dsp.window.move({ workspace = "special:" .. scratch }),   
 -- ═══════════════════════ BAR / SESSION / SYSTEM ═══════════════════════════
 
 sh("SHIFT + W", S .. "waybar-toggle.sh",  "Toggle the top bar")
+sh("CTRL + M",  S .. "tui.sh",            "Open Pure C11 Terminal Control Deck (mono-tui)")
 sh("Z",         S .. "focus.sh zen",       "Zen mode (hide bar, frame workspace, mute notifications)")
 sh("SHIFT + Z", S .. "focus.sh menu",      "Deep-work focus & Pomodoro timer")
 sh("SHIFT + R", "hyprctl reload",          "Reload Hyprland config")

@@ -12,14 +12,6 @@ set -u
 # Tolerate --flags as well as plain arguments (handy in keybinds).
 case "${1:-}" in --*) set -- "${1#--}" "${@:2}" ;; esac
 
-MODS_JQ='
-  def mods:
-    [ (if ((.modmask / 64) % 2) >= 1 then "Super" else empty end),
-      (if ((.modmask / 4)  % 2) >= 2 or ((.modmask / 4) % 2) >= 1 then "Ctrl" else empty end),
-      (if ((.modmask / 8)  % 2) >= 1 then "Alt"   else empty end),
-      (if ((.modmask / 1)  % 2) >= 1 then "Shift" else empty end) ] | join(" + ");
-'
-
 case "${1:-launcher}" in
     launcher)
         [ -x "$SCRIPTS_DIR/open-app.sh" ] && "$SCRIPTS_DIR/open-app.sh" sync-appimages >/dev/null 2>&1 || true
@@ -33,16 +25,7 @@ case "${1:-launcher}" in
     run)
         rofi_menu launcher -show run -i -p "run:" ;;
     keybinds)
-        raw="$(hyprctl binds -j 2>/dev/null | jq -r "$MODS_JQ"'
-            .[]
-            | select(.description != null and .description != "" and .description != "unknown")
-            | (if (.key // "") == "" then "code " + (.keycode | tostring)
-               else (.key | ascii_upcase) end) as $k
-            | (mods) as $m
-            | (if $m == "" then $k else "\($m) + \($k)" end) as $combo
-            | (if (.submap // "") != "" then "[\(.submap)] \($combo)" else $combo end) as $label
-            | "\($label)\t\(.description)\t\(.dispatcher // "")\t\(.arg // "")"
-        ' 2>/dev/null | awk -F'\t' '!seen[$1]++ { printf "%-28s  %s\t%s\t%s\n", $1, $2, $3, $4 }' | sort -k1,1)"
+        raw="$(mono_ipc binds-rofi 2>/dev/null || true)"
         [ -z "$raw" ] && { notify "Keybinds" "hyprctl binds returned nothing" "dialog-error"; exit 1; }
 
         labels="$(printf '%s\n' "$raw" | cut -f1)"

@@ -31,6 +31,7 @@
         "memory",
         "temperature",
         "custom/updates",
+        "custom/keyboard",
         "network",
         "bluetooth",
         "pulseaudio",
@@ -222,6 +223,16 @@
         "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}",
         "on-click": "~/.config/hypr/scripts/settings.sh"
+    },
+
+    "custom/keyboard": {
+        "exec": "~/.config/hypr/scripts/keyboard.sh status --waybar",
+        "return-type": "json",
+        "interval": 15,
+        "signal": 12,
+        "format": "⌨ {}",
+        "on-click": "~/.config/hypr/scripts/keyboard.sh next",
+        "on-click-right": "~/.config/hypr/scripts/keyboard.sh menu"
     },
 
     "pulseaudio": {

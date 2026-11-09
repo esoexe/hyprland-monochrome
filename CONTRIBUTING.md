@@ -6,7 +6,7 @@ machine-specific quirk, a clearer comment.
 ## Before you open a pull request
 
 ```bash
-make test                      # C++20 build + shellcheck + Lua + JSON/TOML + smoke test + docs
+make test                      # Pure C11 build + shellcheck + Lua + JSON/TOML + smoke test + docs
 make docs                      # refresh docs/KEYBINDS.md, windows/* & docs/preview.html
 ```
 

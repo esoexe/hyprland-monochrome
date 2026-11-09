@@ -5,7 +5,18 @@
 
 set -u
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/hyprland-monochrome"
+for _ipc in \
+    "$CONFIG_DIR/hypr/bin/mono-ipc" \
+    "$SCRIPT_DIR/../../../bin/mono-ipc" \
+    "$CACHE/mono-ipc"
+do
+    [ -x "$_ipc" ] && exec "$_ipc" sysgraph
+done
+unset _ipc
+
 [ -d "$CACHE" ] || mkdir -p "$CACHE" 2>/dev/null || true
 STATE="$CACHE/sysgraph.state"
 

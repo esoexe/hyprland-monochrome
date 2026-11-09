@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>hyprland-monochrome : Precision Monochrome Wayland Desktop</title>
-  <meta name="description" content="A minimalist monochrome Hyprland 0.56 desktop environment engineered in C++20 and Lua. Adaptive GPU profiles, GLSL shaders, cohesive browser chrome, and 172 ergonomic keybinds." />
+  <meta name="description" content="A minimalist monochrome Hyprland 0.56 desktop environment engineered in Pure C11 and Lua. Bespoke vector cursors, physical keyboard type profiles, adaptive GPU tuning, GLSL shaders, and 176 ergonomic keybinds." />
   <meta name="theme-color" content="#060606" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -26,13 +26,15 @@
           </svg>
         </span>
         <span>hyprland-monochrome</span>
-        <span style="color:var(--ink-muted);font-weight:500">v5.2</span>
+        <span style="color:var(--ink-muted);font-weight:500">v5.3</span>
       </a>
 
       <div class="nav-links" id="nav-links">
         <a href="#simulator" class="nav-link active">Simulator</a>
+        <a href="#c11-runtime" class="nav-link">C11 Runtime</a>
         <a href="#browser" class="nav-link">Browser</a>
         <a href="#hardware" class="nav-link">Hardware</a>
+        <a href="#input-studio" class="nav-link">Input &amp; Cursor</a>
         <a href="#apps" class="nav-link">Compatibility</a>
         <a href="#wallpapers" class="nav-link">Wallpapers</a>
         <a href="#footage" class="nav-link">Footage</a>
@@ -67,18 +69,19 @@
     <div class="hero-inner">
       <div class="hero-eyebrow">
         <span class="pulse-dot"></span>
-        <span>v5.2.0 Release  /  Hyprland 0.56 Lua Engine  /  C++20 Native Utilities</span>
+        <span>v5.3.0 Release  /  100% Pure ISO C11 Core  /  AF_UNIX Socket IPC  /  mono-tui Control Deck</span>
       </div>
 
       <h1 class="hero-title">
         Pure monochrome.<br />
-        <span class="silver">Engineered for focus.</span>
+        <span class="silver">Engineered in Pure C11.</span>
       </h1>
 
       <p class="hero-sub">
-        A cohesive Wayland desktop environment built around strict luminance hierarchy,
-        spring-damped motion, automatic GPU and display profiling, universal application
-        routing, and a unified monochrome browser workspace.
+        A zero-compromise Wayland desktop engineered in strict ISO C11, Lua 5.4, and POSIX shell
+        with zero Python, zero C++, and zero runtime <code>jq</code> subprocesses. Direct
+        <code>AF_UNIX</code> Hyprland socket IPC, a 6-tab terminal control deck, bespoke vector
+        cursors, and 20 live kinetic wallpapers.
       </p>
 
       <div class="install-box" role="region" aria-label="One-line install command">
@@ -94,8 +97,14 @@
           </svg>
           <span>Launch Live Desktop</span>
         </a>
-        <a href="https://github.com/esoexe/hyprland-monochrome/releases/tag/v5.2.0" target="_blank" rel="noopener" class="btn-ghost">
-          <span>Release v5.2.0</span>
+        <a href="#c11-runtime" class="btn-ghost">
+          <span>Explore Pure C11 Runtime</span>
+        </a>
+        <a href="#input-studio" class="btn-ghost">
+          <span>Cursor &amp; Keyboard Studio</span>
+        </a>
+        <a href="https://github.com/esoexe/hyprland-monochrome/releases/latest" target="_blank" rel="noopener" class="btn-ghost">
+          <span>Release v5.3.0</span>
         </a>
         <a href="newtab.html" target="_blank" rel="noopener" class="btn-ghost">
           <span>Open Browser Startpage</span>
@@ -114,12 +123,12 @@
 
       <div class="hero-metrics">
         <div class="metric-cell">
-          <div class="metric-val" data-count="172">172</div>
+          <div class="metric-val" data-count="176">176</div>
           <div class="metric-lbl">Synced Keybinds</div>
         </div>
         <div class="metric-cell">
-          <div class="metric-val">C++20</div>
-          <div class="metric-lbl">Native Core Utilities</div>
+          <div class="metric-val">Pure C11</div>
+          <div class="metric-lbl">11 Native Core, IPC &amp; TUI Tools</div>
         </div>
         <div class="metric-cell">
           <div class="metric-val" data-count="20">20</div>
@@ -195,7 +204,7 @@
     </div>
 
     <div class="os-stage" id="os-stage">
-      <img src="wallpapers/mono-11.jpg" alt="Active monochrome desktop wallpaper" class="os-wallpaper" id="os-wallpaper" />
+      <img src="wallpapers/mono-11.gif" alt="Active live animated monochrome desktop wallpaper" class="os-wallpaper" id="os-wallpaper" />
       <canvas class="os-grain-canvas" id="os-grain-canvas" width="240" height="150"></canvas>
       <div class="os-crt-overlay"></div>
 
@@ -270,7 +279,7 @@
               <span>try: help, calc, shader, fastfetch</span>
             </div>
             <div class="kitty-out" id="kitty-out">
-              <div><span style="color:#fff;font-weight:700">hyprland-monochrome v5.2.0</span> <span style="color:#7f7a7a">: interactive shell</span></div>
+              <div><span style="color:#fff;font-weight:700">hyprland-monochrome v5.3.0</span> <span style="color:#7f7a7a">: interactive shell</span></div>
               <div style="color:#9e9a9a">Type <span style="color:#fff">help</span>, <span style="color:#fff">fastfetch</span>, <span style="color:#fff">calc 2^16</span>, <span style="color:#fff">shader crt</span>, or <span style="color:#fff">ws 2</span>.</div>
             </div>
             <form class="kitty-form" id="kitty-form" autocomplete="off">
@@ -339,7 +348,7 @@
 
           <div class="os-win">
             <div class="win-bar">
-              <span>mono-calc (C++20 expression engine)</span>
+              <span>mono-calc (Pure C11 expression engine)</span>
               <span>Super + =</span>
             </div>
             <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
@@ -349,7 +358,7 @@
                 <span id="ws-calc-out" style="font-size:18px;font-weight:800;color:#fff">81.59</span>
               </div>
               <div style="color:#888;font-size:11px;line-height:1.5">
-                Compiled native C++20 recursive-descent parser supporting <code>sin</code>, <code>cos</code>, <code>sqrt</code>, <code>log</code>, <code>pi</code>, and exponentiation with sub-millisecond latency.
+                Compiled native Pure C11 recursive-descent parser supporting <code>sin</code>, <code>cos</code>, <code>sqrt</code>, <code>log</code>, <code>pi</code>, and exponentiation with sub-millisecond latency.
               </div>
             </div>
           </div>
@@ -384,6 +393,112 @@
                 <div style="color:#888;font-size:11px">Lossless PNG capture with instant vector annotation</div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01B. PURE ISO C11 ARCHITECTURE, AF_UNIX IPC & TERMINAL CONTROL DECK -->
+  <section class="section reveal" id="c11-runtime">
+    <div class="sec-kicker">01B / Pure ISO C11 Native Core, AF_UNIX IPC &amp; Control Deck</div>
+    <h2 class="sec-title">Zero Python. Zero C++. Sub-millisecond Pure C11 runtime.</h2>
+    <p class="sec-desc">
+      Every native compiler, procedural renderer, HTTP server, Hyprland socket client, and terminal
+      instrument compiles under strict <code>cc -std=c11 -O3 -Wall -Wextra -Werror -pthread -lm</code>
+      with zero external libraries and zero runtime <code>jq</code> subprocesses.
+    </p>
+
+    <div class="studio-split">
+      <!-- LEFT: Interactive mono-tui 6-Tab Terminal Control Deck -->
+      <div class="spot-card studio-panel">
+        <div class="studio-head">
+          <div>
+            <div class="mono studio-tag">SUPER + CTRL + M  /  POSIX TERMIOS + VT100</div>
+            <h3 class="studio-h3">Interactive <code>mono-tui</code> Control Deck</h3>
+          </div>
+          <span class="mono studio-badge" id="tui-status-pill">CLOCK_MONOTONIC : 50.8 us</span>
+        </div>
+
+        <div class="tui-terminal" id="tui-terminal" tabindex="0" aria-label="Interactive mono-tui 6-tab terminal control deck">
+          <div class="tui-top-line">
+            <span>hyprland-monochrome v5.3.0 // Pure ISO C11 Control Deck</span>
+            <span class="tui-live-tag"><span class="tui-dot"></span>IPC: .socket.sock LIVE</span>
+          </div>
+
+          <div class="tui-tabs" id="tui-tabs" role="tablist">
+            <button type="button" class="tui-tab active" data-tuitab="0" role="tab">[1:TELEMETRY]</button>
+            <button type="button" class="tui-tab" data-tuitab="1" role="tab">2:VELOCITY</button>
+            <button type="button" class="tui-tab" data-tuitab="2" role="tab">3:SHADERS</button>
+            <button type="button" class="tui-tab" data-tuitab="3" role="tab">4:INPUT+CURSOR</button>
+            <button type="button" class="tui-tab" data-tuitab="4" role="tab">5:WALLPAPERS</button>
+            <button type="button" class="tui-tab" data-tuitab="5" role="tab">6:BENCHMARK</button>
+          </div>
+
+          <div class="tui-body" id="tui-body"></div>
+
+          <div class="tui-foot-line">
+            <span>Keys: [1-6/Tab] Panel  [Click/Enter] Apply Live  [--snapshot | --json | --bench]</span>
+            <span id="tui-feedback" style="color:var(--pure);font-weight:700">Ready</span>
+          </div>
+        </div>
+
+        <div class="studio-cmd-bar">
+          <code id="tui-cli-out">~/.config/hypr/bin/mono-tui --bench</code>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="sbtn" id="tui-rebench-btn">Re-run Benchmark</button>
+            <button type="button" class="sbtn" id="tui-copy-cmd">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Live AF_UNIX .socket.sock / .socket2.sock Inspector & 12-Binary Matrix -->
+      <div class="spot-card studio-panel">
+        <div class="studio-head">
+          <div>
+            <div class="mono studio-tag">DIRECT AF_UNIX SOCKET IPC  /  ZERO JQ FORKS</div>
+            <h3 class="studio-h3"><code>mono-ipc</code> Wire Inspector &amp; 12-Binary Core</h3>
+          </div>
+          <span class="mono studio-badge" id="ipc-lat-badge">0.08 ms round-trip</span>
+        </div>
+
+        <div>
+          <div class="mono studio-lbl">1. SEND LIVE HYPRLAND SOCKET QUERY</div>
+          <div class="chip-grid" id="ipc-query-chips">
+            <button type="button" class="hw-chip active" data-ipc="version">j/version</button>
+            <button type="button" class="hw-chip" data-ipc="activewindow">j/activewindow</button>
+            <button type="button" class="hw-chip" data-ipc="sysgraph">mono-ipc sysgraph</button>
+            <button type="button" class="hw-chip" data-ipc="socket2">.socket2.sock stream</button>
+            <button type="button" class="hw-chip" data-ipc="binds">binds-rofi</button>
+            <button type="button" class="hw-chip" data-ipc="float">float-target</button>
+          </div>
+        </div>
+
+        <div class="ipc-wire-bar" id="ipc-wire-bar">
+          <span class="ipc-node active">mono-ipc (C11)</span>
+          <span class="ipc-arrow" id="ipc-pulse">---&gt;</span>
+          <span class="ipc-node" id="ipc-sock-node">$HIS/.socket.sock</span>
+          <span class="ipc-arrow">---&gt;</span>
+          <span class="ipc-node">RFC-8259 DOM (0 jq)</span>
+        </div>
+
+        <pre class="ipc-out-box" id="ipc-out-box"></pre>
+
+        <div>
+          <div class="mono studio-lbl">2. ALL 12 ZERO-DEPENDENCY ISO C11 BINARIES (-std=c11 -O3 -Werror)</div>
+          <div class="c11-bin-grid">
+            <div class="c11-bin-item"><b>mono-ipc</b><span>AF_UNIX IPC + JSON</span></div>
+            <div class="c11-bin-item"><b>mono-tui</b><span>6-tab termios deck</span></div>
+            <div class="c11-bin-item"><b>mono-calc</b><span>math / hex parser</span></div>
+            <div class="c11-bin-item"><b>cursor-gen</b><span>.hlc + Xcursor</span></div>
+            <div class="c11-bin-item"><b>wallpaper-anim</b><span>20 GIF89a loops</span></div>
+            <div class="c11-bin-item"><b>wallpaper-gen</b><span>16K T.81 JPEG</span></div>
+            <div class="c11-bin-item"><b>serve-site</b><span>HTTP + Range 206</span></div>
+            <div class="c11-bin-item"><b>keybind-table</b><span>176 Lua binds</span></div>
+            <div class="c11-bin-item"><b>build-preview</b><span>self-contained doc</span></div>
+            <div class="c11-bin-item"><b>build-windows-kit</b><span>GlazeWM + WT sync</span></div>
+            <div class="c11-bin-item"><b>mono-util</b><span>JSONC/TOML/R==G==B</span></div>
+            <div class="c11-bin-item c11-guard"><b>trailer-studio</b><span>48 kHz calm piano</span></div>
           </div>
         </div>
       </div>
@@ -534,6 +649,197 @@
     </div>
   </section>
 
+  <!-- 03B. BESPOKE CURSOR DESIGN & PHYSICAL KEYBOARD STUDIO -->
+  <section class="section reveal" id="input-studio">
+    <div class="sec-kicker">03B / Bespoke Cursor Design &amp; Keyboard Type Studio</div>
+    <h2 class="sec-title">Custom-compiled monochrome cursors and hardware keyboard profiles.</h2>
+    <p class="sec-desc">
+      Our Pure C11 cursor compiler builds four architectural pointer themes in both native vector
+      <code>hyprcursor</code> (<code>.hlc</code>) and supersampled multi-DPI <code>Xcursor</code> formats, paired
+      with live physical keyboard type remapping across ANSI, ISO, 60% HHKB, Vim, Apple, and ergonomic keymaps.
+    </p>
+
+    <div class="studio-split">
+      <!-- LEFT: Interactive Live Cursor Designer -->
+      <div class="spot-card studio-panel">
+        <div class="studio-head">
+          <div>
+            <div class="mono studio-tag">LIVE PAGE POINTER PREVIEW</div>
+            <h3 class="studio-h3">Monochrome Cursor Suite</h3>
+          </div>
+          <span class="mono studio-badge" id="cur-active-badge">Monochrome-Obsidian / 24px</span>
+        </div>
+
+        <div class="cursor-cards" id="cursor-cards" role="radiogroup" aria-label="Select cursor design">
+          <button type="button" class="cur-card active" data-cur="obsidian">
+            <span class="cur-preview-box">
+              <svg viewBox="0 0 64 64" width="38" height="38" aria-hidden="true">
+                <polygon points="12,8 12,50 24,39 32,54 37,51 29,36 44,36" fill="#0a0a0a" stroke="#f5f5f5" stroke-width="2.6" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span class="cur-meta">
+              <strong>Obsidian</strong>
+              <span>#0a0a0a body, silver edge</span>
+            </span>
+          </button>
+
+          <button type="button" class="cur-card" data-cur="ivory">
+            <span class="cur-preview-box">
+              <svg viewBox="0 0 64 64" width="38" height="38" aria-hidden="true">
+                <polygon points="12,8 12,50 24,39 32,54 37,51 29,36 44,36" fill="#f7f7f7" stroke="#0a0a0a" stroke-width="2.6" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span class="cur-meta">
+              <strong>Ivory</strong>
+              <span>#f7f7f7 body, dark stroke</span>
+            </span>
+          </button>
+
+          <button type="button" class="cur-card" data-cur="precision">
+            <span class="cur-preview-box">
+              <svg viewBox="0 0 64 64" width="38" height="38" aria-hidden="true">
+                <polygon points="12,8 12,50 24,39 32,54 37,51 29,36 44,36" fill="none" stroke="#0c0c0c" stroke-width="4.2" stroke-linejoin="round" />
+                <polygon points="12,8 12,50 24,39 32,54 37,51 29,36 44,36" fill="none" stroke="#f4f4f4" stroke-width="2" stroke-linejoin="round" />
+                <circle cx="12" cy="8" r="2.4" fill="#ffffff" />
+              </svg>
+            </span>
+            <span class="cur-meta">
+              <strong>Precision</strong>
+              <span>Hollow CAD drafting reticle</span>
+            </span>
+          </button>
+
+          <button type="button" class="cur-card" data-cur="dot">
+            <span class="cur-preview-box">
+              <svg viewBox="0 0 64 64" width="38" height="38" aria-hidden="true">
+                <circle cx="32" cy="32" r="16" fill="none" stroke="#f4f4f4" stroke-width="2.2" />
+                <circle cx="32" cy="32" r="7" fill="#f4f4f4" stroke="#0c0c0c" stroke-width="1.8" />
+              </svg>
+            </span>
+            <span class="cur-meta">
+              <strong>Dot</strong>
+              <span>Concentric halo &amp; core</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="studio-row-controls">
+          <div>
+            <div class="mono studio-lbl">POINTER SCALE</div>
+            <div class="chip-grid" id="cur-size-chips">
+              <button type="button" class="hw-chip" data-csize="20">20px</button>
+              <button type="button" class="hw-chip active" data-csize="24">24px</button>
+              <button type="button" class="hw-chip" data-csize="32">32px</button>
+              <button type="button" class="hw-chip" data-csize="42">42px</button>
+            </div>
+          </div>
+          <div>
+            <div class="mono studio-lbl">TERMINAL CURSOR</div>
+            <div class="chip-grid" id="cur-kitty-chips">
+              <button type="button" class="hw-chip active" data-ckitty="block">Block</button>
+              <button type="button" class="hw-chip" data-ckitty="beam">Beam</button>
+              <button type="button" class="hw-chip" data-ckitty="underline">Underline</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Cursor Test Surface -->
+        <div class="cur-playground" id="cur-playground">
+          <div class="cur-zone" data-czone="default">
+            <span class="mono">DEFAULT</span>
+            <small>Hover to inspect pointer</small>
+          </div>
+          <div class="cur-zone" data-czone="pointer">
+            <span class="mono">LINK / HAND</span>
+            <small>Interactive target</small>
+          </div>
+          <div class="cur-zone" data-czone="text">
+            <span class="mono">TEXT I-BEAM</span>
+            <small>Serifed editor beam</small>
+          </div>
+          <div class="cur-zone" data-czone="crosshair">
+            <span class="mono">CAD RETICLE</span>
+            <small>Sub-pixel capture</small>
+          </div>
+          <div class="cur-zone" data-czone="ew-resize">
+            <span class="mono">RESIZE H/V</span>
+            <small>Window border drag</small>
+          </div>
+          <div class="cur-zone cur-watch-zone" data-czone="wait">
+            <svg class="cur-spin-svg" viewBox="0 0 32 32" width="18" height="18" aria-hidden="true">
+              <circle cx="16" cy="16" r="10" fill="none" stroke="#f4f4f4" stroke-width="2" opacity="0.55" />
+              <circle cx="16" cy="6" r="2.8" fill="#ffffff" />
+            </svg>
+            <span class="mono">8-FRAME WATCH</span>
+          </div>
+        </div>
+
+        <div class="studio-cmd-bar">
+          <code id="cur-cli-out">cursor.sh theme obsidian &amp;&amp; cursor.sh size 24</code>
+          <div style="display:flex;gap:6px">
+            <button type="button" class="copy-btn" id="cur-reset-page" title="Restore browser default cursor">Reset Page</button>
+            <button type="button" class="copy-btn" id="cur-copy-cmd">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Physical Keyboard Type & Keymap Visualizer -->
+      <div class="spot-card studio-panel">
+        <div class="studio-head">
+          <div>
+            <div class="mono studio-tag">PRESS REAL KEYS OR SELECT PRESET</div>
+            <h3 class="studio-h3">Keyboard Type &amp; Keymap Studio</h3>
+          </div>
+          <span class="mono studio-badge" id="kb-waybar-pill">[US] ANSI / 38Hz</span>
+        </div>
+
+        <div>
+          <div class="mono studio-lbl">1. PHYSICAL KEYBOARD TYPE (MODEL + MODIFIER TOPOLOGY)</div>
+          <div class="chip-grid" id="kb-type-chips">
+            <button type="button" class="hw-chip active" data-kbtype="ansi">Standard ANSI</button>
+            <button type="button" class="hw-chip" data-kbtype="compact60">60% / HHKB (Caps=Esc)</button>
+            <button type="button" class="hw-chip" data-kbtype="vim">Vim (Swap Caps/Esc)</button>
+            <button type="button" class="hw-chip" data-kbtype="emacs">Home-Row (Caps=Ctrl)</button>
+            <button type="button" class="hw-chip" data-kbtype="iso">ISO 105-Key</button>
+            <button type="button" class="hw-chip" data-kbtype="apple">Apple (Cmd=Super)</button>
+          </div>
+        </div>
+
+        <div class="studio-row-controls">
+          <div>
+            <div class="mono studio-lbl">2. KEYMAP / VARIANT</div>
+            <div class="chip-grid" id="kb-layout-chips">
+              <button type="button" class="hw-chip active" data-kblayout="qwerty">QWERTY</button>
+              <button type="button" class="hw-chip" data-kblayout="colemak-dh">Colemak-DH</button>
+              <button type="button" class="hw-chip" data-kblayout="dvorak">Dvorak</button>
+              <button type="button" class="hw-chip" data-kblayout="workman">Workman</button>
+              <button type="button" class="hw-chip" data-kblayout="azerty">AZERTY</button>
+              <button type="button" class="hw-chip" data-kblayout="qwertz">QWERTZ</button>
+            </div>
+          </div>
+          <div>
+            <div class="mono studio-lbl">3. REPEAT FEEL</div>
+            <div class="chip-grid" id="kb-rate-chips">
+              <button type="button" class="hw-chip active" data-kbrate="tactile">Tactile 38Hz</button>
+              <button type="button" class="hw-chip" data-kbrate="rapid">Rapid 55Hz</button>
+              <button type="button" class="hw-chip" data-kbrate="gentle">Gentle 25Hz</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Monochrome Physical Keycap Deck -->
+        <div class="kbd-deck" id="kbd-deck" aria-label="Interactive physical keyboard map"></div>
+
+        <pre class="pc-code" id="kb-lua-out" style="margin:0;padding:10px 12px;font-size:11.5px"></pre>
+
+        <div class="studio-cmd-bar">
+          <code id="kb-cli-out">keyboard.sh type ansi &amp;&amp; keyboard.sh layout qwerty</code>
+          <button type="button" class="copy-btn" id="kb-copy-cmd">Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 04. APPLICATION COMPATIBILITY LAYER -->
   <section class="section reveal" id="apps">
     <div class="sec-kicker">04 / Universal Application Compatibility</div>
@@ -633,35 +939,45 @@
     </div>
   </section>
 
-  <!-- 05. PROCEDURAL C++20 WALLPAPER STUDIO -->
+  <!-- 05. PROCEDURAL PURE C11 LIVE WALLPAPER STUDIO -->
   <section class="section reveal" id="wallpapers">
-    <div class="sec-kicker">05 / Procedural C++20 Wallpaper Studio</div>
-    <h2 class="sec-title">20 algorithmic monochrome compositions.</h2>
+    <div class="sec-kicker">05 / Procedural Pure C11 Live Wallpaper Studio</div>
+    <h2 class="sec-title">20 live animated monochrome compositions.</h2>
     <p class="sec-desc">
-      Synthesized in parallel C++20 with zero external image dependencies, including 4K/16K masters
-      and 3 animated kinetic loops. Click <strong>Apply to Desktop</strong> on any composition to load
-      it into the live simulator above, or click the image to inspect at full resolution.
+      Every wallpaper in the collection is a seamless looping kinetic composition synthesized in parallel Pure C11
+      with zero external image libraries and streamed natively at zero idle CPU cost by <code>awww</code>.
+      Click <strong>Apply to Desktop</strong> on any loop to run it live inside the simulator above, or click
+      any frame to inspect at full resolution.
     </p>
 
     <div class="wall-filters" id="wall-filters">
-      <button type="button" class="sbtn on" data-wcat="all">All (20)</button>
-      <button type="button" class="sbtn" data-wcat="live">Animated Loops (3)</button>
-      <button type="button" class="sbtn" data-wcat="geo">Architectural &amp; Grid</button>
-      <button type="button" class="sbtn" data-wcat="field">Flow &amp; Topo Fields</button>
-      <button type="button" class="sbtn" data-wcat="minimal">UHD &amp; Film Noir</button>
+      <button type="button" class="sbtn on" data-wcat="all">All Live Loops (20)</button>
+      <button type="button" class="sbtn" data-wcat="live">Kinetic Instruments (4)</button>
+      <button type="button" class="sbtn" data-wcat="geo">Architectural &amp; Grid (4)</button>
+      <button type="button" class="sbtn" data-wcat="field">Flow &amp; Atmospheric (5)</button>
+      <button type="button" class="sbtn" data-wcat="minimal">Celestial &amp; Noir (4)</button>
+      <button type="button" class="sbtn" data-wcat="uhd">Cinema Masters (3)</button>
     </div>
 
     <div class="wall-grid" id="wall-grid"></div>
   </section>
 
-  <!-- 06. RECORDED COMPOSITOR FOOTAGE -->
+  <!-- 06. OFFICIAL TRAILER & RECORDED COMPOSITOR FOOTAGE -->
   <section class="section reveal" id="footage">
-    <div class="sec-kicker">06 / Captured Compositor Sessions</div>
-    <h2 class="sec-title">Recorded directly inside the Wayland session.</h2>
+    <div class="sec-kicker">06 / Official Launch Film &amp; Captured Sessions</div>
+    <h2 class="sec-title">Official v5.3.0 launch film &amp; live Wayland footage.</h2>
     <p class="sec-desc">
-      Real-time session recordings demonstrating workspace transitions, Waybar luminance telemetry,
-      shader hot-switching, and live desktop workflows.
+      Mastered at 1920x1080 60 FPS with a calm wool-felt piano and warm concert-hall ambient score
+      synthesized in Pure ISO C11 (<code>tools/trailer-studio.c</code>) alongside unedited Wayland session captures.
     </p>
+
+    <div class="spot-card video-card" style="margin-bottom:18px">
+      <video controls preload="metadata" playsinline src="media/official-trailer.mp4?v=calm530" style="width:100%;display:block;border-radius:8px;background:#0a0909"></video>
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px 4px 2px;font-family:var(--mono);font-size:12px">
+        <span style="color:var(--pure);font-weight:700">official-trailer.mp4 : Hyprland Monochrome v5.3.0 Official Launch Film</span>
+        <span style="color:var(--ink-muted)">60.0s / 1920x1080 / 60 FPS / Calm Felt-Piano Stereo Score</span>
+      </div>
+    </div>
 
     <div class="video-grid">
       <div class="spot-card video-card">
@@ -676,23 +992,23 @@
         <video controls preload="metadata" playsinline loop muted src="media/test-run.mp4"></video>
         <div style="display:flex;justify-content:space-between;padding:12px 4px 2px;font-family:var(--mono);font-size:12px">
           <span style="color:var(--pure);font-weight:700">test-run.mp4 : Automated Build &amp; Verification</span>
-          <span style="color:var(--ink-muted)">C++20 / Lua 5.4</span>
+          <span style="color:var(--ink-muted)">Pure C11 / Lua 5.4</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 07. LIVE 172-KEYBIND EXPLORER -->
+  <!-- 07. LIVE 176-KEYBIND EXPLORER -->
   <section class="section reveal" id="keybinds">
     <div class="sec-kicker">07 / Ergonomic Shortcut Reference</div>
-    <h2 class="sec-title">172 keyboard shortcuts, searchable in real time.</h2>
+    <h2 class="sec-title">176 keyboard shortcuts, searchable in real time.</h2>
     <p class="sec-desc">
-      Generated directly from <code>.config/hypr/lua/binds.lua</code> by our C++20 keybind parser so
+      Generated directly from <code>.config/hypr/modules/binds.lua</code> by our Pure C11 keybind parser so
       documentation and live compositor bindings never drift apart.
     </p>
 
     <div class="kb-controls">
-      <input type="search" class="kb-search" id="kb-search" placeholder="Filter 172 keybinds (e.g. browser, record, shader, scratchpad, workspace, lock)..." aria-label="Search keybinds" />
+      <input type="search" class="kb-search" id="kb-search" placeholder="Filter 176 keybinds (e.g. tui, cursor, keyboard, browser, record, shader, workspace)..." aria-label="Search keybinds" />
       <div class="sim-group" id="kb-cats"></div>
     </div>
 
@@ -706,7 +1022,7 @@
           </tr>
         </thead>
         <tbody id="kb-tbody">
-          <tr><td colspan="3" style="color:var(--ink-muted)">Loading 172 keybinds...</td></tr>
+          <tr><td colspan="3" style="color:var(--ink-muted)">Loading 176 keybinds...</td></tr>
         </tbody>
       </table>
     </div>
@@ -715,12 +1031,12 @@
   <!-- FOOTER -->
   <footer class="site-footer">
     <div>
-      <div style="color:var(--pure);font-weight:700">hyprland-monochrome v5.2.0</div>
-      <div style="margin-top:4px">MIT License  /  C++20 + Lua 5.4 + POSIX Shell  /  Built for Wayland</div>
+      <div style="color:var(--pure);font-weight:700">hyprland-monochrome v5.3.0</div>
+      <div style="margin-top:4px">MIT License  /  Pure C11 + Lua 5.4 + POSIX Shell  /  Built for Wayland</div>
     </div>
     <div class="footer-links">
       <a href="https://github.com/esoexe/hyprland-monochrome" target="_blank" rel="noopener">GitHub Repository</a>
-      <a href="https://github.com/esoexe/hyprland-monochrome/releases/tag/v5.2.0" target="_blank" rel="noopener">v5.2.0 Release</a>
+      <a href="https://github.com/esoexe/hyprland-monochrome/releases/latest" target="_blank" rel="noopener">v5.3.0 Release</a>
       <a href="newtab.html" target="_blank" rel="noopener">Browser Startpage</a>
       <a href="keybinds.json" target="_blank" rel="noopener">keybinds.json</a>
     </div>
@@ -742,7 +1058,7 @@
   <!-- WALLPAPER FULL-RESOLUTION LIGHTBOX -->
   <div class="modal-backdrop" id="lightbox-modal" role="dialog" aria-modal="true" aria-label="Wallpaper preview" style="align-items:center;padding:24px">
     <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-      <img src="wallpapers/mono-11.jpg" alt="Full resolution monochrome wallpaper" class="lightbox-img" id="lightbox-img" />
+      <img src="wallpapers/mono-11.gif" alt="Full resolution live animated monochrome wallpaper" class="lightbox-img" id="lightbox-img" />
       <div style="display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:12.5px">
         <span id="lightbox-caption" style="color:var(--pure)"></span>
         <button type="button" class="copy-btn" id="lightbox-apply">Apply to Desktop Simulator</button>

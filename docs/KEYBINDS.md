@@ -45,8 +45,11 @@ The **main modifier is `Super`**. Change it in one place:
 | `Super + Shift + V` | Clear clipboard history |
 | `Super + /` | Keyboard shortcut cheat sheet |
 | `Super + Shift + C` | Colour picker (copies hex to clipboard) |
+| `Alt + C` | Cycle monochrome cursor design (Obsidian / Ivory / Precision / Dot) |
+| `Ctrl + C` | Cursor Design Studio (pointer theme, size, terminal cursor) |
 | `Super + N` | Show the last notification |
 | `Super + X` | Switch keyboard layout |
+| `Super + Shift + X` | Keyboard Type & Layout Studio (ANSI / 60% / Vim / Colemak / Intl) |
 
 ## Window Management
 
@@ -114,6 +117,7 @@ The **main modifier is `Super`**. Change it in one place:
 | Keys | Action |
 | --- | --- |
 | `Super + Shift + W` | Toggle the top bar |
+| `Ctrl + M` | Open Pure C11 Terminal Control Deck (mono-tui) |
 | `Super + Z` | Zen mode (hide bar, frame workspace, mute notifications) |
 | `Super + Shift + Z` | Deep-work focus & Pomodoro timer |
 | `Super + Shift + R` | Reload Hyprland config |

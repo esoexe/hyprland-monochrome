@@ -33,11 +33,15 @@ user = {
     blur_enabled     = true,   -- set to false on low-end GPUs for extra FPS
     glass_mode       = "kawase", -- "kawase" | "xray" (fast) | "acrylic" (Liquid Glass) | "off"
 
-    -- ── Keyboard / mouse ─────────────────────────────────────────────────
-    kb_layout = "us",          -- e.g. "us", "fr", "de", "ara", or "us,ara" to toggle
-    kb_variant = "",
-    kb_options = "",           -- e.g. "grp:alt_shift_toggle,caps:escape"
-    cursor_size = 24,
+    -- ── Keyboard / mouse / bespoke cursor ────────────────────────────────
+    kb_model     = "pc104",    -- pc104 (ANSI) | pc105 (ISO) | applealu_ansi | thinkpad60
+    kb_layout    = "us",       -- e.g. "us", "fr", "de", "ara", or "us,ara" to toggle
+    kb_variant   = "",         -- e.g. "colemak_dh", "dvorak", "workman", "intl"
+    kb_options   = "",         -- e.g. "grp:alt_shift_toggle,caps:escape"
+    repeat_rate  = 38,         -- key repeat Hz (tactile=38, rapid=55, gentle=25)
+    repeat_delay = 260,        -- key repeat delay ms (tactile=260, rapid=190, gentle=360)
+    cursor_theme = "Monochrome-Obsidian", -- Monochrome-Obsidian | Monochrome-Ivory | Monochrome-Precision | Monochrome-Dot
+    cursor_size  = 24,
     touchpad_natural_scroll  = false,
     touchpad_tap_to_click    = true,
     touchpad_disable_typing  = true,     -- stop palm touches while typing
@@ -47,7 +51,7 @@ user = {
     wallpaper_dir    = home .. "/Pictures/Wallpapers",
     screenshot_dir   = home .. "/Pictures/Screenshots",
     recording_dir    = home .. "/Videos/Recordings",
-    default_wallpaper = home .. "/Pictures/Wallpapers/mono-01.jpg",
+    default_wallpaper = home .. "/Pictures/Wallpapers/mono-11.gif",
 
     -- ── Workflow toggles ─────────────────────────────────────────────────
     workspace_count   = 10,       -- how many numbered workspaces get keybinds

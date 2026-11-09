@@ -126,6 +126,7 @@ hl.config({
     },
 
     cursor = {
+        enable_hyprcursor        = true, -- native vector hyprcursor (.hlc) support
         no_break_fs_vrr          = 2,    -- keep fullscreen VRR locked during mouse input
         persistent_warps         = true, -- remember last pointer position per window
         warp_on_change_workspace = 0,
@@ -211,6 +212,7 @@ hl.config({
 
 hl.config({
     input = {
+        kb_model           = u.kb_model or "pc104",
         kb_layout          = u.kb_layout or "us",
         kb_variant         = u.kb_variant or "",
         kb_options         = u.kb_options or "",
@@ -221,8 +223,8 @@ hl.config({
         focus_on_close = 2,
         sensitivity    = 0.0,
         accel_profile  = "adaptive",
-        repeat_rate    = 38,  -- fast 38 Hz key repeat after crisp 260ms delay
-        repeat_delay   = 260,
+        repeat_rate    = u.repeat_rate or 38,   -- fast 38 Hz key repeat after crisp 260ms delay
+        repeat_delay   = u.repeat_delay or 260,
 
         touchpad = {
             natural_scroll       = u.touchpad_natural_scroll or false,

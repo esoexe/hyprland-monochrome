@@ -127,16 +127,52 @@ rofi_menu() {
     rofi -no-config -theme "$ROFI_DIR/${menu}.rasi" "$@"
 }
 
+# Native Pure C11 Hyprland IPC & JSON engine ----------------------------------
+
+resolve_ipc_bin() {
+    local cand
+    for cand in \
+        "$HYPR_DIR/bin/mono-ipc" \
+        "$SCRIPTS_DIR/../../../bin/mono-ipc" \
+        "$CACHE_DIR/mono-ipc"
+    do
+        if [ -x "$cand" ]; then
+            printf '%s\n' "$cand"
+            return 0
+        fi
+    done
+
+    local src="$HYPR_DIR/src/mono-ipc.c"
+    local cc_bin=""
+    if [ -f "$src" ]; then
+        if have cc; then cc_bin="cc"
+        elif have gcc; then cc_bin="gcc"
+        elif have clang; then cc_bin="clang"
+        fi
+        if [ -n "$cc_bin" ]; then
+            mkdir -p "$CACHE_DIR"
+            if "$cc_bin" -std=c11 -O2 "$src" -o "$CACHE_DIR/mono-ipc" -lm 2>/dev/null; then
+                printf '%s\n' "$CACHE_DIR/mono-ipc"
+                return 0
+            fi
+        fi
+    fi
+    return 1
+}
+
+mono_ipc() {
+    local ipc_bin
+    ipc_bin="$(resolve_ipc_bin)" || return 1
+    "$ipc_bin" "$@"
+}
+
 # Active window helpers -------------------------------------------------------
 
-win_class()  { hyprctl activewindow -j 2>/dev/null | jq -r '.class // ""' 2>/dev/null; }
-monitor_of_active_win() { hyprctl activewindow -j 2>/dev/null | jq -r '.monitor // 0' 2>/dev/null; }
+win_class()              { mono_ipc win-class 2>/dev/null; }
+monitor_of_active_win()  { mono_ipc win-monitor 2>/dev/null; }
 
 # Geometry of a monitor (logical pixels, i.e. what dispatchers expect).
-monitor_geometry() {  # monitor_geometry <id>  →  "x y width height"
-    hyprctl monitors -j 2>/dev/null | jq -r --argjson id "${1:-0}" '
-        .[] | select(.id == $id) |
-        [ .x, .y, ((.width / (.scale // 1)) | floor), ((.height / (.scale // 1)) | floor) ]
-        | @tsv' 2>/dev/null | head -1
+monitor_geometry() {  # monitor_geometry <id>  →  "x<TAB>y<TAB>width<TAB>height"
+    mono_ipc monitor-geom "${1:-0}" 2>/dev/null | head -1
 }
 

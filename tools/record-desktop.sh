@@ -26,7 +26,9 @@ WORK="$(mktemp -d)"
 cleanup() {
     if [ -f "$WORK/pids" ]; then
         while IFS= read -r p; do
-            [ -n "$p" ] && kill "$p" 2>/dev/null || true
+            if [ -n "$p" ]; then
+                kill "$p" 2>/dev/null || true
+            fi
         done < "$WORK/pids"
     fi
     rm -rf "$WORK"
@@ -72,6 +74,15 @@ case "\${1:-}" in
                  workspace: {name: (\$ws.name // "1")}} ]' ;;
     monitors)
         printf '[{"id":0,"name":"HEADLESS-1","width":1920,"height":1080,"refreshRate":60.0,"x":0,"y":0,"scale":1.0,"transform":0,"focused":true}]\n' ;;
+    setcursor)
+        ctheme="\${2:-Monochrome-Obsidian}"
+        csize="\${3:-32}"
+        swaymsg "seat * xcursor_theme \$ctheme \$csize" >/dev/null 2>&1 || true
+        printf 'ok\n' ;;
+    switchxkblayout)
+        printf 'ok\n' ;;
+    keyword)
+        printf 'ok\n' ;;
     activewindow)
         swaymsg -t get_tree 2>/dev/null | jq -c '
             recurse(.nodes[]?, .floating_nodes[]?) | select(.focused == true) |
@@ -230,8 +241,30 @@ for img in "$DEMO_HOME/Pictures/Wallpapers"/*.jpg; do
         "$DEMO_HOME/.cache/hyprland-monochrome/wallpaper-thumbs/${h}.jpg" 2>/dev/null || true
 done
 
+# Ensure Xcursor lookup finds ~/.local/share/icons/Monochrome-* in both paths
+ln -sfn "$DEMO_HOME/.local/share/icons" "$DEMO_HOME/.icons"
+
+# Alias JetBrainsMono Nerd Font -> JetBrains Mono + Symbols Nerd Font + Symbola
+mkdir -p "$DEMO_HOME/.config/fontconfig"
+cat > "$DEMO_HOME/.config/fontconfig/fonts.conf" <<'FCEOF'
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+<fontconfig>
+  <alias>
+    <family>JetBrainsMono Nerd Font</family>
+    <prefer>
+      <family>JetBrains Mono</family>
+      <family>Symbols Nerd Font</family>
+      <family>DejaVu Sans</family>
+      <family>Symbola</family>
+    </prefer>
+  </alias>
+</fontconfig>
+FCEOF
+
 cat > "$WORK/sway.cfg" <<'EOF'
 output HEADLESS-1 resolution 1920x1080 position 0,0
+seat * xcursor_theme Monochrome-Obsidian 36
 xwayland enable
 default_border pixel 2
 default_floating_border pixel 2
@@ -242,6 +275,7 @@ client.focused          #e6e6e6 #0d0d0d #e6e6e6 #ffffff   #e6e6e6
 client.focused_inactive #2a2a2a #0a0a0a #8a8a8a #2a2a2a   #2a2a2a
 client.unfocused        #2a2a2a #0a0a0a #6f6f6f #2a2a2a   #2a2a2a
 for_window [app_id="thunar"] floating enable, resize set 1000 610, move position 860 220
+for_window [class="feh"] floating enable, move position 360 88
 mode "RESIZE" {
     bindsym Escape mode "default"
 }
@@ -277,7 +311,7 @@ cat > "$WORK/scene3.sh" <<'EOF'
 B=$'\033[1m'; D=$'\033[2m'; G=$'\033[32m'; R=$'\033[0m'
 show_cmd() { printf '\n%smono%s %s$%s %s%s%s\n' "$D" "$R" "$G" "$R" "$B" "$1" "$R"; sleep 0.35; }
 
-printf '%s▎ 5.0 Velocity & Precision · 0-Fork Runtime, Doctor (11/11), Bench, OCR & Zen%s\n' "$B" "$R"
+printf '%s▎ v5.3.0 Velocity, Input & Cursor Doctor · Bench · OCR · Zen · Inner Recorder%s\n' "$B" "$R"
 sleep 0.5
 
 show_cmd '~/.config/hypr/scripts/doctor.sh && ~/.config/hypr/scripts/perf.sh bench'
@@ -319,6 +353,8 @@ EOF
 
 cat > "$WORK/scene4.sh" <<'EOF'
 #!/usr/bin/env bash
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+unset XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME WAYLAND_DISPLAY SWAYSOCK
 B=$'\033[1m'; D=$'\033[2m'; G=$'\033[32m'; C=$'\033[36m'; R=$'\033[0m'
 printf '%s▎ 1/2 · Installer, backups, --link & non-Arch sandbox (test/install-sandbox.sh)%s\n' "$B$C" "$R"
 printf '%smono%s %s$%s %sbash test/install-sandbox.sh%s\n\n' "$D" "$R" "$G" "$R" "$B" "$R"
@@ -326,7 +362,7 @@ sleep 0.35
 bash test/install-sandbox.sh | sed "s|/tmp/tmp\.[^/ ]*|/tmp/sandbox|g"
 sleep 1.5
 
-printf '\n%s▎ 2/2 · Full repository verification — 9 suites / 161 smoke checks (test/run-all.sh)%s\n' "$B$C" "$R"
+printf '\n%s▎ 2/2 · Full v5.3.0 repository verification — 10 suites / 207 smoke checks (test/run-all.sh)%s\n' "$B$C" "$R"
 printf '%smono%s %s$%s %sbash test/run-all.sh%s\n' "$D" "$R" "$G" "$R" "$B" "$R"
 sleep 0.35
 bash test/run-all.sh
@@ -341,6 +377,7 @@ printf '==> Booting headless 1920x1080 Wayland session and recording 4.0 Kinetic
 
 # Note: GTK_THEME is intentionally NOT set so GTK3 reads ~/.config/gtk-3.0/settings.ini
 # AND layers our monochrome ~/.config/gtk-3.0/gtk.css override cleanly on top!
+# shellcheck disable=SC2016
 HOME="$DEMO_HOME" \
 XDG_CONFIG_HOME="$DEMO_HOME/.config" \
 XDG_CACHE_HOME="$DEMO_HOME/.cache" \
@@ -351,7 +388,11 @@ GIO_USE_VFS=local \
 PATH="$DEMO_BIN:$PATH" \
 WLR_BACKENDS=headless \
 WLR_RENDERER=pixman \
+WLR_NO_HARDWARE_CURSORS=1 \
 WLR_HEADLESS_OUTPUTS=1 \
+XCURSOR_PATH="$DEMO_HOME/.local/share/icons:/usr/share/icons" \
+XCURSOR_THEME="Monochrome-Obsidian" \
+XCURSOR_SIZE="36" \
 REPO="$REPO" \
 WORK="$WORK" \
 RAW_MKV="$RAW_MKV" \
@@ -366,8 +407,8 @@ dbus-run-session -- bash -c '
     export SWAYSOCK
     export DISPLAY=:0
 
-    # Start on the new 4K Gravitational Singularity design (mono-11-4k.jpg) + Waybar + Dunst
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-11-4k.jpg" >/dev/null 2>&1
+    # Start on the Cinema Gravitational Singularity live loop (mono-11-uhd.gif) + Waybar + Dunst
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-11-uhd.gif" >/dev/null 2>&1
     waybar >"$WORK/waybar.log" 2>&1 </dev/null &
     printf "%s\n" "$!" >> "$WORK/pids"
     dunst -config ~/.config/dunst/dunstrc >"$WORK/dunst.log" 2>&1 </dev/null &
@@ -386,23 +427,101 @@ dbus-run-session -- bash -c '
         done
     }
 
-    # ── Scene 1: Workspace 1 — Zsh + Starship + Monochrome Neovim + btop + Pomodoro ──
+    glide_cursor() {
+        local x0="$1" y0="$2" x1="$3" y1="$4" steps="${5:-18}" s cx cy
+        for s in $(seq 1 "$steps"); do
+            read -r cx cy < <(awk -v a="$x0" -v b="$y0" -v c="$x1" -v d="$y1" -v s="$s" -v n="$steps" \
+                "BEGIN { t=s/n; e=t*t*(3-2*t); printf \"%d %d\n\", a+(c-a)*e+0.5, b+(d-b)*e+0.5 }")
+            swaymsg "seat - cursor set $cx $cy" >/dev/null 2>&1 || true
+            sleep 0.025
+        done
+    }
+
+    # ── Scene 1: Workspace 1 — Zsh + Neovim + btop + v5.3 Cursor & Keyboard Studios ──
+    ~/.config/hypr/scripts/cursor.sh size 36 >/dev/null 2>&1
+    ~/.config/hypr/scripts/cursor.sh theme obsidian >/dev/null 2>&1
+    swaymsg "seat - cursor set 960 540" >/dev/null 2>&1 || true
+
     ~/.config/hypr/scripts/focus.sh start 25 "Deep Work" >/dev/null 2>&1
     foot -c "$WORK/foot.ini" -D "$REPO" -e zsh >/dev/null 2>&1 </dev/null &
     W1_T1=$!; printf "%s\n" "$W1_T1" >> "$WORK/pids"
-    sleep 1.4
+    sleep 1.2
 
     if command -v nvim >/dev/null 2>&1; then
-        foot -c "$WORK/foot.ini" -D "$REPO" -e nvim -R .config/hypr/modules/smart.lua >/dev/null 2>&1 </dev/null &
+        foot -c "$WORK/foot.ini" -D "$REPO" -e nvim -R .config/hypr/src/mono-cursor-gen.c >/dev/null 2>&1 </dev/null &
         W1_NV=$!
-        sleep 2.3
+        glide_cursor 960 540 1320 420 16
+        sleep 1.6
         kill "$W1_NV" 2>/dev/null || true
-        sleep 0.3
+        sleep 0.25
     fi
 
     foot -c "$WORK/foot.ini" -e btop >/dev/null 2>&1 </dev/null &
     W1_T2=$!; printf "%s\n" "$W1_T2" >> "$WORK/pids"
-    sleep 2.0
+    sleep 1.5
+
+    # ── Scene 1B: Bespoke Monochrome Cursor Design Studio (Super + Ctrl + C) ──
+    magick "$REPO/docs/assets/cursor-keyboard-live.svg" -resize 1200x310 "$WORK/studio-card.png" 2>/dev/null || true
+    FEH_PID=""
+    if [ -f "$WORK/studio-card.png" ] && command -v feh >/dev/null 2>&1; then
+        feh --title "Monochrome v5.3 Studio" -x "$WORK/studio-card.png" >/dev/null 2>&1 </dev/null &
+        FEH_PID=$!; printf "%s\n" "$FEH_PID" >> "$WORK/pids"
+        sleep 1.1
+    fi
+
+    ~/.config/hypr/scripts/cursor.sh menu >/dev/null 2>&1 </dev/null &
+    RF=$!
+    wait_rofi; sleep 0.85
+    xdotool key Down; sleep 0.38
+    xdotool key Down; sleep 0.38
+    xdotool key Down; sleep 0.55
+    xdotool key Escape
+    wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
+    sleep 0.3
+
+    # Cycle all 4 custom Monochrome cursors live with Dunst OSD notifications!
+    ~/.config/hypr/scripts/cursor.sh theme ivory >/dev/null 2>&1
+    glide_cursor 520 340 1380 360 12
+    sleep 0.55
+    ~/.config/hypr/scripts/cursor.sh theme precision >/dev/null 2>&1
+    glide_cursor 1380 360 620 680 12
+    sleep 0.55
+    ~/.config/hypr/scripts/cursor.sh theme dot >/dev/null 2>&1
+    glide_cursor 620 680 1280 640 12
+    sleep 0.55
+    ~/.config/hypr/scripts/cursor.sh theme obsidian >/dev/null 2>&1
+    sleep 0.45
+
+    # ── Scene 1C: Physical Keyboard Type & Keymap Studio (Super + Shift + X) ──
+    ~/.config/hypr/scripts/keyboard.sh menu >/dev/null 2>&1 </dev/null &
+    RF=$!
+    wait_rofi; sleep 0.85
+    xdotool key Down; sleep 0.32
+    xdotool key Down; sleep 0.32
+    xdotool key Down; sleep 0.32
+    xdotool key Down; sleep 0.32
+    xdotool key Down; sleep 0.32
+    xdotool key Down; sleep 0.32
+    xdotool key Down; sleep 0.32
+    xdotool key Down; sleep 0.55
+    xdotool key Escape
+    wait "$RF" 2>/dev/null || kill "$RF" 2>/dev/null || true
+    sleep 0.3
+
+    # Apply 60% HHKB hardware type + Colemak-DH + Dual US/ARA toggle (watch Waybar pill!)
+    ~/.config/hypr/scripts/keyboard.sh type compact60 >/dev/null 2>&1
+    sleep 0.75
+    ~/.config/hypr/scripts/keyboard.sh layout colemak-dh >/dev/null 2>&1
+    sleep 0.85
+    ~/.config/hypr/scripts/keyboard.sh layout us-ara >/dev/null 2>&1
+    sleep 0.65
+    ~/.config/hypr/scripts/keyboard.sh next >/dev/null 2>&1
+    sleep 0.85
+    ~/.config/hypr/scripts/keyboard.sh layout colemak-dh >/dev/null 2>&1
+    ~/.config/hypr/scripts/keyboard.sh rate rapid >/dev/null 2>&1
+    sleep 0.6
+    [ -n "$FEH_PID" ] && kill "$FEH_PID" 2>/dev/null || true
+    sleep 0.35
 
     # ── Scene 2: Command Palette (Super+Shift+P), Live Math, Keybinds & RESIZE ──
     ~/.config/hypr/scripts/palette.sh >/dev/null 2>&1 </dev/null &
@@ -508,17 +627,17 @@ dbus-run-session -- bash -c '
     sleep 0.6
     ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-live-03-lissajous.gif" >/dev/null 2>&1
     sleep 1.4
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-12.jpg" >/dev/null 2>&1
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-12.gif" >/dev/null 2>&1
     sleep 0.8
     touch "$WORK/wall.done"
 
     while [ ! -f "$WORK/s3.done" ]; do sleep 0.2; done
 
-    # ── Scene 4: Workspace 3 — Full Automated 161-Check Verification Live ────
+    # ── Scene 4: Workspace 3 — Full Automated Verification Live ──────────────
     swaymsg "workspace number 3" >/dev/null
     sleep 0.35
-    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-14.jpg" >/dev/null 2>&1
-    notify-send -a mono "Workspace 3 · Verification" "Running install-sandbox.sh & 161-check run-all.sh"
+    ~/.config/hypr/scripts/wallpaper.sh set "$HOME/Pictures/Wallpapers/mono-14.gif" >/dev/null 2>&1
+    notify-send -a mono "Workspace 3 · Verification" "Running install-sandbox.sh & full run-all.sh suite"
 
     MONO_NO_BANNER=1 foot -c "$WORK/foot.ini" -D "$REPO" -e "$WORK/scene4.sh" >/dev/null 2>&1 </dev/null &
     W3_T1=$!; printf "%s\n" "$W3_T1" >> "$WORK/pids"

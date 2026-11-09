@@ -1,0 +1,4 @@
+name = Monochrome-Dot
+description = Minimalist concentric halo and tactile dot cursor
+version = 5.3
+cursors_directory = hyprcursors

@@ -73,8 +73,7 @@ case "$mode" in
     full)
         grim "$FILE" || exit 1 ;;
     window)
-        win="$(hyprctl activewindow -j 2>/dev/null)" || exit 1
-        read -r x y w h <<<"$(printf '%s' "$win" | jq -r '"\(.at[0]) \(.at[1]) \(.size[0]) \(.size[1])"' 2>/dev/null)"
+        read -r x y w h <<<"$(mono_ipc win-box 2>/dev/null)"
         [ -z "${w:-}" ] && { notify "Screenshot failed" "No focused window" "dialog-error"; exit 1; }
         grim -g "${w}x${h}+${x}+${y}" "$FILE" || exit 1 ;;
     ocr)

@@ -3,7 +3,7 @@
 #
 # Aggregates open windows across workspaces, focus/Zen sprints, tiling & gap
 # presets, screen capture + OCR, wallpaper studio, config quick-edit, and a
-# safe sub-millisecond C++20 math / hex / bitwise calculator (prefix with '='
+# safe sub-millisecond Pure C11 math / hex / bitwise calculator (prefix with '='
 # or type an arithmetic expression and press Enter).
 #
 #   palette.sh              interactive Rofi command palette
@@ -28,16 +28,16 @@ resolve_calc_bin() {
         fi
     done
 
-    local src="$SCRIPTS_DIR/../src/mono-calc.cpp"
-    local cxx=""
+    local src="$SCRIPTS_DIR/../src/mono-calc.c"
+    local cc_bin=""
     if [ -f "$src" ]; then
-        if have g++; then cxx="g++"
-        elif have clang++; then cxx="clang++"
-        elif have c++; then cxx="c++"
+        if have cc; then cc_bin="cc"
+        elif have gcc; then cc_bin="gcc"
+        elif have clang; then cc_bin="clang"
         fi
-        if [ -n "$cxx" ]; then
+        if [ -n "$cc_bin" ]; then
             mkdir -p "$CACHE_DIR"
-            if "$cxx" -std=c++20 -O2 "$src" -o "$CACHE_DIR/mono-calc" 2>/dev/null; then
+            if "$cc_bin" -std=c11 -O2 "$src" -o "$CACHE_DIR/mono-calc" -lm 2>/dev/null; then
                 printf '%s\n' "$CACHE_DIR/mono-calc"
                 return 0
             fi
@@ -73,13 +73,9 @@ build_entries() {
             printf '◌  Exit Zen Mode (restore bar & notifications)\tfocus:zen\n' ;;
     esac
 
-    # 2. Live open windows across all workspaces
-    if have hyprctl && have jq; then
-        hyprctl clients -j 2>/dev/null | jq -r '
-            .[]
-            | select(.mapped == true and (.title // "") != "")
-            | "◧  Window · \(.title | gsub("[\t\r\n]"; " ") | .[0:52])  [\(.class // "app") · ws \(.workspace.name // "?")]\twin:\(.address)"
-        ' 2>/dev/null || true
+    # 2. Live open windows across all workspaces (Pure C11 mono-ipc)
+    if have hyprctl || [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+        mono_ipc clients-palette 2>/dev/null || true
     fi
 
     # 3. Core productivity, capture, layout & configuration actions
@@ -91,9 +87,21 @@ build_entries() {
 🔕  Focus · Toggle Do Not Disturb	focus:dnd
 ◒  Drawer · Toggle Dropdown Terminal (Super + Shift + T)	drawer:term
 ▣  Drawer · Toggle Floating btop++ Monitor (Super + Shift + B)	drawer:btop
+▣  Control Deck · Launch Pure C11 Terminal Studio (mono-tui · Super + Ctrl + M)	tui:open
 ✎  Drawer · Toggle Scratch Markdown Notes (Super + ')	drawer:notes
 ◰  Drawer · Toggle Quick File Drawer	drawer:files
 󰀻  Open · Universal App / File / AppImage / Flatpak Opener (Super + Shift + O)	open:picker
+⌨  Keyboard · Open Keyboard Type & Layout Studio (Super + Shift + X)	kb:menu
+⌨  Keyboard · Switch to Next Keyboard Layout (Super + X)	kb:next
+⌨  Keyboard · Set 60% / HHKB Mode (CapsLock -> Escape)	kb:60
+⌨  Keyboard · Set Vim Mode (Swap CapsLock & Escape)	kb:vim
+⌨  Keyboard · Set Standard ANSI 104-Key Mode	kb:ansi
+↖  Cursor · Open Cursor Design Studio (Super + Ctrl + C)	cursor:menu
+↖  Cursor · Cycle Monochrome Cursor Design (Super + Alt + C)	cursor:cycle
+↖  Cursor · Set Monochrome-Obsidian Pointer	cursor:obsidian
+↖  Cursor · Set Monochrome-Ivory Pointer	cursor:ivory
+↖  Cursor · Set Monochrome-Precision Reticle Pointer	cursor:precision
+↖  Cursor · Set Monochrome-Dot Halo Pointer	cursor:dot
 󰖟  Browser · Open OpenCode Startpage (Super + Alt + B)	browser:startpage
 󰏘  Browser · Apply OpenCode Theme to All Browser Profiles	browser:apply
 󰓅  Hardware · PC GPU, Chassis & Power Profile Menu	hw:menu
@@ -235,6 +243,18 @@ run_token() {
         menu:keybinds)  "$SCRIPTS_DIR/menu.sh" keybinds ;;
         menu:settings)  "$SCRIPTS_DIR/settings.sh" ;;
         menu:clip)      "$SCRIPTS_DIR/clipboard.sh" ;;
+        tui:open)       "$SCRIPTS_DIR/tui.sh" ;;
+        kb:menu)        "$SCRIPTS_DIR/keyboard.sh" menu ;;
+        kb:next)        "$SCRIPTS_DIR/keyboard.sh" next ;;
+        kb:60)          "$SCRIPTS_DIR/keyboard.sh" type compact60 ;;
+        kb:vim)         "$SCRIPTS_DIR/keyboard.sh" type vim ;;
+        kb:ansi)        "$SCRIPTS_DIR/keyboard.sh" type ansi ;;
+        cursor:menu)    "$SCRIPTS_DIR/cursor.sh" menu ;;
+        cursor:cycle)   "$SCRIPTS_DIR/cursor.sh" cycle ;;
+        cursor:obsidian)  "$SCRIPTS_DIR/cursor.sh" theme obsidian ;;
+        cursor:ivory)     "$SCRIPTS_DIR/cursor.sh" theme ivory ;;
+        cursor:precision) "$SCRIPTS_DIR/cursor.sh" theme precision ;;
+        cursor:dot)       "$SCRIPTS_DIR/cursor.sh" theme dot ;;
         edit:user)      open_in_editor "$HYPR_DIR/modules/user.lua" ;;
         edit:binds)     open_in_editor "$HYPR_DIR/modules/binds.lua" ;;
         edit:waybar)    open_in_editor "$CONFIG_DIR/waybar/config.jsonc" ;;

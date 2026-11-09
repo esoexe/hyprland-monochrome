@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   verify:
-    name: C++20 Toolchain · ShellCheck · Lua 5.4 · 192 Smoke Checks
+    name: Pure C11 Toolchain · ShellCheck · Lua 5.4 · 211 Smoke Checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -20,12 +20,12 @@ jobs:
       - name: Install verification dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq g++ make jq shellcheck lua5.4
+          sudo apt-get install -y -qq gcc make jq shellcheck lua5.4
 
-      - name: Compile C++20 tools (-Wall -Wextra -Werror)
+      - name: Compile Pure C11 tools (-std=c11 -Wall -Wextra -Werror)
         run: make -j"$(nproc)"
 
-      - name: Run full verification suite (10 suites · 192 smoke checks)
+      - name: Run full verification suite (10 suites · 207 smoke checks)
         env:
           LANG: C.UTF-8
           LC_ALL: C.UTF-8

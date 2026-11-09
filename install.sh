@@ -193,7 +193,7 @@ if [ "$DO_PACKAGES" = "1" ]; then
         APT_PKGS=(hyprland waybar rofi kitty thunar dunst wl-clipboard cliphist grim slurp wf-recorder
                   jq fzf bat zathura imv mpv neovim zsh zsh-autosuggestions zsh-syntax-highlighting
                   btop pavucontrol network-manager bluez brightnessctl playerctl xdg-utils flatpak
-                  file-roller unzip p7zip-full g++ make libnotify-bin fonts-noto-color-emoji xwayland)
+                  file-roller unzip p7zip-full gcc make libnotify-bin fonts-noto-color-emoji xwayland)
         avail_apt=()
         for p in "${APT_PKGS[@]}"; do
             apt-cache show "$p" >/dev/null 2>&1 && avail_apt+=("$p")
@@ -317,26 +317,55 @@ done < <(find "$REPO_DIR/.config" -type f -print0)
 
 ok "$INSTALLED files installed ($SKIPPED skipped)"
 
-# Scripts must be executable + native C++20 calculator helper compiled
+# Scripts must be executable + native Pure C11 helpers compiled
 if [ "$DRY_RUN" = "0" ]; then
     chmod +x "$CONFIG_DIR"/hypr/scripts/*.sh 2>/dev/null || true
     chmod +x "$CONFIG_DIR"/waybar/scripts/*.sh 2>/dev/null || true
     chmod +x "$CONFIG_DIR"/hypr/scripts/* 2>/dev/null || true
     ok "Scripts marked executable"
 
-    if [ "$USE_LINKS" = "0" ] && [ -f "$CONFIG_DIR/hypr/src/mono-calc.cpp" ]; then
-        cxx_bin=""
-        if command -v g++ >/dev/null 2>&1; then cxx_bin="g++"
-        elif command -v clang++ >/dev/null 2>&1; then cxx_bin="clang++"
-        elif command -v c++ >/dev/null 2>&1; then cxx_bin="c++"
+    if [ "$USE_LINKS" = "0" ] && [ -f "$CONFIG_DIR/hypr/src/mono-calc.c" ]; then
+        cc_bin=""
+        if command -v cc >/dev/null 2>&1; then cc_bin="cc"
+        elif command -v gcc >/dev/null 2>&1; then cc_bin="gcc"
+        elif command -v clang >/dev/null 2>&1; then cc_bin="clang"
         fi
-        if [ -n "$cxx_bin" ]; then
+        if [ -n "$cc_bin" ]; then
             mkdir -p "$CONFIG_DIR/hypr/bin"
-            if "$cxx_bin" -std=c++20 -O3 "$CONFIG_DIR/hypr/src/mono-calc.cpp" \
-                -o "$CONFIG_DIR/hypr/bin/mono-calc" 2>/dev/null; then
-                ok "Compiled native C++20 helper (hypr/bin/mono-calc)"
+            if "$cc_bin" -std=c11 -O3 "$CONFIG_DIR/hypr/src/mono-calc.c" \
+                -o "$CONFIG_DIR/hypr/bin/mono-calc" -lm 2>/dev/null; then
+                ok "Compiled native Pure C11 helper (hypr/bin/mono-calc)"
+            fi
+            if [ -f "$CONFIG_DIR/hypr/src/mono-cursor-gen.c" ] && \
+               "$cc_bin" -std=c11 -O3 "$CONFIG_DIR/hypr/src/mono-cursor-gen.c" \
+                -o "$CONFIG_DIR/hypr/bin/mono-cursor-gen" -lm 2>/dev/null; then
+                ok "Compiled native Pure C11 cursor compiler (hypr/bin/mono-cursor-gen)"
+            fi
+            if [ -f "$CONFIG_DIR/hypr/src/mono-ipc.c" ] && \
+               "$cc_bin" -std=c11 -O3 "$CONFIG_DIR/hypr/src/mono-ipc.c" \
+                -o "$CONFIG_DIR/hypr/bin/mono-ipc" -lm 2>/dev/null; then
+                ok "Compiled native Pure C11 Hyprland IPC engine (hypr/bin/mono-ipc)"
+            fi
+            if [ -f "$CONFIG_DIR/hypr/src/mono-tui.c" ] && \
+               "$cc_bin" -std=c11 -O3 "$CONFIG_DIR/hypr/src/mono-tui.c" \
+                -o "$CONFIG_DIR/hypr/bin/mono-tui" -lm 2>/dev/null; then
+                ok "Compiled native Pure C11 Terminal Control Deck (hypr/bin/mono-tui)"
             fi
         fi
+    fi
+
+    # Install the 4 bespoke Monochrome cursor suites (hyprcursor + Xcursor)
+    ICONS_TARGET="${XDG_DATA_HOME:-$HOME/.local/share}/icons"
+    mkdir -p "$ICONS_TARGET" 2>/dev/null || true
+    if [ -d "$REPO_DIR/cursors/Monochrome-Obsidian" ]; then
+        cp -a "$REPO_DIR/cursors"/Monochrome-* "$ICONS_TARGET"/ 2>/dev/null || true
+        ok "Installed 4 bespoke Monochrome cursor themes (hyprcursor + Xcursor)"
+    elif [ -x "$CONFIG_DIR/hypr/bin/mono-cursor-gen" ]; then
+        "$CONFIG_DIR/hypr/bin/mono-cursor-gen" --out-dir "$ICONS_TARGET" >/dev/null 2>&1 \
+            && ok "Generated 4 bespoke Monochrome cursor themes in $ICONS_TARGET"
+    fi
+    if [ -x "$CONFIG_DIR/hypr/scripts/cursor.sh" ]; then
+        "$CONFIG_DIR/hypr/scripts/cursor.sh" theme Monochrome-Obsidian >/dev/null 2>&1 || true
     fi
 fi
 
@@ -383,7 +412,7 @@ if [ -d "$REPO_DIR/wallpapers" ]; then
         [ -f "$wp" ] || continue
         case "${wp,,}" in
             *.jpg|*.jpeg|*.png|*.webp|*.gif|*.bmp) ;;
-            *) continue ;;   # skip generate.cpp / generate.hpp and anything else non-image
+            *) continue ;;   # skip generate.c / generate.h / animate.c and anything else non-image
         esac
         name="$(basename "$wp")"
         if [ -e "$WALLPAPER_DIR/$name" ]; then

@@ -50,6 +50,7 @@ window#waybar {
 #memory,
 #temperature,
 #custom-updates,
+#custom-keyboard,
 #network,
 #bluetooth,
 #pulseaudio,
@@ -76,7 +77,7 @@ window#waybar {
 }
 
 #cpu:hover, #custom-sysgraph:hover, #memory:hover, #temperature:hover, #custom-updates:hover,
-#network:hover, #bluetooth:hover, #pulseaudio:hover, #battery:hover,
+#custom-keyboard:hover, #network:hover, #bluetooth:hover, #pulseaudio:hover, #battery:hover,
 #clock:hover, #mpris:hover, #custom-launcher:hover,
 #custom-settings:hover {
     color: #ffffff;

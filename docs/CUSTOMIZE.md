@@ -125,8 +125,8 @@ somewhere else) and they show up in the picker. Thumbnails are cached in
 
 ### Regenerating the wallpapers
 
-The 14 bundled static wallpapers and 3 animated live loops are drawn procedurally in
-multi-threaded, zero-dependency **C++20** (`wallpapers/generate.cpp` and `wallpapers/animate.cpp`),
+All 20 bundled live animated wallpapers (plus optional still renders) are drawn procedurally in
+multi-threaded, zero-dependency **Pure C11** (`wallpapers/generate.c` and `wallpapers/animate.c`),
 so you can render any resolution you like in milliseconds:
 
 ```bash
@@ -145,8 +145,8 @@ curve where the 1080p file has visible stair-steps.
 * `--only 6` (or `6`, or `mono-06`) renders one design.
 * `--suffix -16k` names the output `mono-06-16k.jpg` instead of overwriting the 1080p file.
 * `--quality 95` raises the ITU-T T.81 Grayscale JPEG quality (default 92).
-* Per-pixel shaders (`mono-01`..`mono-14`) parallelize across `std::thread::hardware_concurrency()`
-  in `-O3` C++20, so 1080p and 4K renders finish almost instantaneously.
+* Per-pixel shaders (`mono-01`..`mono-14`) parallelize across POSIX worker threads (`pthread_create`)
+  in `-O3` Pure C11, so 1080p and 4K renders finish almost instantaneously.
 
 `mono-06-16k.jpg` (15360×8640) ships alongside the 1080p set; nothing else needed to change,
 the wallpaper picker lists whatever is in the folder.
