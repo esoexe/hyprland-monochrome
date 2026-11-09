@@ -29,7 +29,7 @@ jobs:
           mkdir -p _pages/wallpapers _pages/media
           cp -a site/* _pages/
           cp -a wallpapers/*.gif _pages/wallpapers/
-          cp -a docs/official-trailer.mp4 docs/desktop-demo.mp4 docs/test-run.mp4 _pages/media/
+          cp -a docs/official-trailer.mp4 docs/desktop-demo.mp4 docs/test-run.mp4 docs/youtube-thumbnail.jpg _pages/media/
           cp -a docs/preview.html _pages/preview.html
           cp -a site/newtab.html _pages/startpage.html
 
